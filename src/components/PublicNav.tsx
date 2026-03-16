@@ -71,6 +71,18 @@ const PublicNav = () => {
               {label}
             </Link>
           ))}
+          <div className="w-px h-5 bg-border mx-1" />
+          <Link
+            to="/paper-trading"
+            className={cn(
+              "px-3 py-2 text-sm font-semibold rounded-lg transition-colors",
+              location.pathname === "/paper-trading"
+                ? "text-primary bg-primary/10"
+                : "text-accent-foreground bg-accent/60 hover:bg-accent"
+            )}
+          >
+            Paper Trading
+          </Link>
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
@@ -97,6 +109,14 @@ const PublicNav = () => {
               {label}
             </Link>
           ))}
+          <div className="h-px bg-border my-2" />
+          <Link
+            to="/paper-trading"
+            onClick={() => setOpen(false)}
+            className="block px-3 py-2.5 text-sm font-semibold rounded-lg text-accent-foreground bg-accent/60 hover:bg-accent transition-colors"
+          >
+            Paper Trading
+          </Link>
           <div className="pt-3 flex gap-2">
             <Link to="/auth" className="flex-1"><Button variant="outline" className="w-full" size="sm">Sign In</Button></Link>
             <Link to="/auth" className="flex-1"><Button className="w-full" size="sm">Start Free</Button></Link>
