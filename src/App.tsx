@@ -27,6 +27,7 @@ import CoursesPreview from "./pages/CoursesPreview";
 import MistakesReview from "./pages/MistakesReview";
 import Quests from "./pages/Quests";
 import Rankings from "./pages/Rankings";
+import PaperTrading from "./pages/PaperTrading";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
