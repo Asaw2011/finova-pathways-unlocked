@@ -44,10 +44,8 @@ serve(async (req) => {
     const to = yesterday.toISOString().split("T")[0];
 
     // Use snapshot endpoint for latest prices
-    const snapshotUrl = `${STOCK_API_BASE}/v2/snapshot/locale/us/markets/stocks/tickers?tickers=${tickerStr}`;
-    const snapshotRes = await fetch(snapshotUrl, {
-      headers: { Authorization: `Bearer ${apiKey}` },
-    });
+    const snapshotUrl = `${STOCK_API_BASE}/v2/snapshot/locale/us/markets/stocks/tickers?tickers=${tickerStr}&apiKey=${apiKey}`;
+    const snapshotRes = await fetch(snapshotUrl);
     const snapshotData = await snapshotRes.json();
 
     if (!snapshotRes.ok) {
