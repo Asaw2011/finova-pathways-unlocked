@@ -28,6 +28,7 @@ const navItems = [
   { to: "/rankings", label: "Rank", icon: Trophy },
   { to: "/mistakes", label: "Review", icon: AlertTriangle },
   { to: "/awards", label: "Awards", icon: Award },
+  { to: "/paper-trading", label: "Trade", icon: BarChart3 },
   { to: "/profile", label: "Profile", icon: User },
 ];
 
