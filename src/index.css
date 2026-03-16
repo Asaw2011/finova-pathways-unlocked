@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 20% 98%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 142 60% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 16% 93%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 210 100% 52%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 20% 90%;
+    --input: 214 20% 90%;
+    --ring: 142 60% 45%;
+
+    --radius: 1rem;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 142 60% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 20% 96%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 214 20% 92%;
+    --sidebar-ring: 142 60% 45%;
+
+    /* Custom tokens */
+    --success: 142 60% 45%;
+    --warning: 38 92% 50%;
+    --info: 210 100% 52%;
+    --gold: 45 93% 47%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(142 60% 45%), hsl(172 60% 45%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(210 20% 98%));
+    --gradient-gold: linear-gradient(135deg, hsl(38 92% 50%), hsl(45 93% 58%));
+
+    --shadow-glow: 0 0 20px hsl(142 60% 45% / 0.15);
+    --shadow-card: 0 2px 12px hsl(222 47% 11% / 0.06);
+    --shadow-card-hover: 0 8px 30px hsl(222 47% 11% / 0.1);
+
+    --font-display: 'Nunito', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+
+    /* Section colors */
+    --section-1: 142 60% 45%;
+    --section-2: 210 100% 52%;
+    --section-3: 280 60% 55%;
+    --section-4: 38 92% 50%;
+    --section-5: 340 65% 55%;
+    --section-6: 172 60% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-card border border-border shadow-sm;
+  }
+
+  .glow-primary {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .gradient-text {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-gold {
+    background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .card-shadow {
+    box-shadow: var(--shadow-card);
+  }
+
+  .card-shadow-hover {
+    box-shadow: var(--shadow-card-hover);
+  }
+}

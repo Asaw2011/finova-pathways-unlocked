@@ -1,0 +1,142 @@
+import { useState } from "react";
+import { Play, Bookmark, Heart, X } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const categories = ["All", "Budgeting", "Investing", "Credit", "Entrepreneurship", "Saving", "Taxes", "Mindset"];
+
+const videos = [
+  { id: "1", title: "How to Budget as a Teenager", category: "Budgeting", youtubeId: "sVKQn2I4HDM", source: "Practical Wisdom" },
+  { id: "2", title: "What is a Credit Score?", category: "Credit", youtubeId: "jPLUsc5SWTE", source: "Investopedia" },
+  { id: "3", title: "Start Investing with $100", category: "Investing", youtubeId: "gFQNPmLKj1k", source: "Ali Abdaal" },
+  { id: "4", title: "5 Side Hustles for High Schoolers", category: "Entrepreneurship", youtubeId: "hv9dGWOG3bk", source: "Next Gen Personal Finance" },
+  { id: "5", title: "Emergency Fund: Why & How", category: "Saving", youtubeId: "fVToMS2Q3XQ", source: "Two Cents" },
+  { id: "6", title: "Understanding Compound Interest", category: "Investing", youtubeId: "wf91rEGw88Q", source: "The Organic Chemistry Tutor" },
+  { id: "7", title: "How Taxes Work for Beginners", category: "Taxes", youtubeId: "ZJx3VNqJObs", source: "Marko - WhiteBoard Finance" },
+  { id: "8", title: "Money Mindset: Think Like the Wealthy", category: "Mindset", youtubeId: "bfAzi6D5FpM", source: "The Swedish Investor" },
+  { id: "9", title: "Needs vs Wants Explained", category: "Budgeting", youtubeId: "zOnrKkGccDU", source: "Econ Plus" },
+  { id: "10", title: "How to Open a Bank Account", category: "Saving", youtubeId: "1m6s2FnhECk", source: "Zions TV" },
+  { id: "11", title: "What is an ETF?", category: "Investing", youtubeId: "OwpFBi-jRVg", source: "The Plain Bagel" },
+  { id: "12", title: "Building Your First Business Plan", category: "Entrepreneurship", youtubeId: "Fqch5OrUPvA", source: "Young Entrepreneurs Forum" },
+  { id: "13", title: "Credit Cards Explained", category: "Credit", youtubeId: "EJMEMaMtRto", source: "Two Cents" },
+  { id: "14", title: "The 50/30/20 Budget Rule", category: "Budgeting", youtubeId: "HQzoZfc3GwQ", source: "Nischa" },
+  { id: "15", title: "How to Negotiate Your First Salary", category: "Mindset", youtubeId: "u-FBIOr0KTc", source: "Jeff Su" },
+  { id: "16", title: "Stock Market for Beginners", category: "Investing", youtubeId: "ZCFkWDdmXG8", source: "Humphrey Yang" },
+  { id: "17", title: "Why You Should Start Saving NOW", category: "Saving", youtubeId: "jHXfDc0YKfk", source: "Two Cents" },
+  { id: "18", title: "Filing Taxes: A Beginner's Guide", category: "Taxes", youtubeId: "tY7tMW1Kmc4", source: "ClearValue Tax" },
+];
+
+const ResourceHub = () => {
+  const [filter, setFilter] = useState("All");
+  const [saved, setSaved] = useState<Set<string>>(new Set());
+  const [liked, setLiked] = useState<Set<string>>(new Set());
+  const [playingId, setPlayingId] = useState<string | null>(null);
+
+  const filtered = filter === "All" ? videos : videos.filter((v) => v.category === filter);
+
+  const toggleSave = (id: string) => {
+    setSaved((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const toggleLike = (id: string) => {
+    setLiked((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  return (
+    <div className="space-y-6 animate-fade-in">
+      <div>
+        <h1 className="text-3xl font-bold font-display">Resource Hub</h1>
+        <p className="text-muted-foreground mt-1">Curated finance & business videos — learn at your own pace</p>
+      </div>
+
+      {/* Category filters */}
+      <div className="flex gap-2 flex-wrap">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setFilter(cat)}
+            className={cn(
+              "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
+              filter === cat
+                ? "bg-primary text-primary-foreground"
+                : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+            )}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      {/* Video grid */}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filtered.map((video) => (
+          <div key={video.id} className="rounded-xl overflow-hidden border border-border bg-card group hover:border-primary/30 transition-all">
+            {/* Video area */}
+            <div className="aspect-video relative bg-secondary">
+              {playingId === video.id ? (
+                <div className="relative w-full h-full">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${video.youtubeId}?autoplay=1&rel=0`}
+                    title={video.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full absolute inset-0"
+                    loading="lazy"
+                  />
+                  <button
+                    onClick={() => setPlayingId(null)}
+                    className="absolute top-2 right-2 z-10 p-1 rounded-full bg-background/80 hover:bg-background transition-colors"
+                  >
+                    <X className="w-4 h-4 text-foreground" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setPlayingId(video.id)}
+                  className="w-full h-full relative cursor-pointer"
+                >
+                  <img
+                    src={`https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`}
+                    alt={video.title}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-background/20 group-hover:bg-background/40 transition-colors flex items-center justify-center">
+                    <div className="p-3 rounded-full bg-primary/90 shadow-lg">
+                      <Play className="w-6 h-6 text-primary-foreground fill-primary-foreground" />
+                    </div>
+                  </div>
+                </button>
+              )}
+            </div>
+
+            <div className="p-4">
+              <h3 className="font-display font-semibold text-sm mb-1 line-clamp-2">{video.title}</h3>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">{video.source}</span>
+                <div className="flex items-center gap-1">
+                  <button onClick={() => toggleLike(video.id)} className="p-1.5 rounded-md hover:bg-secondary transition-colors">
+                    <Heart className={cn("w-4 h-4", liked.has(video.id) ? "fill-destructive text-destructive" : "text-muted-foreground")} />
+                  </button>
+                  <button onClick={() => toggleSave(video.id)} className="p-1.5 rounded-md hover:bg-secondary transition-colors">
+                    <Bookmark className={cn("w-4 h-4", saved.has(video.id) ? "fill-primary text-primary" : "text-muted-foreground")} />
+                  </button>
+                </div>
+              </div>
+              <span className="text-xs mt-1 inline-block px-2 py-0.5 rounded bg-primary/10 text-primary">{video.category}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default ResourceHub;

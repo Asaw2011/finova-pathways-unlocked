@@ -1,0 +1,214 @@
+{
+  "importVersion": "finova-v1",
+  "source": "FinOva-Lovable-Batch1",
+  "courses": [
+    {
+      "courseId": "budgeting-basics-v1",
+      "title": "Budgeting Basics",
+      "subtitle": "Practical, hands-on budgeting for teens",
+      "description": "Create and sustain a budget that actually works: zero-based, 50/30/20, saving strategies, spreadsheets and app walkthroughs.",
+      "certificateTemplate": "certificate-basic-v1",
+      "modules": [
+        {
+          "moduleId": "bb-m1",
+          "title": "Why Budget?",
+          "lessons": [
+            { "lessonId": "bb-m1-l1", "type": "video", "title": "Intro: Why budgeting matters", "durationSeconds": 240, "assetUrl": "https://cdn.finova.app/videos/bb_intro.mp4", "srtUrl": "https://cdn.finova.app/captions/bb_intro.srt" },
+            { "lessonId": "bb-m1-l2", "type": "reading", "title": "Needs vs Wants", "contentHtml": "<p contenteditable='true'>Explain needs vs wants with teen examples (phone bill vs extra skins). Add examples and an exercise.</p>" },
+            { "lessonId": "bb-m1-l3", "type": "exercise", "title": "Quick budget worksheet", "exerciseType": "spreadsheet", "contentHtml": "<p contenteditable='true'>Download the worksheet, fill monthly income & recurring expenses.</p>" }
+          ]
+        },
+        {
+          "moduleId": "bb-m2",
+          "title": "Budget Methods",
+          "lessons": [
+            { "lessonId": "bb-m2-l1", "type": "video", "title": "50/30/20 and zero-based budgeting", "durationSeconds": 300, "assetUrl": "https://cdn.finova.app/videos/bb_methods.mp4" },
+            { "lessonId": "bb-m2-l2", "type": "quiz", "title": "Budgeting quick quiz", "quiz": { "shuffle": true, "items": [{ "id": "q1", "prompt": "What percent is recommended for savings under 50/30/20?", "type": "single", "choices": [{ "id": "a", "text": "50%" }, { "id": "b", "text": "20%" }, { "id": "c", "text": "30%" }], "answer": "b" }] } },
+            { "lessonId": "bb-m2-l3", "type": "exercise", "title": "Create your first budget (template)", "exerciseType": "upload", "contentHtml": "<p contenteditable='true'>Upload a filled CSV budget file to submit.</p>" }
+          ]
+        },
+        {
+          "moduleId": "bb-m3",
+          "title": "Tools & Apps",
+          "lessons": [
+            { "lessonId": "bb-m3-l1", "type": "video", "title": "Choosing the right app", "durationSeconds": 180, "assetUrl": "https://cdn.finova.app/videos/bb_tools.mp4" },
+            { "lessonId": "bb-m3-l2", "type": "reading", "title": "Saving strategies", "contentHtml": "<p contenteditable='true'>Automate savings, round-ups, emergency funds with examples.</p>" },
+            { "lessonId": "bb-m3-l3", "type": "quiz", "title": "Tools recap quiz", "quiz": { "items": [{ "id": "q1", "prompt": "Which feature helps small automatic savings?", "type": "single", "choices": [{ "id": "a", "text": "Round-ups" }, { "id": "b", "text": "Interest rates" }, { "id": "c", "text": "Loan amortization" }], "answer": "a" }] } }
+          ]
+        },
+        {
+          "moduleId": "bb-m4",
+          "title": "Real-life Practice",
+          "lessons": [
+            { "lessonId": "bb-m4-l1", "type": "exercise", "title": "30-day budgeting challenge", "exerciseType": "progressive", "contentHtml": "<p contenteditable='true'>Daily short tasks. Submit end-of-challenge reflection.</p>" },
+            { "lessonId": "bb-m4-l2", "type": "reading", "title": "Dealing with setbacks", "contentHtml": "<p contenteditable='true'>What to do when unexpected expenses hit.</p>" },
+            { "lessonId": "bb-m4-l3", "type": "video", "title": "Student case studies", "durationSeconds": 420, "assetUrl": "https://cdn.finova.app/videos/bb_cases.mp4" }
+          ]
+        },
+        {
+          "moduleId": "bb-m5",
+          "title": "Teacher Guide & Worksheets",
+          "lessons": [
+            { "lessonId": "bb-m5-l1", "type": "reading", "title": "Teacher guide", "contentHtml": "<p contenteditable='true'>Lesson timings, classroom adaptations, assessment rubric.</p>" },
+            { "lessonId": "bb-m5-l2", "type": "exercise", "title": "Printable worksheet pack", "exerciseType": "download", "contentHtml": "<p contenteditable='true'>PDF worksheets for class use.</p>" },
+            { "lessonId": "bb-m5-l3", "type": "quiz", "title": "Final module quiz", "quiz": { "items": [{ "id": "q1", "prompt": "What should an emergency fund cover?", "type": "single", "choices": [{ "id": "a", "text": "6 months of expenses" }, { "id": "b", "text": "A new phone" }, { "id": "c", "text": "Student loans" }], "answer": "a" }] } }
+          ]
+        },
+        {
+          "moduleId": "bb-m6",
+          "title": "Capstone",
+          "lessons": [
+            { "lessonId": "bb-capstone", "type": "project", "title": "30-day budgeting capstone", "contentHtml": "<p contenteditable='true'>Deliverable: Upload final budget CSV + 300-word reflection. Instructors grade per rubric.</p>" }
+          ]
+        }
+      ]
+    },
+    {
+      "courseId": "investing-basics-v1",
+      "title": "Investing Basics",
+      "subtitle": "Stocks, bonds, ETFs, and long-term thinking",
+      "description": "Foundations of investing and building a beginner portfolio.",
+      "certificateTemplate": "certificate-basic-v1",
+      "modules": [
+        {
+          "moduleId": "ib-m1",
+          "title": "Why invest?",
+          "lessons": [
+            { "lessonId": "ib-m1-l1", "type": "video", "title": "Intro to investing", "durationSeconds": 320, "assetUrl": "https://cdn.finova.app/videos/ib_intro.mp4" },
+            { "lessonId": "ib-m1-l2", "type": "reading", "title": "Risk vs reward", "contentHtml": "<p contenteditable='true'></p>" },
+            { "lessonId": "ib-m1-l3", "type": "quiz", "title": "Concepts quiz", "quiz": { "items": [{ "id": "q1", "prompt": "Which is generally lower risk?", "type": "single", "choices": [{ "id": "a", "text": "Stocks" }, { "id": "b", "text": "Bonds" }, { "id": "c", "text": "Options" }], "answer": "b" }] } }
+          ]
+        },
+        {
+          "moduleId": "ib-m2",
+          "title": "Investment vehicles",
+          "lessons": [
+            { "lessonId": "ib-m2-l1", "type": "video", "title": "ETFs vs mutual funds", "durationSeconds": 300, "assetUrl": "https://cdn.finova.app/videos/ib_etf.mp4" },
+            { "lessonId": "ib-m2-l2", "type": "reading", "title": "Index funds explained", "contentHtml": "<p contenteditable='true'></p>" },
+            { "lessonId": "ib-m2-l3", "type": "exercise", "title": "Build a sample portfolio", "exerciseType": "simulator" }
+          ]
+        },
+        {
+          "moduleId": "ib-m3",
+          "title": "Basics of stock analysis",
+          "lessons": [
+            { "lessonId": "ib-m3-l1", "type": "video", "title": "Reading financials for beginners", "durationSeconds": 360, "assetUrl": "https://cdn.finova.app/videos/ib_financials.mp4" },
+            { "lessonId": "ib-m3-l2", "type": "quiz", "title": "Ticker quiz", "quiz": { "items": [{ "id": "q1", "prompt": "P/E ratio stands for?", "type": "single", "choices": [{ "id": "a", "text": "Price to earnings" }, { "id": "b", "text": "Profit each" }, { "id": "c", "text": "Partial equity" }], "answer": "a" }] } },
+            { "lessonId": "ib-m3-l3", "type": "exercise", "title": "Paper trading challenge", "exerciseType": "simulator" }
+          ]
+        },
+        {
+          "moduleId": "ib-m4",
+          "title": "Long-term strategies",
+          "lessons": [
+            { "lessonId": "ib-m4-l1", "type": "video", "title": "Compounding and time in market", "durationSeconds": 240, "assetUrl": "https://cdn.finova.app/videos/ib_compound.mp4" },
+            { "lessonId": "ib-m4-l2", "type": "reading", "title": "Diversification", "contentHtml": "<p contenteditable='true'></p>" },
+            { "lessonId": "ib-m4-l3", "type": "quiz", "title": "Strategy quiz", "quiz": { "items": [{ "id": "q1", "prompt": "What reduces portfolio risk?", "type": "single", "choices": [{ "id": "a", "text": "Diversification" }, { "id": "b", "text": "Higher leverage" }, { "id": "c", "text": "Concentrated bets" }], "answer": "a" }] } }
+          ]
+        },
+        {
+          "moduleId": "ib-m5",
+          "title": "Taxes & accounts",
+          "lessons": [
+            { "lessonId": "ib-m5-l1", "type": "reading", "title": "Tax-efficient investing", "contentHtml": "<p contenteditable='true'></p>" },
+            { "lessonId": "ib-m5-l2", "type": "exercise", "title": "Compare account types", "exerciseType": "worksheet" },
+            { "lessonId": "ib-m5-l3", "type": "video", "title": "Broker walkthrough", "durationSeconds": 300, "assetUrl": "https://cdn.finova.app/videos/ib_broker.mp4" }
+          ]
+        },
+        {
+          "moduleId": "ib-m6",
+          "title": "Capstone",
+          "lessons": [
+            { "lessonId": "ib-capstone", "type": "project", "title": "Create a 1-year investment plan", "contentHtml": "<p contenteditable='true'>Deliverable: plan PDF + 5-minute recorded pitch.</p>" }
+          ]
+        }
+      ]
+    },
+    {
+      "courseId": "credit-borrowing-v1",
+      "title": "Credit & Borrowing",
+      "subtitle": "Credit scores, cards, loans and responsible borrowing",
+      "description": "How credit works, responsible use of credit, and how to build strong credit early.",
+      "certificateTemplate": "certificate-basic-v1",
+      "modules": [
+        {
+          "moduleId": "cb-m1",
+          "title": "Credit fundamentals",
+          "lessons": [
+            { "lessonId": "cb-m1-l1", "type": "video", "title": "Intro to credit", "durationSeconds": 260, "assetUrl": "https://cdn.finova.app/videos/cb_intro.mp4" },
+            { "lessonId": "cb-m1-l2", "type": "reading", "title": "Credit score components", "contentHtml": "<p contenteditable='true'></p>" },
+            { "lessonId": "cb-m1-l3", "type": "quiz", "title": "Credit quiz", "quiz": { "items": [{ "id": "q1", "prompt": "Which affects your credit score most?", "type": "single", "choices": [{ "id": "a", "text": "Payment history" }, { "id": "b", "text": "Length of credit" }, { "id": "c", "text": "Number of cards" }], "answer": "a" }] } }
+          ]
+        },
+        {
+          "moduleId": "cb-m2",
+          "title": "Cards vs loans",
+          "lessons": [
+            { "lessonId": "cb-m2-l1", "type": "video", "title": "How credit cards work", "durationSeconds": 280, "assetUrl": "https://cdn.finova.app/videos/cb_cards.mp4" },
+            { "lessonId": "cb-m2-l2", "type": "reading", "title": "Loans & interest", "contentHtml": "<p contenteditable='true'></p>" },
+            { "lessonId": "cb-m2-l3", "type": "exercise", "title": "Calculate interest scenarios", "exerciseType": "spreadsheet" }
+          ]
+        },
+        {
+          "moduleId": "cb-m3",
+          "title": "Protecting your credit",
+          "lessons": [
+            { "lessonId": "cb-m3-l1", "type": "video", "title": "Identity protection & fraud", "durationSeconds": 240, "assetUrl": "https://cdn.finova.app/videos/cb_safety.mp4" },
+            { "lessonId": "cb-m3-l2", "type": "quiz", "title": "Protection quiz", "quiz": { "items": [{ "id": "q1", "prompt": "What reduces fraud risk?", "type": "single", "choices": [{ "id": "a", "text": "Strong passwords & MFA" }, { "id": "b", "text": "Posting on social media" }, { "id": "c", "text": "Sharing SSN by phone" }], "answer": "a" }] } },
+            { "lessonId": "cb-m3-l3", "type": "reading", "title": "Repairing credit", "contentHtml": "<p contenteditable='true'></p>" }
+          ]
+        },
+        {
+          "moduleId": "cb-m4",
+          "title": "Capstone & case studies",
+          "lessons": [
+            { "lessonId": "cb-capstone", "type": "project", "title": "Create a credit plan & case study analysis", "contentHtml": "<p contenteditable='true'></p>" }
+          ]
+        }
+      ]
+    },
+    {
+      "courseId": "entrepreneurship-sidehustles-v1",
+      "title": "Entrepreneurship & Side-Hustles",
+      "subtitle": "Start a micro-business, price products, and manage bookkeeping",
+      "description": "From idea to first sale: validate, price, run simple bookkeeping and marketing for micro-businesses.",
+      "certificateTemplate": "certificate-basic-v1",
+      "modules": [
+        {
+          "moduleId": "es-m1",
+          "title": "Idea & Validation",
+          "lessons": [
+            { "lessonId": "es-m1-l1", "type": "video", "title": "Finding a business idea", "durationSeconds": 300, "assetUrl": "https://cdn.finova.app/videos/es_idea.mp4" },
+            { "lessonId": "es-m1-l2", "type": "reading", "title": "Market research basics", "contentHtml": "<p contenteditable='true'>How to validate demand before investing time and money.</p>" },
+            { "lessonId": "es-m1-l3", "type": "exercise", "title": "Idea validation worksheet", "exerciseType": "worksheet", "contentHtml": "<p contenteditable='true'>Fill out the lean canvas for your idea.</p>" }
+          ]
+        },
+        {
+          "moduleId": "es-m2",
+          "title": "Pricing & Revenue",
+          "lessons": [
+            { "lessonId": "es-m2-l1", "type": "video", "title": "How to price your product", "durationSeconds": 280, "assetUrl": "https://cdn.finova.app/videos/es_pricing.mp4" },
+            { "lessonId": "es-m2-l2", "type": "reading", "title": "Revenue models", "contentHtml": "<p contenteditable='true'>Subscription, one-time, freemium, and service-based models.</p>" },
+            { "lessonId": "es-m2-l3", "type": "quiz", "title": "Pricing quiz", "quiz": { "items": [{ "id": "q1", "prompt": "What pricing strategy charges a recurring fee?", "type": "single", "choices": [{ "id": "a", "text": "Subscription" }, { "id": "b", "text": "Cost-plus" }, { "id": "c", "text": "Penetration" }], "answer": "a" }] } }
+          ]
+        },
+        {
+          "moduleId": "es-m3",
+          "title": "Simple Bookkeeping",
+          "lessons": [
+            { "lessonId": "es-m3-l1", "type": "video", "title": "Tracking income & expenses", "durationSeconds": 240, "assetUrl": "https://cdn.finova.app/videos/es_books.mp4" },
+            { "lessonId": "es-m3-l2", "type": "exercise", "title": "Create a simple P&L", "exerciseType": "spreadsheet", "contentHtml": "<p contenteditable='true'>Build a basic profit & loss statement.</p>" },
+            { "lessonId": "es-m3-l3", "type": "quiz", "title": "Bookkeeping quiz", "quiz": { "items": [{ "id": "q1", "prompt": "Revenue minus expenses equals?", "type": "single", "choices": [{ "id": "a", "text": "Profit" }, { "id": "b", "text": "Assets" }, { "id": "c", "text": "Equity" }], "answer": "a" }] } }
+          ]
+        },
+        {
+          "moduleId": "es-m4",
+          "title": "Capstone",
+          "lessons": [
+            { "lessonId": "es-capstone", "type": "project", "title": "Launch a micro-business plan", "contentHtml": "<p contenteditable='true'>Deliverable: Business plan + mock pitch deck.</p>" }
+          ]
+        }
+      ]
+    }
+  ]
+}
