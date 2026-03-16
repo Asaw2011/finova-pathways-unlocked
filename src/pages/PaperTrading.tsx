@@ -1,40 +1,34 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, TrendingDown, DollarSign, BarChart3, Lock, ArrowUpRight, ArrowDownRight, RotateCcw, ShoppingCart, MinusCircle } from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, BarChart3, Lock, ArrowUpRight, ArrowDownRight, RotateCcw, ShoppingCart, MinusCircle, Wifi, WifiOff, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { usePremiumAccess } from "@/hooks/usePremiumAccess";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
-// --- Stock universe with realistic starting prices ---
-const STOCK_UNIVERSE = [
-  { symbol: "AAPL", name: "Apple Inc.", basePrice: 178.50, volatility: 0.018 },
-  { symbol: "GOOGL", name: "Alphabet Inc.", basePrice: 141.20, volatility: 0.02 },
-  { symbol: "TSLA", name: "Tesla Inc.", basePrice: 245.80, volatility: 0.035 },
-  { symbol: "AMZN", name: "Amazon.com", basePrice: 185.60, volatility: 0.022 },
-  { symbol: "MSFT", name: "Microsoft", basePrice: 415.30, volatility: 0.015 },
-  { symbol: "NVDA", name: "NVIDIA Corp.", basePrice: 875.40, volatility: 0.03 },
-  { symbol: "META", name: "Meta Platforms", basePrice: 505.75, volatility: 0.025 },
-  { symbol: "JPM", name: "JPMorgan Chase", basePrice: 198.20, volatility: 0.012 },
-  { symbol: "V", name: "Visa Inc.", basePrice: 279.90, volatility: 0.01 },
-  { symbol: "NFLX", name: "Netflix Inc.", basePrice: 628.50, volatility: 0.028 },
-  { symbol: "AMD", name: "AMD Inc.", basePrice: 162.30, volatility: 0.032 },
-  { symbol: "DIS", name: "Walt Disney Co.", basePrice: 112.40, volatility: 0.02 },
-];
+const TICKERS = ["AAPL", "GOOGL", "TSLA", "AMZN", "MSFT", "NVDA", "META", "JPM", "V", "NFLX", "AMD", "DIS"];
+
+const TICKER_NAMES: Record<string, string> = {
+  AAPL: "Apple Inc.", GOOGL: "Alphabet Inc.", TSLA: "Tesla Inc.", AMZN: "Amazon.com",
+  MSFT: "Microsoft", NVDA: "NVIDIA Corp.", META: "Meta Platforms", JPM: "JPMorgan Chase",
+  V: "Visa Inc.", NFLX: "Netflix Inc.", AMD: "AMD Inc.", DIS: "Walt Disney Co.",
+};
 
 interface StockData {
   symbol: string;
   name: string;
   price: number;
   prevPrice: number;
-  basePrice: number;
-  change: number;
-  changePct: number;
+  open: number;
   high: number;
   low: number;
-  volatility: number;
+  prevClose: number;
+  change: number;
+  changePct: number;
+  volume: number;
 }
 
 interface Position {
@@ -53,7 +47,6 @@ interface Trade {
   timestamp: Date;
 }
 
-// --- Access Gate ---
 const PremiumGate = () => (
   <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
     <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md">
@@ -62,7 +55,7 @@ const PremiumGate = () => (
       </div>
       <h1 className="text-2xl font-extrabold font-display mb-2">Paper Trading is Premium</h1>
       <p className="text-muted-foreground mb-6">
-        Practice trading with virtual money using real-time market simulation.
+        Practice trading with virtual money using real-time market data.
         Upgrade to Premium to unlock this feature.
       </p>
       <Link to="/shop">
@@ -72,61 +65,80 @@ const PremiumGate = () => (
   </div>
 );
 
-// --- Main Trading Component ---
 const PaperTrading = () => {
   const { hasAccess, loading: accessLoading } = usePremiumAccess();
-  const [stocks, setStocks] = useState<StockData[]>(() =>
-    STOCK_UNIVERSE.map((s) => ({
-      symbol: s.symbol,
-      name: s.name,
-      price: s.basePrice,
-      prevPrice: s.basePrice,
-      basePrice: s.basePrice,
-      change: 0,
-      changePct: 0,
-      high: s.basePrice,
-      low: s.basePrice,
-      volatility: s.volatility,
-    }))
-  );
+  const [stocks, setStocks] = useState<StockData[]>([]);
   const [cash, setCash] = useState(100000);
   const [positions, setPositions] = useState<Record<string, Position>>({});
   const [trades, setTrades] = useState<Trade[]>([]);
   const [shareInput, setShareInput] = useState<Record<string, string>>({});
-  const [paused, setPaused] = useState(false);
   const [selectedTab, setSelectedTab] = useState<"market" | "portfolio" | "history">("market");
+  const [isLive, setIsLive] = useState(false);
+  const [loadingPrices, setLoadingPrices] = useState(true);
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const tradeIdRef = useRef(0);
 
-  // Simulate market ticks
-  useEffect(() => {
-    if (paused) return;
-    const interval = setInterval(() => {
-      setStocks((prev) =>
-        prev.map((s) => {
-          const drift = (Math.random() - 0.48) * s.volatility;
-          const newPrice = Math.max(s.price * (1 + drift), 0.01);
-          const rounded = Math.round(newPrice * 100) / 100;
-          const change = rounded - s.basePrice;
-          return {
-            ...s,
-            prevPrice: s.price,
-            price: rounded,
-            change,
-            changePct: (change / s.basePrice) * 100,
-            high: Math.max(s.high, rounded),
-            low: Math.min(s.low, rounded),
+  const fetchPrices = useCallback(async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke("stock-prices", {
+        body: { tickers: TICKERS },
+      });
+
+      if (error) throw error;
+      if (!data?.prices) throw new Error("No price data returned");
+
+      const newStocks: StockData[] = TICKERS.map((symbol) => {
+        const p = data.prices[symbol];
+        const existing = stocks.find((s) => s.symbol === symbol);
+        if (!p) {
+          return existing || {
+            symbol, name: TICKER_NAMES[symbol] || symbol,
+            price: 0, prevPrice: 0, open: 0, high: 0, low: 0, prevClose: 0,
+            change: 0, changePct: 0, volume: 0,
           };
-        })
-      );
-    }, 2000);
+        }
+        return {
+          symbol,
+          name: TICKER_NAMES[symbol] || symbol,
+          price: p.price,
+          prevPrice: existing?.price ?? p.prevClose,
+          open: p.open,
+          high: p.high,
+          low: p.low,
+          prevClose: p.prevClose,
+          change: p.change,
+          changePct: p.changePct,
+          volume: p.volume,
+        };
+      });
+
+      setStocks(newStocks);
+      setIsLive(true);
+      setLastUpdate(new Date());
+      setLoadingPrices(false);
+    } catch (err) {
+      console.error("Failed to fetch live prices:", err);
+      setIsLive(false);
+      setLoadingPrices(false);
+      if (stocks.length === 0) {
+        toast.error("Could not load live prices. Showing offline mode.");
+      }
+    }
+  }, [stocks]);
+
+  // Fetch prices on mount and every 15 seconds
+  useEffect(() => {
+    if (!hasAccess) return;
+    fetchPrices();
+    const interval = setInterval(fetchPrices, 15000);
     return () => clearInterval(interval);
-  }, [paused]);
+  }, [hasAccess]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const buy = useCallback((symbol: string) => {
     const shares = parseInt(shareInput[symbol] || "1");
     if (isNaN(shares) || shares <= 0) { toast.error("Enter a valid number of shares"); return; }
     const stock = stocks.find((s) => s.symbol === symbol);
-    if (!stock) return;
+    if (!stock || stock.price <= 0) { toast.error("Price not available"); return; }
     const cost = stock.price * shares;
     if (cost > cash) { toast.error("Insufficient funds"); return; }
 
@@ -148,7 +160,7 @@ const PaperTrading = () => {
     const pos = positions[symbol];
     if (!pos || pos.shares < shares) { toast.error("Not enough shares"); return; }
     const stock = stocks.find((s) => s.symbol === symbol);
-    if (!stock) return;
+    if (!stock || stock.price <= 0) { toast.error("Price not available"); return; }
     const revenue = stock.price * shares;
 
     setCash((c) => Math.round((c + revenue) * 100) / 100);
@@ -166,10 +178,6 @@ const PaperTrading = () => {
     setCash(100000);
     setPositions({});
     setTrades([]);
-    setStocks(STOCK_UNIVERSE.map((s) => ({
-      symbol: s.symbol, name: s.name, price: s.basePrice, prevPrice: s.basePrice,
-      basePrice: s.basePrice, change: 0, changePct: 0, high: s.basePrice, low: s.basePrice, volatility: s.volatility,
-    })));
     toast.success("Account reset to $100,000");
   };
 
@@ -199,8 +207,15 @@ const PaperTrading = () => {
         <div className="flex items-center gap-2 mb-1">
           <BarChart3 className="w-6 h-6 text-primary" />
           <h1 className="text-2xl md:text-3xl font-extrabold font-display">Paper Trading</h1>
+          <div className={cn("flex items-center gap-1 ml-auto text-[10px] font-bold px-2 py-1 rounded-full", isLive ? "bg-emerald-500/10 text-emerald-500" : "bg-muted text-muted-foreground")}>
+            {isLive ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
+            {isLive ? "LIVE" : "OFFLINE"}
+          </div>
         </div>
-        <p className="text-muted-foreground text-sm">Practice trading with $100,000 virtual cash — prices update every 2s</p>
+        <p className="text-muted-foreground text-sm">
+          Real market data — refreshes every 15s
+          {lastUpdate && <span className="ml-2 text-[10px] text-muted-foreground/60">Last: {lastUpdate.toLocaleTimeString()}</span>}
+        </p>
       </motion.div>
 
       {/* Account Summary */}
@@ -223,8 +238,8 @@ const PaperTrading = () => {
 
       {/* Controls */}
       <div className="flex gap-2 flex-wrap">
-        <Button size="sm" variant={paused ? "default" : "outline"} className="rounded-xl text-xs" onClick={() => setPaused(!paused)}>
-          {paused ? "▶ Resume" : "⏸ Pause"}
+        <Button size="sm" variant="outline" className="rounded-xl text-xs" onClick={() => fetchPrices()}>
+          <RefreshCw className={cn("w-3.5 h-3.5 mr-1", loadingPrices && "animate-spin")} /> Refresh
         </Button>
         <Button size="sm" variant="outline" className="rounded-xl text-xs" onClick={resetAccount}>
           <RotateCcw className="w-3.5 h-3.5 mr-1" /> Reset
@@ -250,62 +265,71 @@ const PaperTrading = () => {
       {/* Market Tab */}
       {selectedTab === "market" && (
         <div className="space-y-2">
-          {stocks.map((stock) => {
-            const isUp = stock.price > stock.prevPrice;
-            const isDown = stock.price < stock.prevPrice;
-            const pos = positions[stock.symbol];
-            return (
-              <motion.div
-                key={stock.symbol}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className={cn(
-                  "bg-card rounded-xl border border-border p-3 transition-colors",
-                  isUp && "border-emerald-500/20",
-                  isDown && "border-red-500/20"
-                )}
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-extrabold font-display text-primary">{stock.symbol}</span>
-                      {pos && <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-md font-bold">{pos.shares} shares</span>}
+          {loadingPrices && stocks.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              <RefreshCw className="w-8 h-8 mx-auto mb-3 animate-spin opacity-30" />
+              <p className="font-semibold">Loading live prices...</p>
+            </div>
+          ) : (
+            stocks.map((stock) => {
+              const isUp = stock.price > stock.prevPrice;
+              const isDown = stock.price < stock.prevPrice;
+              const pos = positions[stock.symbol];
+              return (
+                <motion.div
+                  key={stock.symbol}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className={cn(
+                    "bg-card rounded-xl border border-border p-3 transition-colors",
+                    isUp && "border-emerald-500/20",
+                    isDown && "border-red-500/20"
+                  )}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-extrabold font-display text-primary">{stock.symbol}</span>
+                        {pos && <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-md font-bold">{pos.shares} shares</span>}
+                      </div>
+                      <p className="text-[10px] text-muted-foreground truncate">{stock.name}</p>
+                      {stock.volume > 0 && (
+                        <p className="text-[9px] text-muted-foreground/60">Vol: {(stock.volume / 1e6).toFixed(1)}M</p>
+                      )}
                     </div>
-                    <p className="text-[10px] text-muted-foreground truncate">{stock.name}</p>
+                    <div className="text-right mr-3">
+                      <p className="text-base font-extrabold font-display">${stock.price.toFixed(2)}</p>
+                      <p className={cn("text-[11px] font-bold", stock.change >= 0 ? "text-emerald-500" : "text-red-500")}>
+                        {stock.change >= 0 ? "+" : ""}{stock.changePct.toFixed(2)}%
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Input
+                        type="number"
+                        min="1"
+                        placeholder="Qty"
+                        value={shareInput[stock.symbol] || ""}
+                        onChange={(e) => setShareInput((prev) => ({ ...prev, [stock.symbol]: e.target.value }))}
+                        className="w-16 h-8 text-xs rounded-lg text-center"
+                      />
+                      <Button size="sm" className="h-8 px-2.5 text-xs rounded-lg bg-emerald-600 hover:bg-emerald-700" onClick={() => buy(stock.symbol)}>
+                        <ShoppingCart className="w-3 h-3" />
+                      </Button>
+                      <Button size="sm" variant="outline" className="h-8 px-2.5 text-xs rounded-lg text-red-500 border-red-500/30 hover:bg-red-500/10" onClick={() => sell(stock.symbol)}>
+                        <MinusCircle className="w-3 h-3" />
+                      </Button>
+                    </div>
                   </div>
-                  <div className="text-right mr-3">
-                    <p className="text-base font-extrabold font-display">${stock.price.toFixed(2)}</p>
-                    <p className={cn("text-[11px] font-bold", stock.change >= 0 ? "text-emerald-500" : "text-red-500")}>
-                      {stock.change >= 0 ? "+" : ""}{stock.changePct.toFixed(2)}%
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Input
-                      type="number"
-                      min="1"
-                      placeholder="Qty"
-                      value={shareInput[stock.symbol] || ""}
-                      onChange={(e) => setShareInput((prev) => ({ ...prev, [stock.symbol]: e.target.value }))}
-                      className="w-16 h-8 text-xs rounded-lg text-center"
+                  <div className="mt-2 h-1 bg-muted rounded-full overflow-hidden">
+                    <div
+                      className={cn("h-full rounded-full transition-all", stock.change >= 0 ? "bg-emerald-500/50" : "bg-red-500/50")}
+                      style={{ width: `${Math.min(Math.abs(stock.changePct) * 10, 100)}%` }}
                     />
-                    <Button size="sm" className="h-8 px-2.5 text-xs rounded-lg bg-emerald-600 hover:bg-emerald-700" onClick={() => buy(stock.symbol)}>
-                      <ShoppingCart className="w-3 h-3" />
-                    </Button>
-                    <Button size="sm" variant="outline" className="h-8 px-2.5 text-xs rounded-lg text-red-500 border-red-500/30 hover:bg-red-500/10" onClick={() => sell(stock.symbol)}>
-                      <MinusCircle className="w-3 h-3" />
-                    </Button>
                   </div>
-                </div>
-                {/* Mini bar showing day range */}
-                <div className="mt-2 h-1 bg-muted rounded-full overflow-hidden">
-                  <div
-                    className={cn("h-full rounded-full transition-all", stock.change >= 0 ? "bg-emerald-500/50" : "bg-red-500/50")}
-                    style={{ width: `${Math.min(Math.abs(stock.changePct) * 10, 100)}%` }}
-                  />
-                </div>
-              </motion.div>
-            );
-          })}
+                </motion.div>
+              );
+            })
+          )}
         </div>
       )}
 
