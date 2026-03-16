@@ -71,6 +71,18 @@ const PublicNav = () => {
               {label}
             </Link>
           ))}
+          <div className="w-px h-5 bg-border mx-1" />
+          <Link
+            to="/paper-trading"
+            className={cn(
+              "px-3 py-2 text-sm font-semibold rounded-lg transition-colors",
+              location.pathname === "/paper-trading"
+                ? "text-primary bg-primary/10"
+                : "text-accent-foreground bg-accent/60 hover:bg-accent"
+            )}
+          >
+            Paper Trading
+          </Link>
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
