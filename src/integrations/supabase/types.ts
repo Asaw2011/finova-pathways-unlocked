@@ -118,6 +118,39 @@ export type Database = {
         }
         Relationships: []
       }
+      financial_profiles: {
+        Row: {
+          created_at: string
+          id: string
+          knowledge_level: string
+          learning_pace: string
+          life_stage: string
+          primary_goal: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          knowledge_level?: string
+          learning_pace?: string
+          life_stage?: string
+          primary_goal?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          knowledge_level?: string
+          learning_pace?: string
+          life_stage?: string
+          primary_goal?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       lessons: {
         Row: {
           content: Json | null

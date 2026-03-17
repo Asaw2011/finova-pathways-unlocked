@@ -77,7 +77,7 @@ const subscriptionDetails = [
     tier: "Quant Vault (Elite)",
     price: "$29/mo or $199 lifetime",
     audience: "Advanced learners & young investors",
-    includes: ["Everything in Premium", "Quantitative investment strategy access", "Downloadable models & datasets", "Backtesting tools", "Live Q&A webinars", "Private community"],
+    includes: ["Everything in Plus", "Quantitative investment strategy access", "Downloadable models & datasets", "Backtesting tools", "Live Q&A webinars", "Private community"],
   },
   {
     tier: "School Classroom",
