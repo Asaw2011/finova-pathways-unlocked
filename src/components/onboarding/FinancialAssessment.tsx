@@ -80,13 +80,13 @@ const FinancialAssessment = ({ onComplete }: FinancialAssessmentProps) => {
       setSaving(true);
       try {
         if (user) {
-          await supabase.from("financial_profiles").upsert({
+          await supabase.from("financial_profiles" as any).upsert({
             user_id: user.id,
             life_stage: answers.life_stage,
             primary_goal: answers.primary_goal,
             knowledge_level: answers.knowledge,
             learning_pace: answers.pace,
-          }, { onConflict: "user_id" });
+          } as any, { onConflict: "user_id" });
         }
         toast.success("Profile saved! Your learning path is personalized.");
         onComplete();
