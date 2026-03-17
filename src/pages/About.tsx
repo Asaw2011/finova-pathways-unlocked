@@ -21,7 +21,7 @@ const About = () => {
               <Target className="w-6 h-6 text-primary" /> Our Mission
             </h2>
             <p className="text-muted-foreground leading-relaxed">
-              FinOva exists to close the financial literacy gap for young people. Traditional education doesn't teach students how to budget, invest, or build credit. We're changing that with engaging, gamified courses built by financial experts and educators. Our platform is designed to be accessible, fun, and practical — equipping the next generation with real-world money skills.
+              FinOva exists to close the financial literacy gap. Traditional education doesn't teach people how to budget, invest, or build credit. We're changing that with engaging, gamified courses built by financial experts and educators. Our platform is designed to be accessible, fun, and practical — equipping everyone with real-world money skills.
             </p>
           </div>
 
