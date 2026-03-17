@@ -47,19 +47,19 @@ interface Trade {
   timestamp: Date;
 }
 
-const PremiumGate = () => (
+const PlusGate = () => (
   <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
     <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md">
       <div className="w-16 h-16 rounded-2xl bg-amber-500/10 flex items-center justify-center mx-auto mb-4">
         <Lock className="w-8 h-8 text-amber-500" />
       </div>
-      <h1 className="text-2xl font-extrabold font-display mb-2">Paper Trading is Premium</h1>
+      <h1 className="text-2xl font-extrabold font-display mb-2">Paper Trading is a Plus feature</h1>
       <p className="text-muted-foreground mb-6">
         Practice trading with virtual money using real-time market data.
-        Upgrade to Premium to unlock this feature.
+        Upgrade to Plus to unlock this feature.
       </p>
       <Link to="/shop">
-        <Button className="rounded-xl px-6">Upgrade to Premium</Button>
+        <Button className="rounded-xl px-6">Upgrade to Plus</Button>
       </Link>
     </motion.div>
   </div>
@@ -126,7 +126,6 @@ const PaperTrading = () => {
     }
   }, [stocks]);
 
-  // Fetch prices on mount and every 15 seconds
   useEffect(() => {
     if (!hasAccess) return;
     fetchPrices();
@@ -198,7 +197,7 @@ const PaperTrading = () => {
     );
   }
 
-  if (!hasAccess) return <PremiumGate />;
+  if (!hasAccess) return <PlusGate />;
 
   return (
     <div className="space-y-4">
