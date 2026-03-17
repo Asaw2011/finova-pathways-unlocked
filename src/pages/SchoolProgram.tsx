@@ -68,7 +68,7 @@ const complianceItems = [
 
 const subscriptionDetails = [
   {
-    tier: "Individual Premium",
+    tier: "Individual Plus",
     price: "$9.99/mo or $79/yr",
     audience: "Individual students (ages 13+)",
     includes: ["All 9+ courses & modules", "Unlimited games & simulations", "Personalized certificates", "Ad-free experience", "Advanced investing modules"],
