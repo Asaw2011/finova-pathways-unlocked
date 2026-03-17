@@ -1,15 +1,44 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, ExternalLink, Instagram, BookOpen, Gamepad2, Brain, BarChart3, Trophy, Target } from "lucide-react";
+import { ArrowRight, ExternalLink, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroIllustration from "@/assets/hero-illustration.png";
+import featureLessons from "@/assets/feature-lessons.png";
+import featureGames from "@/assets/feature-games.png";
+import featureCoach from "@/assets/feature-coach.png";
+import featureTrading from "@/assets/feature-trading.png";
+import featureRewards from "@/assets/feature-rewards.png";
 
-const features = [
-  { icon: BookOpen, title: "Bite-sized lessons", color: "bg-emerald-100 text-emerald-600" },
-  { icon: Gamepad2, title: "Fun money games", color: "bg-blue-100 text-blue-600" },
-  { icon: Brain, title: "AI Money Coach", color: "bg-purple-100 text-purple-600" },
-  { icon: BarChart3, title: "Paper Trading", color: "bg-amber-100 text-amber-600" },
-  { icon: Trophy, title: "Earn rewards", color: "bg-pink-100 text-pink-600" },
-  { icon: Target, title: "Daily quests", color: "bg-cyan-100 text-cyan-600" },
+const featureSections = [
+  {
+    headline: "learn by doing",
+    body: "Quick, interactive lessons that teach real financial skills — not boring textbook stuff.",
+    image: featureLessons,
+    alt: "Teen reading a money book",
+  },
+  {
+    headline: "play money games",
+    body: "Build budgets, dodge subscription traps, and grow your credit score — all through games.",
+    image: featureGames,
+    alt: "Teen playing financial games",
+  },
+  {
+    headline: "get smart advice",
+    body: "Your personal AI money coach answers questions and guides your learning journey.",
+    image: featureCoach,
+    alt: "AI money coach robot",
+  },
+  {
+    headline: "practice investing",
+    body: "Trade real stocks with virtual money. Zero risk, real experience.",
+    image: featureTrading,
+    alt: "Teen with stock chart",
+  },
+  {
+    headline: "stay motivated",
+    body: "Earn gems, badges, and certificates. Compete with friends on the leaderboard.",
+    image: featureRewards,
+    alt: "Teen celebrating with trophies",
+  },
 ];
 
 const Landing = () => {
@@ -22,13 +51,13 @@ const Landing = () => {
             <span className="gradient-text">FinOva</span>
           </span>
           <div className="flex items-center gap-3">
-            <a href="https://instagram.com/financial.freedom.initiative" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors p-2">
+            <a href="https://instagram.com/financial.freedom.initiative" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors p-2 hidden sm:block">
               <Instagram className="w-4 h-4" />
             </a>
-            <a href="https://bcinvestments.wixsite.com/financial-freedom--2" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors p-2">
+            <a href="https://bcinvestments.wixsite.com/financial-freedom--2" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors p-2 hidden sm:block">
               <ExternalLink className="w-4 h-4" />
             </a>
-            <div className="w-px h-5 bg-border mx-1" />
+            <div className="w-px h-5 bg-border mx-1 hidden sm:block" />
             <Link to="/auth">
               <Button variant="ghost" size="sm" className="font-semibold">Log in</Button>
             </Link>
@@ -40,7 +69,7 @@ const Landing = () => {
       </header>
 
       {/* Hero */}
-      <section className="flex items-center justify-center px-6 py-14 md:py-20">
+      <section className="flex items-center justify-center px-6 py-16 md:py-24">
         <div className="max-w-5xl w-full flex flex-col md:flex-row items-center gap-8 md:gap-14">
           <div className="flex-1 text-center md:text-left">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-display leading-tight mb-4">
@@ -66,27 +95,34 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Features — icon grid, minimal text */}
-      <section className="bg-card border-y border-border/40 px-6 py-14 md:py-16">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-extrabold font-display text-center mb-10">
-            Everything you need to <span className="gradient-text">level up</span>
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6">
-            {features.map(({ icon: Icon, title, color }) => (
-              <div key={title} className="flex flex-col items-center text-center p-5 rounded-2xl hover:bg-secondary/50 transition-colors">
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-3 ${color}`}>
-                  <Icon className="w-7 h-7" />
-                </div>
-                <span className="text-sm font-bold font-display">{title}</span>
-              </div>
-            ))}
+      {/* Feature sections — alternating layout like Duolingo */}
+      {featureSections.map(({ headline, body, image, alt }, i) => (
+        <section
+          key={headline}
+          className={`px-6 py-16 md:py-24 ${i % 2 === 0 ? "bg-background" : "bg-card"}`}
+        >
+          <div
+            className={`max-w-5xl mx-auto flex flex-col items-center gap-8 md:gap-16 ${
+              i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
+            }`}
+          >
+            <div className="flex-1 text-center md:text-left">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold font-display lowercase gradient-text mb-4">
+                {headline}
+              </h2>
+              <p className="text-muted-foreground text-lg max-w-md mx-auto md:mx-0">
+                {body}
+              </p>
+            </div>
+            <div className="flex-shrink-0">
+              <img src={image} alt={alt} className="w-48 md:w-56 lg:w-64 h-auto" />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ))}
 
-      {/* Plus upsell banner */}
-      <section className="px-6 py-14 md:py-16">
+      {/* Plus banner */}
+      <section className="px-6 py-16 md:py-20 bg-card">
         <div className="max-w-3xl mx-auto text-center">
           <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-amber-400 to-amber-500 text-white mb-4">PLUS</span>
           <h2 className="text-2xl md:text-3xl font-extrabold font-display mb-3">
@@ -102,7 +138,7 @@ const Landing = () => {
       </section>
 
       {/* Bottom CTA */}
-      <section className="bg-card border-y border-border/40 px-6 py-14 md:py-16">
+      <section className="px-6 py-16 md:py-20">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-extrabold font-display mb-4">
             Ready to start?
