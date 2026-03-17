@@ -68,7 +68,7 @@ const complianceItems = [
 
 const subscriptionDetails = [
   {
-    tier: "Individual Premium",
+    tier: "Individual Plus",
     price: "$9.99/mo or $79/yr",
     audience: "Individual students (ages 13+)",
     includes: ["All 9+ courses & modules", "Unlimited games & simulations", "Personalized certificates", "Ad-free experience", "Advanced investing modules"],
@@ -77,7 +77,7 @@ const subscriptionDetails = [
     tier: "Quant Vault (Elite)",
     price: "$29/mo or $199 lifetime",
     audience: "Advanced learners & young investors",
-    includes: ["Everything in Premium", "Quantitative investment strategy access", "Downloadable models & datasets", "Backtesting tools", "Live Q&A webinars", "Private community"],
+    includes: ["Everything in Plus", "Quantitative investment strategy access", "Downloadable models & datasets", "Backtesting tools", "Live Q&A webinars", "Private community"],
   },
   {
     tier: "School Classroom",

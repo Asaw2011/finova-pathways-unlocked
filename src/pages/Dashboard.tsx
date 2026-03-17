@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -8,6 +9,8 @@ import { cn } from "@/lib/utils";
 import DailyChallenge from "@/components/learning-path/DailyChallenge";
 import { modules } from "@/pages/LearningPath";
 import { useGameEconomy } from "@/contexts/GameEconomyContext";
+import { usePremiumAccess } from "@/hooks/usePremiumAccess";
+import FinancialAssessment from "@/components/onboarding/FinancialAssessment";
 
 // Badge definitions for achievements
 const achievementBadges = [
@@ -29,6 +32,24 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { hearts, maxHearts, gems, streakFreezes } = useGameEconomy();
+  const { hasAccess: isPlusUser } = usePremiumAccess();
+  const [assessmentDone, setAssessmentDone] = useState(false);
+
+  // Check if Plus user has completed financial assessment
+  const { data: financialProfile, isLoading: profileLoading } = useQuery({
+    queryKey: ["financial-profile", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("financial_profiles" as any)
+        .select("*")
+        .eq("user_id", user!.id)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!user && isPlusUser,
+  });
+
+  const needsAssessment = isPlusUser && !financialProfile && !assessmentDone && !profileLoading;
 
   const { data: profile } = useQuery({
     queryKey: ["profile", user?.id],
@@ -144,6 +165,15 @@ const Dashboard = () => {
   const sectionColors = ["bg-emerald-500", "bg-blue-500", "bg-purple-500", "bg-amber-500", "bg-pink-500", "bg-teal-500", "bg-sky-500", "bg-violet-500"];
   const sectionTextColors = ["text-emerald-600", "text-blue-600", "text-purple-600", "text-amber-600", "text-pink-600", "text-teal-600", "text-sky-600", "text-violet-600"];
   const sectionBgColors = ["bg-emerald-50", "bg-blue-50", "bg-purple-50", "bg-amber-50", "bg-pink-50", "bg-teal-50", "bg-sky-50", "bg-violet-50"];
+
+  if (needsAssessment) {
+    return (
+      <FinancialAssessment onComplete={() => {
+        setAssessmentDone(true);
+        queryClient.invalidateQueries({ queryKey: ["financial-profile"] });
+      }} />
+    );
+  }
 
   return (
     <div className="space-y-6">
