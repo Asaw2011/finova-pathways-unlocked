@@ -32,6 +32,24 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { hearts, maxHearts, gems, streakFreezes } = useGameEconomy();
+  const { hasAccess: isPlusUser } = usePremiumAccess();
+  const [assessmentDone, setAssessmentDone] = useState(false);
+
+  // Check if Plus user has completed financial assessment
+  const { data: financialProfile, isLoading: profileLoading } = useQuery({
+    queryKey: ["financial-profile", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("financial_profiles" as any)
+        .select("*")
+        .eq("user_id", user!.id)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!user && isPlusUser,
+  });
+
+  const needsAssessment = isPlusUser && !financialProfile && !assessmentDone && !profileLoading;
 
   const { data: profile } = useQuery({
     queryKey: ["profile", user?.id],
