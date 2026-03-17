@@ -37,7 +37,7 @@ const featureSections = [
     headline: "stay motivated",
     body: "Earn gems, badges, and certificates. Compete with friends on the leaderboard.",
     image: featureRewards,
-    alt: "Teen celebrating with trophies",
+    alt: "Person celebrating with trophies",
   },
 ];
 
