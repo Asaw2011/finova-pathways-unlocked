@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CheckCircle2, XCircle, ArrowRight, RotateCcw, BookOpen, Lightbulb, Brain, Trophy } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface QuestionData {
   question: string;
@@ -26,6 +27,8 @@ interface LessonContent {
 interface Props {
   content: LessonContent;
   lessonTitle: string;
+  lessonId?: string;
+  userId?: string;
   onComplete: (passed: boolean, score: number) => void;
   onCancel: () => void;
 }
@@ -39,7 +42,7 @@ const phaseLabels: Record<string, { label: string; icon: typeof BookOpen }> = {
   quiz: { label: "Quiz", icon: Trophy },
 };
 
-const LessonExperience = ({ content, lessonTitle, onComplete, onCancel }: Props) => {
+const LessonExperience = ({ content, lessonTitle, lessonId, userId, onComplete, onCancel }: Props) => {
   const [phase, setPhase] = useState<Phase>("intro");
   const [exampleAnswer, setExampleAnswer] = useState<number | null>(null);
   const [practiceIdx, setPracticeIdx] = useState(0);
@@ -48,18 +51,47 @@ const LessonExperience = ({ content, lessonTitle, onComplete, onCancel }: Props)
   const [quizAnswer, setQuizAnswer] = useState<number | null>(null);
   const [quizScore, setQuizScore] = useState(0);
   const [quizFinished, setQuizFinished] = useState(false);
+  const [mistakes, setMistakes] = useState<Array<{ question: string; userAnswer: string; correctAnswer: string }>>([]);
 
   const phases: Phase[] = ["intro", "example", "practice", "quiz"];
   const currentPhaseIdx = phases.indexOf(phase === "result" ? "quiz" : phase);
 
+  const trackMistake = (question: string, userAnswer: string, correctAnswer: string) => {
+    setMistakes(prev => [...prev, { question, userAnswer, correctAnswer }]);
+  };
+
+  const saveMistakes = async () => {
+    if (!userId || mistakes.length === 0) return;
+    try {
+      const inserts = mistakes.map(m => ({
+        user_id: userId,
+        question_text: m.question,
+        user_answer: m.userAnswer,
+        correct_answer: m.correctAnswer,
+        lesson_id: lessonId || null,
+        topic: lessonTitle,
+      }));
+      await supabase.from("user_mistakes").insert(inserts);
+    } catch (e) {
+      console.error("Failed to save mistakes:", e);
+    }
+  };
+
   const handleExampleAnswer = (i: number) => {
     if (exampleAnswer !== null) return;
     setExampleAnswer(i);
+    if (i !== content.example.correct) {
+      trackMistake(content.example.question, content.example.options[i], content.example.options[content.example.correct]);
+    }
   };
 
   const handlePracticeAnswer = (i: number) => {
     if (practiceAnswer !== null) return;
     setPracticeAnswer(i);
+    if (i !== content.practice[practiceIdx].correct) {
+      const q = content.practice[practiceIdx];
+      trackMistake(q.question, q.options[i], q.options[q.correct]);
+    }
   };
 
   const nextPractice = () => {
@@ -74,12 +106,17 @@ const LessonExperience = ({ content, lessonTitle, onComplete, onCancel }: Props)
   const handleQuizAnswer = (i: number) => {
     if (quizAnswer !== null) return;
     setQuizAnswer(i);
-    const isCorrect = i === content.quiz[quizIdx].correct;
+    const q = content.quiz[quizIdx];
+    const isCorrect = i === q.correct;
     if (isCorrect) setQuizScore(s => s + 1);
+    else trackMistake(q.question, q.options[i], q.options[q.correct]);
+
     setTimeout(() => {
       if (quizIdx + 1 >= content.quiz.length) {
         setQuizFinished(true);
         setPhase("result");
+        // Save mistakes after quiz completes
+        saveMistakes();
       } else {
         setQuizIdx(q => q + 1);
         setQuizAnswer(null);
@@ -98,6 +135,7 @@ const LessonExperience = ({ content, lessonTitle, onComplete, onCancel }: Props)
     setQuizAnswer(null);
     setQuizScore(0);
     setQuizFinished(false);
+    setMistakes([]);
   };
 
   return (
@@ -260,6 +298,9 @@ const LessonExperience = ({ content, lessonTitle, onComplete, onCancel }: Props)
                 <CheckCircle2 className="w-12 h-12 text-primary mx-auto" />
                 <h3 className="text-lg font-bold font-display">Lesson Complete! 🎉</h3>
                 <p className="text-muted-foreground text-sm">You scored {quizScore}/{content.quiz.length}</p>
+                {mistakes.length > 0 && (
+                  <p className="text-xs text-muted-foreground">{mistakes.length} mistake{mistakes.length > 1 ? "s" : ""} saved to your review list</p>
+                )}
                 <Button onClick={() => onComplete(true, quizScore)} className="w-full">
                   Continue to Next Lesson <ArrowRight className="w-4 h-4 ml-1" />
                 </Button>
@@ -269,6 +310,9 @@ const LessonExperience = ({ content, lessonTitle, onComplete, onCancel }: Props)
                 <XCircle className="w-12 h-12 text-destructive mx-auto" />
                 <h3 className="text-lg font-bold font-display">Not quite — review and try again</h3>
                 <p className="text-muted-foreground text-sm">You scored {quizScore}/{content.quiz.length}. You need {Math.ceil(content.quiz.length * 0.7)} to pass.</p>
+                {mistakes.length > 0 && (
+                  <p className="text-xs text-muted-foreground">{mistakes.length} mistake{mistakes.length > 1 ? "s" : ""} saved to your review list</p>
+                )}
                 <Button onClick={restart} variant="outline" className="w-full">
                   <RotateCcw className="w-4 h-4 mr-1" /> Review Lesson
                 </Button>

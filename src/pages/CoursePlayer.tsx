@@ -123,6 +123,8 @@ const CoursePlayer = () => {
         <LessonExperience
           content={activeLessonData.content as any}
           lessonTitle={activeLessonData.title}
+          lessonId={activeLesson}
+          userId={user?.id}
           onComplete={(passed, score) => {
             if (passed) {
               completeMutation.mutate({ lessonId: activeLesson, score });

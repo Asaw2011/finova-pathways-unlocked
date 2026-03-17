@@ -71,7 +71,7 @@ const Landing = () => {
       {/* Hero — centered */}
       <section className="flex items-center justify-center px-6 py-16 md:py-24">
         <div className="max-w-2xl w-full text-center">
-          <img src={heroIllustration} alt="Teens learning about money" className="w-40 md:w-52 h-auto mx-auto mb-8" />
+          <img src={heroIllustration} alt="People learning about money" className="w-40 md:w-52 h-auto mx-auto mb-8" />
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-display leading-tight mb-4">
             The free, fun way to <span className="gradient-text">master money</span>
           </h1>
