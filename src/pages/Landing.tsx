@@ -68,30 +68,28 @@ const Landing = () => {
         </div>
       </header>
 
-      {/* Hero */}
+      {/* Hero — centered */}
       <section className="flex items-center justify-center px-6 py-16 md:py-24">
-        <div className="max-w-5xl w-full flex flex-col md:flex-row items-center gap-8 md:gap-14">
-          <div className="flex-1 text-center md:text-left">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-display leading-tight mb-4">
-              The free, fun way to <span className="gradient-text">master money</span>
-            </h1>
-            <p className="text-lg text-muted-foreground mb-6 max-w-md mx-auto md:mx-0">
-              Financial literacy for teens. Gamified.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 max-w-sm mx-auto md:mx-0">
-              <Link to="/auth" className="flex-1">
-                <Button size="lg" className="w-full font-bold glow-primary rounded-xl">
-                  Get Started <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
-              <Link to="/auth" className="flex-1">
-                <Button size="lg" variant="outline" className="w-full font-bold rounded-xl">
-                  I have an account
-                </Button>
-              </Link>
-            </div>
+        <div className="max-w-2xl w-full text-center">
+          <img src={heroIllustration} alt="Teens learning about money" className="w-40 md:w-52 h-auto mx-auto mb-8" />
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-display leading-tight mb-4">
+            The free, fun way to <span className="gradient-text">master money</span>
+          </h1>
+          <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto">
+            Financial literacy for teens. Gamified.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 max-w-sm mx-auto">
+            <Link to="/auth" className="flex-1">
+              <Button size="lg" className="w-full font-bold glow-primary rounded-xl">
+                Get Started <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+            <Link to="/auth" className="flex-1">
+              <Button size="lg" variant="outline" className="w-full font-bold rounded-xl">
+                I have an account
+              </Button>
+            </Link>
           </div>
-          <img src={heroIllustration} alt="Teens learning about money" className="w-48 md:w-64 lg:w-72 h-auto" />
         </div>
       </section>
 
