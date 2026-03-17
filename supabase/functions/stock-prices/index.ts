@@ -6,19 +6,9 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const STOCK_API_BASE = "https://api.massive.com";
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
-  }
-
-  const apiKey = Deno.env.get("STOCK_API_KEY");
-  if (!apiKey) {
-    return new Response(JSON.stringify({ error: "STOCK_API_KEY not configured" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
   }
 
   try {
@@ -31,28 +21,6 @@ serve(async (req) => {
       });
     }
 
-    // Fetch previous close for each ticker using grouped daily bars
-    const tickerStr = tickers.join(",");
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    // Go back a few extra days to handle weekends
-    const fiveDaysAgo = new Date(today);
-    fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
-
-    const from = fiveDaysAgo.toISOString().split("T")[0];
-    const to = yesterday.toISOString().split("T")[0];
-
-    // Use snapshot endpoint for latest prices
-    const snapshotUrl = `${STOCK_API_BASE}/v2/snapshot/locale/us/markets/stocks/tickers?tickers=${tickerStr}&apiKey=${apiKey}`;
-    const snapshotRes = await fetch(snapshotUrl);
-    const snapshotData = await snapshotRes.json();
-
-    if (!snapshotRes.ok) {
-      throw new Error(`Snapshot API error [${snapshotRes.status}]: ${JSON.stringify(snapshotData)}`);
-    }
-
-    // Map the data
     const prices: Record<string, {
       price: number;
       open: number;
@@ -64,23 +32,59 @@ serve(async (req) => {
       volume: number;
     }> = {};
 
-    if (snapshotData.tickers) {
-      for (const t of snapshotData.tickers) {
-        const lastTrade = t.lastTrade?.p ?? t.day?.c ?? 0;
-        const prevClose = t.prevDay?.c ?? lastTrade;
-        const change = lastTrade - prevClose;
-        const changePct = prevClose > 0 ? (change / prevClose) * 100 : 0;
+    // Fetch from Yahoo Finance v8 quote endpoint (no API key needed)
+    const symbols = tickers.join(",");
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${tickers[0]}?symbol=${tickers[0]}&interval=1d&range=1d`;
+    
+    // Fetch all tickers in parallel
+    const results = await Promise.allSettled(
+      tickers.map(async (ticker: string) => {
+        const res = await fetch(
+          `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=2d`,
+          {
+            headers: {
+              "User-Agent": "Mozilla/5.0",
+            },
+          }
+        );
+        if (!res.ok) throw new Error(`Yahoo API error for ${ticker}: ${res.status}`);
+        const data = await res.json();
+        return { ticker, data };
+      })
+    );
 
-        prices[t.ticker] = {
-          price: lastTrade,
-          open: t.day?.o ?? lastTrade,
-          high: t.day?.h ?? lastTrade,
-          low: t.day?.l ?? lastTrade,
-          prevClose,
-          change,
-          changePct,
-          volume: t.day?.v ?? 0,
-        };
+    for (const result of results) {
+      if (result.status === "fulfilled") {
+        const { ticker, data } = result.value;
+        try {
+          const meta = data.chart?.result?.[0]?.meta;
+          const quote = data.chart?.result?.[0]?.indicators?.quote?.[0];
+          
+          if (meta) {
+            const currentPrice = meta.regularMarketPrice ?? 0;
+            const prevClose = meta.previousClose ?? meta.chartPreviousClose ?? currentPrice;
+            const change = currentPrice - prevClose;
+            const changePct = prevClose > 0 ? (change / prevClose) * 100 : 0;
+            
+            // Get today's OHLCV from the last candle
+            const lastIdx = (quote?.open?.length ?? 1) - 1;
+            
+            prices[ticker] = {
+              price: currentPrice,
+              open: quote?.open?.[lastIdx] ?? currentPrice,
+              high: quote?.high?.[lastIdx] ?? currentPrice,
+              low: quote?.low?.[lastIdx] ?? currentPrice,
+              prevClose,
+              change,
+              changePct,
+              volume: quote?.volume?.[lastIdx] ?? 0,
+            };
+          }
+        } catch (parseErr) {
+          console.error(`Failed to parse ${ticker}:`, parseErr);
+        }
+      } else {
+        console.error(`Failed to fetch ${result.reason}`);
       }
     }
 
