@@ -2,3 +2,12 @@ project_id = "zytiawhrvfesfgtzzqdd"
 
 [functions.stock-prices]
 verify_jwt = false
+
+[functions.money-coach]
+verify_jwt = false
+
+[functions.generate-lesson-content]
+verify_jwt = false
+
+[functions.generate-custom-course]
+verify_jwt = false

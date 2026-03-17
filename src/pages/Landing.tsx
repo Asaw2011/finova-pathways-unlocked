@@ -76,7 +76,7 @@ const Landing = () => {
             The free, fun way to <span className="gradient-text">master money</span>
           </h1>
           <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto">
-            Financial literacy for teens. Gamified.
+            Financial literacy for everyone. Gamified.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 max-w-sm mx-auto">
             <Link to="/auth" className="flex-1">
