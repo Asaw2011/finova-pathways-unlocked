@@ -25,6 +25,7 @@ const navItems = [
   { to: "/dashboard", label: "Home", icon: LayoutDashboard },
   { to: "/learning-path", label: "Learn", icon: Map },
   { to: "/courses", label: "Courses", icon: BookOpen },
+  { to: "/money-coach", label: "Coach", icon: Bot },
   { to: "/quests", label: "Quests", icon: Target },
   { to: "/rankings", label: "Rank", icon: Trophy },
   { to: "/mistakes", label: "Review", icon: AlertTriangle },
