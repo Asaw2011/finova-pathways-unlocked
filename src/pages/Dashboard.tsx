@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -8,6 +9,8 @@ import { cn } from "@/lib/utils";
 import DailyChallenge from "@/components/learning-path/DailyChallenge";
 import { modules } from "@/pages/LearningPath";
 import { useGameEconomy } from "@/contexts/GameEconomyContext";
+import { usePremiumAccess } from "@/hooks/usePremiumAccess";
+import FinancialAssessment from "@/components/onboarding/FinancialAssessment";
 
 // Badge definitions for achievements
 const achievementBadges = [
