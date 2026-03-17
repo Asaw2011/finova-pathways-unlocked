@@ -1,38 +1,26 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Target, CheckCircle2, Calendar, Star, Lock, Diamond } from "lucide-react";
+import { Target, CheckCircle2, Star, Diamond } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useGameEconomy } from "@/contexts/GameEconomyContext";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 
-const dailyQuestPool = [
-  { text: "Complete 1 lesson today", reward: 5 },
-  { text: "Get 3 quiz questions right in a row", reward: 10 },
-  { text: "Review 2 mistakes from the Mistakes section", reward: 5 },
-  { text: "Spend less than 5 minutes deciding on a purchase", reward: 5 },
-  { text: "Learn what APY stands for", reward: 5 },
-  { text: "Name 3 differences between needs and wants", reward: 5 },
-  { text: "Calculate your weekly spending", reward: 10 },
-  { text: "Explain the 50/30/20 rule to someone", reward: 10 },
-];
-
+// 3 harder monthly quests — all completable in-app
 const monthlyQuests = [
-  { text: "Complete all lessons in a section", reward: 50 },
-  { text: "Maintain a 7-day streak", reward: 30 },
-  { text: "Earn 500 XP this month", reward: 40 },
-  { text: "Review all your mistakes", reward: 25 },
-  { text: "Complete 3 unit quizzes", reward: 60 },
+  { text: "Complete an entire course unit (all lessons in one section)", reward: 75 },
+  { text: "Achieve a 14-day learning streak", reward: 100 },
+  { text: "Score 100% on 5 different lesson quizzes", reward: 80 },
 ];
 
 const Quests = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const { earnGems, isPro } = useGameEconomy();
+  const { earnGems } = useGameEconomy();
 
-  const today = new Date().toISOString().split("T")[0];
   const currentMonth = new Date().toISOString().slice(0, 7);
 
   const { data: quests, isLoading } = useQuery({
@@ -48,36 +36,12 @@ const Quests = () => {
     enabled: !!user,
   });
 
-  // Generate daily quest if none exists for today
-  const { data: todayQuest } = useQuery({
-    queryKey: ["daily-quest", user?.id, today],
-    queryFn: async () => {
-      const existing = quests?.find((q) => q.quest_type === "daily" && q.quest_date === today);
-      if (existing) return existing;
-
-      const randomQuest = dailyQuestPool[Math.floor(Math.random() * dailyQuestPool.length)];
-      const { data } = await supabase
-        .from("quests")
-        .insert({
-          user_id: user!.id,
-          quest_type: "daily",
-          quest_text: randomQuest.text,
-          quest_date: today,
-          reward_gems: randomQuest.reward,
-        })
-        .select()
-        .single();
-      return data;
-    },
-    enabled: !!user && !!quests,
-  });
-
-  // Generate monthly quests if none exist
+  // Generate monthly quests if none exist for this month
   const { data: monthQuests } = useQuery({
     queryKey: ["monthly-quests", user?.id, currentMonth],
     queryFn: async () => {
       const existing = quests?.filter(
-        (q) => q.quest_type === "monthly" && q.quest_date?.startsWith(currentMonth.slice(0, 7))
+        (q) => q.quest_type === "monthly" && q.quest_date?.startsWith(currentMonth)
       );
       if (existing && existing.length > 0) return existing;
 
@@ -95,24 +59,68 @@ const Quests = () => {
     enabled: !!user && !!quests,
   });
 
+  // Auto-check quest completion against real data
+  const { data: questProgress } = useQuery({
+    queryKey: ["quest-progress", user?.id, currentMonth],
+    queryFn: async () => {
+      // Check streak
+      const { data: streak } = await supabase
+        .from("user_streaks")
+        .select("current_streak, longest_streak")
+        .eq("user_id", user!.id)
+        .maybeSingle();
+
+      // Check perfect quiz scores
+      const { data: progress } = await supabase
+        .from("user_progress")
+        .select("score, lesson_id")
+        .eq("user_id", user!.id)
+        .eq("completed", true);
+
+      // Check unit completions (all lessons in a module completed)
+      const { data: modules } = await supabase
+        .from("modules")
+        .select("id, lessons(id)");
+
+      const completedLessonIds = new Set(progress?.map(p => p.lesson_id) ?? []);
+      const completedUnits = modules?.filter(m => 
+        m.lessons.length > 0 && m.lessons.every((l: any) => completedLessonIds.has(l.id))
+      ).length ?? 0;
+
+      const perfectScores = progress?.filter(p => {
+        // Check if score represents 100% (5/5 quiz = score of 5)
+        return p.score !== null && p.score >= 5;
+      }).length ?? 0;
+
+      const longestStreak = Math.max(streak?.current_streak ?? 0, streak?.longest_streak ?? 0);
+
+      return { completedUnits, longestStreak, perfectScores };
+    },
+    enabled: !!user,
+  });
+
   const completeQuest = useMutation({
     mutationFn: async (questId: string) => {
-      const quest = [...(quests ?? []), todayQuest, ...(monthQuests ?? [])].find((q) => q?.id === questId);
+      const quest = monthQuests?.find((q) => q.id === questId);
       if (!quest || quest.completed) return;
       await supabase.from("quests").update({ completed: true, completed_at: new Date().toISOString() }).eq("id", questId);
       await earnGems(quest.reward_gems);
+      toast.success(`Quest completed! +${quest.reward_gems} gems 💎`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["quests"] });
-      queryClient.invalidateQueries({ queryKey: ["daily-quest"] });
       queryClient.invalidateQueries({ queryKey: ["monthly-quests"] });
     },
   });
 
-  // Extra daily quests (subscription only)
-  const extraDailyQuests = quests?.filter(
-    (q) => q.quest_type === "daily" && q.quest_date === today && q.id !== todayQuest?.id
-  ) ?? [];
+  // Determine which quests are achievable based on progress
+  const isQuestAchieved = (questText: string): boolean => {
+    if (!questProgress) return false;
+    if (questText.includes("entire course unit")) return questProgress.completedUnits >= 1;
+    if (questText.includes("14-day")) return questProgress.longestStreak >= 14;
+    if (questText.includes("100% on 5")) return questProgress.perfectScores >= 5;
+    return false;
+  };
 
   if (isLoading) {
     return (
@@ -127,110 +135,67 @@ const Quests = () => {
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl md:text-3xl font-extrabold font-display text-foreground flex items-center gap-3">
           <Target className="w-7 h-7 text-primary" />
-          Quests
+          Monthly Quests
         </h1>
-        <p className="text-muted-foreground mt-1">Complete quests to earn gems and rare badges!</p>
+        <p className="text-muted-foreground mt-1">Complete all 3 quests this month for a rare badge!</p>
       </motion.div>
 
-      {/* Daily Quest */}
+      {/* Monthly Quests */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
         className="bg-card rounded-2xl border border-border p-5 card-shadow space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="font-extrabold font-display text-lg flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-amber-500" />
-            Daily Quest
-          </h2>
-          <Badge variant="secondary" className="text-xs">Resets daily</Badge>
-        </div>
-
-        {todayQuest && (
-          <div className={cn(
-            "rounded-xl p-4 border-2 flex items-center justify-between transition-all",
-            todayQuest.completed
-              ? "bg-emerald-50 border-emerald-200"
-              : "bg-amber-50 border-amber-200"
-          )}>
-            <div className="flex items-center gap-3">
-              {todayQuest.completed ? (
-                <CheckCircle2 className="w-6 h-6 text-emerald-500 shrink-0" />
-              ) : (
-                <Target className="w-6 h-6 text-amber-500 shrink-0" />
-              )}
-              <div>
-                <p className="text-sm font-bold">{todayQuest.quest_text}</p>
-                <div className="flex items-center gap-1 mt-1">
-                  <Diamond className="w-3.5 h-3.5 text-cyan-500 fill-cyan-500" />
-                  <span className="text-xs font-bold text-cyan-600">+{todayQuest.reward_gems} gems</span>
-                </div>
-              </div>
-            </div>
-            {!todayQuest.completed && (
-              <Button size="sm" className="rounded-xl font-bold bg-amber-500 hover:bg-amber-600 text-white shrink-0"
-                onClick={() => completeQuest.mutate(todayQuest.id)}
-                disabled={completeQuest.isPending}>
-                Complete
-              </Button>
-            )}
-          </div>
-        )}
-
-        {/* Unlimited quests (Pro only) */}
-        {!isPro && (
-          <div className="rounded-xl p-4 border-2 border-dashed border-muted-foreground/20 flex items-center gap-3 opacity-60">
-            <Lock className="w-5 h-5 text-muted-foreground shrink-0" />
-            <div>
-              <p className="text-sm font-bold text-muted-foreground">Unlimited Daily Quests</p>
-              <p className="text-xs text-muted-foreground">Subscribe to Pro for unlimited quests each day</p>
-            </div>
-          </div>
-        )}
-      </motion.div>
-
-      {/* Monthly Quests */}
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-        className="bg-card rounded-2xl border border-border p-5 card-shadow space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="font-extrabold font-display text-lg flex items-center gap-2">
             <Star className="w-5 h-5 text-purple-500" />
-            Monthly Quests
+            {new Date().toLocaleString("default", { month: "long" })} Challenges
           </h2>
           <Badge className="bg-purple-100 text-purple-700 border-purple-200 text-xs">
-            {currentMonth}
+            {monthQuests?.filter(q => q.completed).length ?? 0}/{monthQuests?.length ?? 3} done
           </Badge>
         </div>
-        <p className="text-sm text-muted-foreground">Complete all monthly quests to earn a <strong className="text-purple-600">rare badge</strong>! 🏅</p>
 
-        <div className="space-y-2">
-          {monthQuests?.map((quest) => (
-            <div key={quest.id} className={cn(
-              "rounded-xl p-4 border flex items-center justify-between transition-all",
-              quest.completed
-                ? "bg-purple-50 border-purple-200"
-                : "bg-background border-border"
-            )}>
-              <div className="flex items-center gap-3">
-                {quest.completed ? (
-                  <CheckCircle2 className="w-5 h-5 text-purple-500 shrink-0" />
-                ) : (
-                  <div className="w-5 h-5 rounded-full border-2 border-muted-foreground/30 shrink-0" />
-                )}
-                <div>
-                  <p className="text-sm font-semibold">{quest.quest_text}</p>
-                  <div className="flex items-center gap-1 mt-0.5">
-                    <Diamond className="w-3 h-3 text-cyan-500 fill-cyan-500" />
-                    <span className="text-xs font-bold text-cyan-600">+{quest.reward_gems}</span>
+        <div className="space-y-3">
+          {monthQuests?.map((quest) => {
+            const achieved = isQuestAchieved(quest.quest_text);
+            return (
+              <div key={quest.id} className={cn(
+                "rounded-xl p-4 border-2 transition-all",
+                quest.completed
+                  ? "bg-purple-50 border-purple-200"
+                  : achieved
+                  ? "bg-emerald-50 border-emerald-300"
+                  : "bg-background border-border"
+              )}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    {quest.completed ? (
+                      <CheckCircle2 className="w-6 h-6 text-purple-500 shrink-0" />
+                    ) : achieved ? (
+                      <CheckCircle2 className="w-6 h-6 text-emerald-500 shrink-0" />
+                    ) : (
+                      <div className="w-6 h-6 rounded-full border-2 border-muted-foreground/30 shrink-0" />
+                    )}
+                    <div>
+                      <p className="text-sm font-bold">{quest.quest_text}</p>
+                      <div className="flex items-center gap-1 mt-1">
+                        <Diamond className="w-3.5 h-3.5 text-cyan-500 fill-cyan-500" />
+                        <span className="text-xs font-bold text-cyan-600">+{quest.reward_gems} gems</span>
+                      </div>
+                    </div>
                   </div>
+                  {!quest.completed && achieved && (
+                    <Button size="sm" className="rounded-xl font-bold bg-emerald-600 hover:bg-emerald-700 text-white shrink-0"
+                      onClick={() => completeQuest.mutate(quest.id)}
+                      disabled={completeQuest.isPending}>
+                      Claim
+                    </Button>
+                  )}
+                  {quest.completed && (
+                    <span className="text-xs font-bold text-purple-500 bg-purple-100 px-2 py-1 rounded-lg">Claimed</span>
+                  )}
                 </div>
               </div>
-              {!quest.completed && (
-                <Button size="sm" variant="outline" className="rounded-xl text-xs font-bold shrink-0"
-                  onClick={() => completeQuest.mutate(quest.id)}
-                  disabled={completeQuest.isPending}>
-                  Done
-                </Button>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Monthly completion badge */}
@@ -239,10 +204,32 @@ const Quests = () => {
             className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl p-4 text-white text-center">
             <p className="text-2xl mb-1">🏅</p>
             <p className="font-extrabold font-display">Monthly Quest Champion!</p>
-            <p className="text-xs opacity-80">You completed all quests for {currentMonth}</p>
+            <p className="text-xs opacity-80">You completed all quests for {new Date().toLocaleString("default", { month: "long" })}</p>
           </motion.div>
         )}
       </motion.div>
+
+      {/* Progress hints */}
+      {questProgress && (
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+          className="bg-card rounded-2xl border border-border p-5 card-shadow">
+          <h3 className="font-bold text-sm mb-3">Your Progress</h3>
+          <div className="grid grid-cols-3 gap-3 text-center">
+            <div className="bg-muted rounded-xl p-3">
+              <p className="text-lg font-extrabold font-display">{questProgress.completedUnits}</p>
+              <p className="text-[10px] text-muted-foreground font-semibold">Units Done</p>
+            </div>
+            <div className="bg-muted rounded-xl p-3">
+              <p className="text-lg font-extrabold font-display">{questProgress.longestStreak}</p>
+              <p className="text-[10px] text-muted-foreground font-semibold">Best Streak</p>
+            </div>
+            <div className="bg-muted rounded-xl p-3">
+              <p className="text-lg font-extrabold font-display">{questProgress.perfectScores}</p>
+              <p className="text-[10px] text-muted-foreground font-semibold">Perfect Quizzes</p>
+            </div>
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 };

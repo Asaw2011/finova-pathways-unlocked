@@ -13,13 +13,13 @@ const featureSections = [
     headline: "learn by doing",
     body: "Quick, interactive lessons that teach real financial skills — not boring textbook stuff.",
     image: featureLessons,
-    alt: "Teen reading a money book",
+    alt: "Person reading a money book",
   },
   {
     headline: "play money games",
     body: "Build budgets, dodge subscription traps, and grow your credit score — all through games.",
     image: featureGames,
-    alt: "Teen playing financial games",
+    alt: "Person playing financial games",
   },
   {
     headline: "get smart advice",
@@ -31,13 +31,13 @@ const featureSections = [
     headline: "practice investing",
     body: "Trade real stocks with virtual money. Zero risk, real experience.",
     image: featureTrading,
-    alt: "Teen with stock chart",
+    alt: "Person with stock chart",
   },
   {
     headline: "stay motivated",
     body: "Earn gems, badges, and certificates. Compete with friends on the leaderboard.",
     image: featureRewards,
-    alt: "Teen celebrating with trophies",
+    alt: "Person celebrating with trophies",
   },
 ];
 
@@ -71,12 +71,12 @@ const Landing = () => {
       {/* Hero — centered */}
       <section className="flex items-center justify-center px-6 py-16 md:py-24">
         <div className="max-w-2xl w-full text-center">
-          <img src={heroIllustration} alt="Teens learning about money" className="w-40 md:w-52 h-auto mx-auto mb-8" />
+          <img src={heroIllustration} alt="People learning about money" className="w-40 md:w-52 h-auto mx-auto mb-8" />
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-display leading-tight mb-4">
             The free, fun way to <span className="gradient-text">master money</span>
           </h1>
           <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto">
-            Financial literacy for teens. Gamified.
+            Financial literacy for everyone. Gamified.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 max-w-sm mx-auto">
             <Link to="/auth" className="flex-1">
