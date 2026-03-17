@@ -24,6 +24,7 @@ import Disclaimers from "./pages/Disclaimers";
 import SchoolProgram from "./pages/SchoolProgram";
 import QuantVault from "./pages/QuantVault";
 import CoursesPreview from "./pages/CoursesPreview";
+import Plus from "./pages/Plus";
 import MistakesReview from "./pages/MistakesReview";
 import Quests from "./pages/Quests";
 import Rankings from "./pages/Rankings";
