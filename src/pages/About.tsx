@@ -12,7 +12,8 @@ const About = () => {
             About <span className="gradient-text">FinOva</span>
           </h1>
           <p className="text-xl text-muted-foreground mb-12 max-w-2xl">
-            We believe every teenager deserves the financial knowledge to build wealth, avoid debt traps, and make confident money decisions — before they graduate.
+            We believe everyone deserves the financial knowledge to build wealth, avoid debt traps, and make confident money decisions.
+          </p>
           </p>
 
           {/* Mission */}
