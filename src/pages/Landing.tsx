@@ -31,7 +31,7 @@ const featureSections = [
     headline: "practice investing",
     body: "Trade real stocks with virtual money. Zero risk, real experience.",
     image: featureTrading,
-    alt: "Teen with stock chart",
+    alt: "Person with stock chart",
   },
   {
     headline: "stay motivated",
