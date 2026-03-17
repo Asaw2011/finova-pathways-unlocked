@@ -166,6 +166,15 @@ const Dashboard = () => {
   const sectionTextColors = ["text-emerald-600", "text-blue-600", "text-purple-600", "text-amber-600", "text-pink-600", "text-teal-600", "text-sky-600", "text-violet-600"];
   const sectionBgColors = ["bg-emerald-50", "bg-blue-50", "bg-purple-50", "bg-amber-50", "bg-pink-50", "bg-teal-50", "bg-sky-50", "bg-violet-50"];
 
+  if (needsAssessment) {
+    return (
+      <FinancialAssessment onComplete={() => {
+        setAssessmentDone(true);
+        queryClient.invalidateQueries({ queryKey: ["financial-profile"] });
+      }} />
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Welcome + Streak */}
