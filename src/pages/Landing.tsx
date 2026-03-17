@@ -13,7 +13,7 @@ const featureSections = [
     headline: "learn by doing",
     body: "Quick, interactive lessons that teach real financial skills — not boring textbook stuff.",
     image: featureLessons,
-    alt: "Teen reading a money book",
+    alt: "Person reading a money book",
   },
   {
     headline: "play money games",
