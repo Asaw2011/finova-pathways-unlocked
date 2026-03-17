@@ -5,25 +5,52 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/money-coach`;
 
 const suggestedQuestions = [
-  "How do I start saving money as a teenager?",
+  "Based on my profile, what should I focus on first?",
+  "How do I start saving money effectively?",
   "What's the difference between a debit and credit card?",
   "How does compound interest work?",
   "What's the 50/30/20 budgeting rule?",
   "How do I build my credit score?",
-  "What is an ETF and should I invest in one?",
 ];
 
 const MoneyCoach = () => {
+  const { user } = useAuth();
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Fetch user's financial profile to personalize the coach
+  const { data: financialProfile } = useQuery({
+    queryKey: ["financial-profile", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("financial_profiles" as any)
+        .select("*")
+        .eq("user_id", user!.id)
+        .maybeSingle();
+      return data as any;
+    },
+    enabled: !!user,
+  });
+
+  const { data: userProfile } = useQuery({
+    queryKey: ["profile", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase.from("profiles").select("*").eq("user_id", user!.id).single();
+      return data;
+    },
+    enabled: !!user,
+  });
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -46,7 +73,16 @@ const MoneyCoach = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: allMessages }),
+        body: JSON.stringify({
+          messages: allMessages,
+          userProfile: financialProfile ? {
+            name: userProfile?.display_name || "Learner",
+            lifeStage: financialProfile.life_stage,
+            primaryGoal: financialProfile.primary_goal,
+            knowledgeLevel: financialProfile.knowledge_level,
+            learningPace: financialProfile.learning_pace,
+          } : null,
+        }),
       });
 
       if (!resp.ok) {
@@ -112,7 +148,9 @@ const MoneyCoach = () => {
           </div>
           <div>
             <h1 className="text-xl font-extrabold font-display">Money Coach</h1>
-            <p className="text-xs text-muted-foreground">Your AI financial advisor</p>
+            <p className="text-xs text-muted-foreground">
+              {financialProfile ? `Personalized for you · ${financialProfile.primary_goal === "save" ? "Saving focus" : financialProfile.primary_goal === "invest" ? "Investing focus" : financialProfile.primary_goal === "debt" ? "Debt-free focus" : "Earning focus"}` : "Your AI financial advisor"}
+            </p>
           </div>
         </div>
         {messages.length > 0 && (
@@ -130,8 +168,12 @@ const MoneyCoach = () => {
               <Sparkles className="w-8 h-8 text-primary" />
             </div>
             <div>
-              <h2 className="text-lg font-extrabold font-display">Ask me anything about money!</h2>
-              <p className="text-sm text-muted-foreground mt-1">I'm here to help you learn about budgeting, saving, investing, credit, and more.</p>
+              <h2 className="text-lg font-extrabold font-display">
+                {financialProfile ? `Hi ${userProfile?.display_name || "there"}! How can I help?` : "Ask me anything about money!"}
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                {financialProfile ? "I know your goals and can give you personalized advice." : "I'm here to help you learn about budgeting, saving, investing, credit, and more."}
+              </p>
             </div>
             <div className="grid sm:grid-cols-2 gap-2 max-w-md mx-auto">
               {suggestedQuestions.map(q => (
