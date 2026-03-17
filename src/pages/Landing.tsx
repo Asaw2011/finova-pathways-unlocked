@@ -19,7 +19,7 @@ const featureSections = [
     headline: "play money games",
     body: "Build budgets, dodge subscription traps, and grow your credit score — all through games.",
     image: featureGames,
-    alt: "Teen playing financial games",
+    alt: "Person playing financial games",
   },
   {
     headline: "get smart advice",
