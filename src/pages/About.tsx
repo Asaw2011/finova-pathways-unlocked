@@ -14,7 +14,6 @@ const About = () => {
           <p className="text-xl text-muted-foreground mb-12 max-w-2xl">
             We believe everyone deserves the financial knowledge to build wealth, avoid debt traps, and make confident money decisions.
           </p>
-          </p>
 
           {/* Mission */}
           <div className="glass rounded-xl p-8 mb-8">
