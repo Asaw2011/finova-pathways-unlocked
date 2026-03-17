@@ -35,7 +35,7 @@ const Dashboard = () => {
   const { hasAccess: isPlusUser } = usePremiumAccess();
   const [assessmentDone, setAssessmentDone] = useState(false);
 
-  // Check if Plus user has completed financial assessment
+  // Check if user has completed financial assessment (for ALL users)
   const { data: financialProfile, isLoading: profileLoading } = useQuery({
     queryKey: ["financial-profile", user?.id],
     queryFn: async () => {
@@ -46,10 +46,10 @@ const Dashboard = () => {
         .maybeSingle();
       return data;
     },
-    enabled: !!user && isPlusUser,
+    enabled: !!user,
   });
 
-  const needsAssessment = isPlusUser && !financialProfile && !assessmentDone && !profileLoading;
+  const needsAssessment = !financialProfile && !assessmentDone && !profileLoading;
 
   const { data: profile } = useQuery({
     queryKey: ["profile", user?.id],
@@ -102,12 +102,10 @@ const Dashboard = () => {
   const completedQuizzes = new Set(xpRecords?.filter(x => x.source === "unit-quiz").map(x => x.source_id) ?? []);
   const currentStreak = streak?.current_streak ?? 0;
 
-  // Check achievement badges
   const earnedAchievements = achievementBadges.filter(b => b.check(lessonsCompleted));
   const earnedStreaks = streakBadges.filter(b => b.check(currentStreak));
   const allEarnedBadges = [...earnedAchievements, ...earnedStreaks];
 
-  // Auto-award badge for first lesson
   const awardBadgeMutation = useMutation({
     mutationFn: async ({ name, icon }: { name: string; icon: string }) => {
       if (!user) return;
@@ -119,7 +117,6 @@ const Dashboard = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["user-badges"] }),
   });
 
-  // Award achievement badges that haven't been awarded yet
   if (badges) {
     allEarnedBadges.forEach(ab => {
       if (!badges.find(b => b.badge_name === ab.name)) {
@@ -128,7 +125,6 @@ const Dashboard = () => {
     });
   }
 
-  // Find next lesson to continue
   const findNextLesson = () => {
     for (let mi = 0; mi < modules.length; mi++) {
       const mod = modules[mi];
@@ -146,14 +142,11 @@ const Dashboard = () => {
 
   const nextLesson = findNextLesson();
 
-  // Calculate overall progress
   const totalLessons = modules.reduce((sum, m) => sum + m.lessons.length, 0);
   const progressPercent = Math.round((lessonsCompleted / totalLessons) * 100);
 
-  // Current section progress
   const currentModule = nextLesson?.module ?? modules[modules.length - 1];
   const currentModuleIndex = nextLesson?.moduleIndex ?? modules.length - 1;
-  const currentModuleLessons = currentModule.lessons.filter(l => completedLessons.has(l.id)).length;
 
   const stats = [
     { label: "Hearts", value: `${hearts}/${maxHearts}`, icon: Heart, color: "bg-red-100 text-red-500" },
@@ -164,14 +157,16 @@ const Dashboard = () => {
 
   const sectionColors = ["bg-emerald-500", "bg-blue-500", "bg-purple-500", "bg-amber-500", "bg-pink-500", "bg-teal-500", "bg-sky-500", "bg-violet-500"];
   const sectionTextColors = ["text-emerald-600", "text-blue-600", "text-purple-600", "text-amber-600", "text-pink-600", "text-teal-600", "text-sky-600", "text-violet-600"];
-  const sectionBgColors = ["bg-emerald-50", "bg-blue-50", "bg-purple-50", "bg-amber-50", "bg-pink-50", "bg-teal-50", "bg-sky-50", "bg-violet-50"];
 
   if (needsAssessment) {
     return (
-      <FinancialAssessment onComplete={() => {
-        setAssessmentDone(true);
-        queryClient.invalidateQueries({ queryKey: ["financial-profile"] });
-      }} />
+      <FinancialAssessment
+        isPlusUser={isPlusUser}
+        onComplete={() => {
+          setAssessmentDone(true);
+          queryClient.invalidateQueries({ queryKey: ["financial-profile"] });
+        }}
+      />
     );
   }
 
@@ -221,7 +216,6 @@ const Dashboard = () => {
               <div className="flex items-center gap-4 mt-2">
                 <p className="text-sm opacity-80">{lessonsCompleted}/{totalLessons} lessons · {progressPercent}% complete</p>
               </div>
-              {/* Overall progress bar */}
               <div className="h-2 rounded-full bg-primary-foreground/20 overflow-hidden mt-3 max-w-xs">
                 <motion.div className="h-full rounded-full bg-primary-foreground/60" initial={{ width: 0 }} animate={{ width: `${progressPercent}%` }} transition={{ duration: 1 }} />
               </div>

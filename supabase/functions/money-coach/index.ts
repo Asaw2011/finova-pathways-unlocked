@@ -9,9 +9,50 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { messages } = await req.json();
+    const { messages, userProfile } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+    // Build personalized system prompt based on user profile
+    let personalContext = "";
+    if (userProfile) {
+      const goalMap: Record<string, string> = {
+        save: "building savings",
+        invest: "starting to invest",
+        debt: "getting out of debt",
+        earn: "earning more money",
+      };
+      const stageMap: Record<string, string> = {
+        teen: "a teenager (13-17)",
+        young_adult: "a young adult (18-24)",
+        mid_career: "a working adult (25-44)",
+        established: "an established professional (45+)",
+        parent: "a parent",
+      };
+      const knowledgeMap: Record<string, string> = {
+        beginner: "a total beginner with money",
+        some: "someone who knows the basics",
+        intermediate: "fairly comfortable with finances",
+        advanced: "looking for advanced financial strategies",
+      };
+      const paceMap: Record<string, string> = {
+        quick: "quick 5-minute explanations",
+        moderate: "10-15 minute detailed sessions",
+        deep: "deep 20+ minute comprehensive explanations",
+      };
+
+      personalContext = `
+IMPORTANT — You are speaking to ${userProfile.name || "a user"} who is ${stageMap[userProfile.lifeStage] || "a learner"}.
+Their #1 financial goal is ${goalMap[userProfile.primaryGoal] || "improving finances"}.
+Their knowledge level: ${knowledgeMap[userProfile.knowledgeLevel] || "varies"}.
+They prefer ${paceMap[userProfile.learningPace] || "moderate-length"} responses.
+
+Tailor ALL your responses to their specific life stage, goal, and knowledge level. 
+- If they're a beginner, use simpler explanations and avoid jargon.
+- If they're advanced, go deeper with strategies and numbers.
+- Always relate advice back to their primary goal when relevant.
+- Match response length to their learning pace preference.`;
+    }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -24,13 +65,14 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are Finova Money Coach — a friendly, knowledgeable financial advisor for people of all ages learning about personal finance. 
+            content: `You are Finova Money Coach — a friendly, knowledgeable financial advisor for people of all ages learning about personal finance.
+${personalContext}
 
 Your personality:
 - Warm, encouraging, and never condescending
 - Use simple language — avoid jargon, or explain it when needed
 - Give practical, actionable advice
-- Use real-world examples people can relate to (first job, side hustles, saving for goals, managing expenses)
+- Use real-world examples people can relate to
 - Be positive but honest about financial risks
 - Keep responses concise (2-3 paragraphs max unless asked for detail)
 

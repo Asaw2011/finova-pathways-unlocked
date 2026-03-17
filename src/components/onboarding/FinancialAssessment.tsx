@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, Crown, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,16 +11,18 @@ interface AssessmentStep {
   id: string;
   question: string;
   options: { value: string; label: string; emoji: string }[];
+  plusOnly?: boolean;
 }
 
-const steps: AssessmentStep[] = [
+const baseSteps: AssessmentStep[] = [
   {
     id: "life_stage",
     question: "Which best describes you?",
     options: [
       { value: "teen", label: "Teen (13–17)", emoji: "🎒" },
       { value: "young_adult", label: "Young Adult (18–24)", emoji: "🎓" },
-      { value: "mid_career", label: "Working Adult (25+)", emoji: "💼" },
+      { value: "mid_career", label: "Working Adult (25–44)", emoji: "💼" },
+      { value: "established", label: "Established (45+)", emoji: "🏠" },
       { value: "parent", label: "Parent", emoji: "👨‍👧" },
     ],
   },
@@ -55,12 +57,61 @@ const steps: AssessmentStep[] = [
   },
 ];
 
+const plusSteps: AssessmentStep[] = [
+  {
+    id: "income_range",
+    question: "What's your approximate annual income?",
+    plusOnly: true,
+    options: [
+      { value: "under_25k", label: "Under $25,000", emoji: "💵" },
+      { value: "25k_50k", label: "$25,000–$50,000", emoji: "💰" },
+      { value: "50k_100k", label: "$50,000–$100,000", emoji: "💎" },
+      { value: "over_100k", label: "Over $100,000", emoji: "🏆" },
+    ],
+  },
+  {
+    id: "debt_level",
+    question: "How would you describe your current debt?",
+    plusOnly: true,
+    options: [
+      { value: "none", label: "Debt-free", emoji: "✅" },
+      { value: "low", label: "Manageable debt", emoji: "📊" },
+      { value: "moderate", label: "Struggling a bit", emoji: "⚠️" },
+      { value: "high", label: "Overwhelmed by debt", emoji: "🆘" },
+    ],
+  },
+  {
+    id: "investing_experience",
+    question: "What's your investing experience?",
+    plusOnly: true,
+    options: [
+      { value: "none", label: "Never invested", emoji: "🌱" },
+      { value: "beginner", label: "Just started", emoji: "📈" },
+      { value: "some", label: "A few years", emoji: "📊" },
+      { value: "experienced", label: "Seasoned investor", emoji: "🧠" },
+    ],
+  },
+  {
+    id: "risk_tolerance",
+    question: "How do you feel about financial risk?",
+    plusOnly: true,
+    options: [
+      { value: "conservative", label: "Play it safe", emoji: "🛡️" },
+      { value: "moderate", label: "Balanced approach", emoji: "⚖️" },
+      { value: "aggressive", label: "Higher risk, higher reward", emoji: "🚀" },
+    ],
+  },
+];
+
 interface FinancialAssessmentProps {
   onComplete: () => void;
+  isPlusUser?: boolean;
+  isRedo?: boolean;
 }
 
-const FinancialAssessment = ({ onComplete }: FinancialAssessmentProps) => {
+const FinancialAssessment = ({ onComplete, isPlusUser = false, isRedo = false }: FinancialAssessmentProps) => {
   const { user } = useAuth();
+  const steps = isPlusUser ? [...baseSteps, ...plusSteps] : baseSteps;
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
@@ -88,7 +139,7 @@ const FinancialAssessment = ({ onComplete }: FinancialAssessmentProps) => {
             learning_pace: answers.pace,
           } as any, { onConflict: "user_id" });
         }
-        toast.success("Profile saved! Your learning path is personalized.");
+        toast.success(isRedo ? "Profile updated! Your learning path is now personalized." : "Profile saved! Your learning path is personalized.");
         onComplete();
       } catch {
         toast.error("Couldn't save profile. You can update it later.");
@@ -104,9 +155,27 @@ const FinancialAssessment = ({ onComplete }: FinancialAssessmentProps) => {
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4">
       <div className="max-w-md w-full">
+        {/* Header */}
+        {!isRedo && (
+          <div className="text-center mb-6">
+            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
+              <Sparkles className="w-7 h-7 text-primary" />
+            </div>
+            <h1 className="text-xl font-extrabold font-display">Let's personalize your experience</h1>
+            <p className="text-sm text-muted-foreground mt-1">Answer a few questions so we can tailor your learning path</p>
+          </div>
+        )}
+
+        {isRedo && (
+          <div className="text-center mb-6">
+            <h1 className="text-xl font-extrabold font-display">Update Your Profile</h1>
+            <p className="text-sm text-muted-foreground mt-1">Let us know if anything has changed</p>
+          </div>
+        )}
+
         {/* Progress */}
         <div className="flex gap-1.5 mb-8">
-          {steps.map((_, i) => (
+          {steps.map((s, i) => (
             <div
               key={i}
               className={cn(
@@ -125,7 +194,14 @@ const FinancialAssessment = ({ onComplete }: FinancialAssessmentProps) => {
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.2 }}
           >
-            <h2 className="text-2xl font-extrabold font-display mb-6">{step.question}</h2>
+            <div className="flex items-center gap-2 mb-6">
+              <h2 className="text-2xl font-extrabold font-display">{step.question}</h2>
+              {step.plusOnly && (
+                <span className="shrink-0 text-xs font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-700 flex items-center gap-1">
+                  <Crown className="w-3 h-3" /> Plus
+                </span>
+              )}
+            </div>
 
             <div className="space-y-3">
               {step.options.map((option) => (
@@ -156,12 +232,12 @@ const FinancialAssessment = ({ onComplete }: FinancialAssessmentProps) => {
           className="w-full mt-8 py-6 text-base font-bold rounded-2xl"
           size="lg"
         >
-          {saving ? "Saving..." : isLastStep ? "Start Learning" : "Continue"}
+          {saving ? "Saving..." : isLastStep ? (isRedo ? "Update Profile" : "Start Learning") : "Continue"}
           {!saving && <ArrowRight className="w-5 h-5 ml-2" />}
         </Button>
 
         <p className="text-center text-xs text-muted-foreground mt-4">
-          Step {currentStep + 1} of {steps.length} · Takes about 1 minute
+          Step {currentStep + 1} of {steps.length}
         </p>
       </div>
     </div>

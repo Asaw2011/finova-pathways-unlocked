@@ -48,6 +48,7 @@ const Courses = () => {
               return sum + (m.lessons?.filter((l: any) => progress?.has(l.id)).length ?? 0);
             }, 0) ?? 0;
             const progressPct = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+            // Plus users can access ALL courses — no lock
             const locked = course.is_premium && !isPremium;
             const unitCount = course.modules?.length ?? 0;
 
