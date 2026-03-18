@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { motion } from "framer-motion";
-import { TrendingUp, TrendingDown, DollarSign, BarChart3, Lock, ArrowUpRight, ArrowDownRight, RotateCcw, ShoppingCart, MinusCircle, Wifi, WifiOff, RefreshCw, Search, Filter } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { TrendingUp, TrendingDown, DollarSign, BarChart3, Lock, ArrowUpRight, ArrowDownRight, RotateCcw, ShoppingCart, MinusCircle, Wifi, WifiOff, RefreshCw, Search, Filter, CheckCircle2, Download, Upload, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { NYSE_TICKERS, SECTORS, POPULAR_TICKERS } from "@/data/nyse-tickers";
+import { useLocalPersistence, getStorageStats, getHistoryVersions } from "@/hooks/useLocalPersistence";
 
 interface StockData {
   symbol: string;
@@ -55,6 +56,7 @@ const BATCH_SIZE = 30; // Yahoo API batch size
 const PaperTrading = () => {
   const { hasAccess, loading: accessLoading } = usePremiumAccess();
   const { user } = useAuth();
+  const { save, load, restoreVersion, exportData, importData, showSaved } = useLocalPersistence();
   const [stockPrices, setStockPrices] = useState<Record<string, StockData>>({});
   const [cash, setCash] = useState(100000);
   const [positions, setPositions] = useState<Record<string, Position>>({});
@@ -67,6 +69,7 @@ const PaperTrading = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSector, setSelectedSector] = useState<string>("Popular");
   const [dbLoaded, setDbLoaded] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Get the tickers to display based on sector/search
   const visibleTickers = useMemo(() => {
@@ -88,10 +91,19 @@ const PaperTrading = () => {
     return Array.from(set);
   }, [visibleTickers, positions]);
 
-  // Load portfolio from DB
+  // Load portfolio from localStorage first, then DB
   useEffect(() => {
     if (!user || !hasAccess) return;
-    const load = async () => {
+
+    // Try localStorage first for instant restore
+    const local = load();
+    if (local) {
+      setCash(local.cash);
+      if (local.positions) setPositions(local.positions);
+      if (local.trades) setTrades(local.trades);
+    }
+
+    const loadFromDb = async () => {
       const [portfolioRes, positionsRes, tradesRes] = await Promise.all([
         supabase.from("paper_portfolios").select("*").eq("user_id", user.id).maybeSingle(),
         supabase.from("paper_positions").select("*").eq("user_id", user.id),
@@ -101,7 +113,6 @@ const PaperTrading = () => {
       if (portfolioRes.data) {
         setCash(Number(portfolioRes.data.cash));
       } else {
-        // Create initial portfolio
         await supabase.from("paper_portfolios").insert({ user_id: user.id, cash: 100000 });
       }
 
@@ -122,8 +133,16 @@ const PaperTrading = () => {
       }
       setDbLoaded(true);
     };
-    load();
+    loadFromDb();
   }, [user, hasAccess]);
+
+  // Auto-save to localStorage whenever cash, positions, or trades change
+  const initialLoadDone = useRef(false);
+  useEffect(() => {
+    if (!dbLoaded && !initialLoadDone.current) return;
+    initialLoadDone.current = true;
+    save({ cash, positions, trades, savedAt: new Date().toISOString() });
+  }, [cash, positions, trades, dbLoaded]);
 
   // Fetch prices for visible tickers
   const fetchPrices = useCallback(async () => {
@@ -277,6 +296,21 @@ const PaperTrading = () => {
     toast.success("Account reset to $100,000");
   };
 
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const data = await importData(file);
+    if (data) {
+      setCash(data.cash);
+      setPositions(data.positions);
+      setTrades(data.trades);
+      toast.success("Data restored from backup");
+    } else {
+      toast.error("Invalid backup file");
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const portfolioValue = Object.entries(positions).reduce((sum, [sym, pos]) => {
     const stock = stockPrices[sym];
     return sum + (stock ? stock.price * pos.shares : pos.avgPrice * pos.shares);
@@ -287,6 +321,12 @@ const PaperTrading = () => {
   const totalPnLPct = (totalPnL / 100000) * 100;
 
   const sectorKeys = ["Popular", "My Holdings", ...Object.keys(SECTORS)];
+  const stats = getStorageStats();
+
+  if (accessLoading) {
+    return <div className="flex items-center justify-center min-h-[60vh]"><p className="text-muted-foreground font-medium">Checking access...</p></div>;
+  }
+  if (!hasAccess) return <PlusGate />;
 
   if (accessLoading) {
     return <div className="flex items-center justify-center min-h-[60vh]"><p className="text-muted-foreground font-medium">Checking access...</p></div>;
@@ -330,13 +370,40 @@ const PaperTrading = () => {
       </div>
 
       {/* Controls */}
-      <div className="flex gap-2 flex-wrap">
+      <div className="flex gap-2 flex-wrap items-center">
         <Button size="sm" variant="outline" className="rounded-xl text-xs" onClick={fetchPrices}>
           <RefreshCw className={cn("w-3.5 h-3.5 mr-1", loadingPrices && "animate-spin")} /> Refresh
         </Button>
         <Button size="sm" variant="outline" className="rounded-xl text-xs" onClick={resetAccount}>
           <RotateCcw className="w-3.5 h-3.5 mr-1" /> Reset Account
         </Button>
+        <Button size="sm" variant="outline" className="rounded-xl text-xs" onClick={exportData}>
+          <Download className="w-3.5 h-3.5 mr-1" /> Export
+        </Button>
+        <Button size="sm" variant="outline" className="rounded-xl text-xs" onClick={() => fileInputRef.current?.click()}>
+          <Upload className="w-3.5 h-3.5 mr-1" /> Import
+        </Button>
+        <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={handleImport} />
+
+        {/* Auto-save indicator */}
+        <AnimatePresence>
+          {showSaved && (
+            <motion.div
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0 }}
+              className="flex items-center gap-1 text-emerald-500 text-[11px] font-bold"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              Auto Saved
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Storage stats */}
+        <span className="text-[10px] text-muted-foreground ml-auto">
+          {stats.tradeCount} trades · {stats.totalKB} KB · {stats.historyVersions} backups
+        </span>
       </div>
 
       {/* Tabs */}
