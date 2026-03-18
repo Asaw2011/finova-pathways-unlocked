@@ -370,13 +370,40 @@ const PaperTrading = () => {
       </div>
 
       {/* Controls */}
-      <div className="flex gap-2 flex-wrap">
+      <div className="flex gap-2 flex-wrap items-center">
         <Button size="sm" variant="outline" className="rounded-xl text-xs" onClick={fetchPrices}>
           <RefreshCw className={cn("w-3.5 h-3.5 mr-1", loadingPrices && "animate-spin")} /> Refresh
         </Button>
         <Button size="sm" variant="outline" className="rounded-xl text-xs" onClick={resetAccount}>
           <RotateCcw className="w-3.5 h-3.5 mr-1" /> Reset Account
         </Button>
+        <Button size="sm" variant="outline" className="rounded-xl text-xs" onClick={exportData}>
+          <Download className="w-3.5 h-3.5 mr-1" /> Export
+        </Button>
+        <Button size="sm" variant="outline" className="rounded-xl text-xs" onClick={() => fileInputRef.current?.click()}>
+          <Upload className="w-3.5 h-3.5 mr-1" /> Import
+        </Button>
+        <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={handleImport} />
+
+        {/* Auto-save indicator */}
+        <AnimatePresence>
+          {showSaved && (
+            <motion.div
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0 }}
+              className="flex items-center gap-1 text-emerald-500 text-[11px] font-bold"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              Auto Saved
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Storage stats */}
+        <span className="text-[10px] text-muted-foreground ml-auto">
+          {stats.tradeCount} trades · {stats.totalKB} KB · {stats.historyVersions} backups
+        </span>
       </div>
 
       {/* Tabs */}
