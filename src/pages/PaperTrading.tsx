@@ -91,10 +91,19 @@ const PaperTrading = () => {
     return Array.from(set);
   }, [visibleTickers, positions]);
 
-  // Load portfolio from DB
+  // Load portfolio from localStorage first, then DB
   useEffect(() => {
     if (!user || !hasAccess) return;
-    const load = async () => {
+
+    // Try localStorage first for instant restore
+    const local = load();
+    if (local) {
+      setCash(local.cash);
+      if (local.positions) setPositions(local.positions);
+      if (local.trades) setTrades(local.trades);
+    }
+
+    const loadFromDb = async () => {
       const [portfolioRes, positionsRes, tradesRes] = await Promise.all([
         supabase.from("paper_portfolios").select("*").eq("user_id", user.id).maybeSingle(),
         supabase.from("paper_positions").select("*").eq("user_id", user.id),
@@ -104,7 +113,6 @@ const PaperTrading = () => {
       if (portfolioRes.data) {
         setCash(Number(portfolioRes.data.cash));
       } else {
-        // Create initial portfolio
         await supabase.from("paper_portfolios").insert({ user_id: user.id, cash: 100000 });
       }
 
@@ -125,8 +133,16 @@ const PaperTrading = () => {
       }
       setDbLoaded(true);
     };
-    load();
+    loadFromDb();
   }, [user, hasAccess]);
+
+  // Auto-save to localStorage whenever cash, positions, or trades change
+  const initialLoadDone = useRef(false);
+  useEffect(() => {
+    if (!dbLoaded && !initialLoadDone.current) return;
+    initialLoadDone.current = true;
+    save({ cash, positions, trades, savedAt: new Date().toISOString() });
+  }, [cash, positions, trades, dbLoaded]);
 
   // Fetch prices for visible tickers
   const fetchPrices = useCallback(async () => {
