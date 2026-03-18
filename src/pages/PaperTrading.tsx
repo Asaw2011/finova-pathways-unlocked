@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { motion } from "framer-motion";
-import { TrendingUp, TrendingDown, DollarSign, BarChart3, Lock, ArrowUpRight, ArrowDownRight, RotateCcw, ShoppingCart, MinusCircle, Wifi, WifiOff, RefreshCw, Search, Filter } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { TrendingUp, TrendingDown, DollarSign, BarChart3, Lock, ArrowUpRight, ArrowDownRight, RotateCcw, ShoppingCart, MinusCircle, Wifi, WifiOff, RefreshCw, Search, Filter, CheckCircle2, Download, Upload, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { NYSE_TICKERS, SECTORS, POPULAR_TICKERS } from "@/data/nyse-tickers";
+import { useLocalPersistence, getStorageStats, getHistoryVersions } from "@/hooks/useLocalPersistence";
 
 interface StockData {
   symbol: string;
