@@ -56,6 +56,7 @@ const BATCH_SIZE = 30; // Yahoo API batch size
 const PaperTrading = () => {
   const { hasAccess, loading: accessLoading } = usePremiumAccess();
   const { user } = useAuth();
+  const { save, load, restoreVersion, exportData, importData, showSaved } = useLocalPersistence();
   const [stockPrices, setStockPrices] = useState<Record<string, StockData>>({});
   const [cash, setCash] = useState(100000);
   const [positions, setPositions] = useState<Record<string, Position>>({});
@@ -68,6 +69,7 @@ const PaperTrading = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSector, setSelectedSector] = useState<string>("Popular");
   const [dbLoaded, setDbLoaded] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Get the tickers to display based on sector/search
   const visibleTickers = useMemo(() => {
