@@ -296,6 +296,21 @@ const PaperTrading = () => {
     toast.success("Account reset to $100,000");
   };
 
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const data = await importData(file);
+    if (data) {
+      setCash(data.cash);
+      setPositions(data.positions);
+      setTrades(data.trades);
+      toast.success("Data restored from backup");
+    } else {
+      toast.error("Invalid backup file");
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const portfolioValue = Object.entries(positions).reduce((sum, [sym, pos]) => {
     const stock = stockPrices[sym];
     return sum + (stock ? stock.price * pos.shares : pos.avgPrice * pos.shares);
@@ -306,6 +321,12 @@ const PaperTrading = () => {
   const totalPnLPct = (totalPnL / 100000) * 100;
 
   const sectorKeys = ["Popular", "My Holdings", ...Object.keys(SECTORS)];
+  const stats = getStorageStats();
+
+  if (accessLoading) {
+    return <div className="flex items-center justify-center min-h-[60vh]"><p className="text-muted-foreground font-medium">Checking access...</p></div>;
+  }
+  if (!hasAccess) return <PlusGate />;
 
   if (accessLoading) {
     return <div className="flex items-center justify-center min-h-[60vh]"><p className="text-muted-foreground font-medium">Checking access...</p></div>;
