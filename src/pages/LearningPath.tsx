@@ -439,13 +439,12 @@ const LearningPath = () => {
                     colors.light, colors.border
                   )}
                 >
-                  <motion.span
-                    className="text-3xl"
+                  <motion.div
                     animate={!isModuleComplete ? { scale: [1, 1.15, 1] } : {}}
                     transition={{ repeat: Infinity, duration: 2 }}
                   >
-                    {milestone.emoji}
-                  </motion.span>
+                    {(() => { const MIcon = milestone.icon; return <MIcon className={cn("w-7 h-7", colors.text)} />; })()}
+                  </motion.div>
                   <div className="flex-1 min-w-0">
                     <p className={cn("text-sm font-extrabold", colors.text)}>{milestone.label}</p>
                     <p className="text-xs text-muted-foreground font-semibold">Reward: {milestone.reward}</p>
