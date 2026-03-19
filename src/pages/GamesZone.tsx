@@ -49,11 +49,19 @@ const stocks = [
 
 const SimTrading = ({ earnGems, onComplete, personalBest, gemsMultiplier = 1 }: { earnGems?: (n: number) => void; onComplete?: (score: number) => void; personalBest?: number | null; gemsMultiplier?: number }) => {
   const initialBalance = 10000;
-  const [balance, setBalance] = useState(initialBalance);
-  const [portfolio, setPortfolio] = useState<Record<string, { shares: number; avgPrice: number }>>({});
-  const [prices, setPrices] = useState(stocks.map((s) => s.price));
-  const [tradeHistory, setTradeHistory] = useState<{ action: string; symbol: string; price: number; pnl?: number }[]>([]);
-  const [dayCount, setDayCount] = useState(0);
+  const saved = loadGameState("trading");
+  const [balance, setBalance] = useState(saved?.balance ?? initialBalance);
+  const [portfolio, setPortfolio] = useState<Record<string, { shares: number; avgPrice: number }>>(saved?.portfolio ?? {});
+  const [prices, setPrices] = useState(saved?.prices ?? stocks.map((s) => s.price));
+  const [tradeHistory, setTradeHistory] = useState<{ action: string; symbol: string; price: number; pnl?: number }[]>(saved?.tradeHistory ?? []);
+  const [dayCount, setDayCount] = useState(saved?.dayCount ?? 0);
+
+  // Auto-save on meaningful state changes
+  useEffect(() => {
+    if (dayCount > 0 || tradeHistory.length > 0) {
+      saveGameState("trading", { balance, portfolio, prices, tradeHistory, dayCount });
+    }
+  }, [balance, portfolio, prices, tradeHistory, dayCount]);
 
   const simulateMarket = () => {
     setDayCount(d => d + 1);
@@ -105,7 +113,7 @@ const SimTrading = ({ earnGems, onComplete, personalBest, gemsMultiplier = 1 }: 
       <div className="flex gap-2 items-center">
         <Button size="sm" onClick={simulateMarket} className="rounded-xl"><TrendingUp className="w-4 h-4 mr-1" /> Simulate Day</Button>
         <span className="text-xs text-muted-foreground font-bold">Day {dayCount + 1}</span>
-        <Button size="sm" variant="outline" className="rounded-xl ml-auto" onClick={() => { setBalance(initialBalance); setPortfolio({}); setPrices(stocks.map(s => s.price)); setTradeHistory([]); setDayCount(0); }}><RotateCcw className="w-4 h-4 mr-1" /> Reset</Button>
+        <Button size="sm" variant="outline" className="rounded-xl ml-auto" onClick={() => { setBalance(initialBalance); setPortfolio({}); setPrices(stocks.map(s => s.price)); setTradeHistory([]); setDayCount(0); clearGameState("trading"); }}><RotateCcw className="w-4 h-4 mr-1" /> Reset</Button>
       </div>
       <div className="space-y-2">
         {stocks.map((stock, i) => {
@@ -160,10 +168,18 @@ const budgetScenarios = [
 ];
 
 const BudgetGame = ({ earnGems, onComplete, personalBest, gemsMultiplier = 1 }: { earnGems?: (n: number) => void; onComplete?: (score: number) => void; personalBest?: number | null; gemsMultiplier?: number }) => {
-  const [scenarioIndex, setScenarioIndex] = useState(0);
+  const saved = loadGameState("budget");
+  const [scenarioIndex, setScenarioIndex] = useState(saved?.scenarioIndex ?? 0);
   const scenario = budgetScenarios[scenarioIndex];
   const [selected, setSelected] = useState<Set<number>>(new Set(scenario.expenses.map((e, i) => e.required ? i : -1).filter(i => i >= 0)));
   const [submitted, setSubmitted] = useState(false);
+
+  // Auto-save scenario progress
+  useEffect(() => {
+    if (scenarioIndex > 0) {
+      saveGameState("budget", { scenarioIndex });
+    }
+  }, [scenarioIndex]);
 
   useEffect(() => {
     setSelected(new Set(budgetScenarios[scenarioIndex].expenses.map((e, i) => e.required ? i : -1).filter(i => i >= 0)));
@@ -222,52 +238,138 @@ const BudgetGame = ({ earnGems, onComplete, personalBest, gemsMultiplier = 1 }: 
   );
 };
 
-// ---- QUIZ GAME ----
-const quizQuestions = [
-  { q: "What is compound interest?", options: ["Interest on original only", "Interest on interest + principal", "A bank fee", "A tax deduction"], answer: 1 },
-  { q: "What does 'diversification' mean?", options: ["Buying one stock", "Spreading investments", "Selling everything", "Borrowing to invest"], answer: 1 },
-  { q: "What is a credit score range?", options: ["0-500", "100-850", "300-850", "500-1000"], answer: 2 },
-  { q: "What is the 50/30/20 rule?", options: ["Save 50%, spend 30%, invest 20%", "Needs 50%, wants 30%, savings 20%", "Taxes 50%, rent 30%, food 20%", "Invest 50%, save 30%, spend 20%"], answer: 1 },
-  { q: "What is an ETF?", options: ["Electronic Transfer Fund", "Exchange-Traded Fund", "Extra Tax Filing", "Emergency Trust Fund"], answer: 1 },
-  { q: "What is APR?", options: ["Annual Profit Rate", "Annual Percentage Rate", "Account Payment Ratio", "Average Premium Rate"], answer: 1 },
-  { q: "FDIC insurance covers deposits up to:", options: ["$100,000", "$250,000", "$500,000", "$1,000,000"], answer: 1 },
-  { q: "A Roth IRA is taxed:", options: ["When you withdraw", "When you contribute", "Never", "Twice"], answer: 1 },
-  { q: "What is net worth?", options: ["Your salary", "Assets minus liabilities", "Total savings", "Monthly income"], answer: 1 },
-  { q: "The 24-hour rule helps you avoid:", options: ["Paying bills late", "Impulse purchases", "Low credit scores", "Tax penalties"], answer: 1 },
-  { q: "Which account typically earns higher interest?", options: ["Checking account", "High-yield savings account", "Student loan account", "Credit card account"], answer: 1 },
-  { q: "What is an index fund?", options: ["A list of stocks", "A fund tracking a market index like the S&P 500", "A type of savings account", "A government bond"], answer: 1 },
-  { q: "Lifestyle inflation means:", options: ["Prices rising over time", "Spending more as you earn more", "Investing your raises", "Reducing expenses"], answer: 1 },
-  { q: "What does 'pay yourself first' mean?", options: ["Buy treats first", "Save before spending on wants", "Pay bills first", "Borrow money upfront"], answer: 1 },
-  { q: "A credit score of 750 is considered:", options: ["Poor", "Fair", "Good to Excellent", "Not real"], answer: 2 },
-  { q: "The biggest factor in your credit score is:", options: ["Length of history", "Payment history (35%)", "Credit mix", "New credit"], answer: 1 },
-  { q: "What is an emergency fund?", options: ["Money for vacations", "3-6 months of expenses saved", "A type of investment", "A bank loan"], answer: 1 },
-  { q: "Employer 401k matching is:", options: ["A tax penalty", "Free money you should always take", "A type of loan", "Optional for employers"], answer: 1 },
-  { q: "What is opportunity cost?", options: ["The price of opportunities", "Money spent here can't grow elsewhere", "The cheapest option available", "A type of interest"], answer: 1 },
-  { q: "Dollar-cost averaging means:", options: ["Always buying at the lowest price", "Investing a fixed amount regularly regardless of price", "Only buying when markets drop", "Splitting investments 50/50"], answer: 1 },
+// ---- QUIZ GAME WITH LESSON-BASED QUESTIONS ----
+// Each question is tagged with a topic that maps to lesson modules
+const quizQuestions: Array<{ q: string; options: string[]; answer: number; topic: string }> = [
+  // Budgeting Basics
+  { q: "What is the 50/30/20 rule?", options: ["Save 50%, spend 30%, invest 20%", "Needs 50%, wants 30%, savings 20%", "Taxes 50%, rent 30%, food 20%", "Invest 50%, save 30%, spend 20%"], answer: 1, topic: "Budgeting Basics" },
+  { q: "What is a budget's main purpose?", options: ["To restrict spending", "To track and plan where money goes", "To eliminate wants", "To maximize debt"], answer: 1, topic: "Budgeting Basics" },
+  { q: "What is a common budgeting mistake?", options: ["Tracking expenses", "Not accounting for irregular expenses", "Having an emergency fund", "Saving too much"], answer: 1, topic: "Budgeting Basics" },
+
+  // Banking & Credit
+  { q: "What is a credit score range?", options: ["0-500", "100-850", "300-850", "500-1000"], answer: 2, topic: "Banking & Credit Intro" },
+  { q: "A credit score of 750 is considered:", options: ["Poor", "Fair", "Good to Excellent", "Not real"], answer: 2, topic: "Banking & Credit Intro" },
+  { q: "The biggest factor in your credit score is:", options: ["Length of history", "Payment history (35%)", "Credit mix", "New credit"], answer: 1, topic: "Banking & Credit Intro" },
+  { q: "Debit cards pull money from:", options: ["A loan", "Your bank account", "Credit score", "Future earnings"], answer: 1, topic: "Banking & Credit Intro" },
+  { q: "Which account typically earns higher interest?", options: ["Checking account", "High-yield savings account", "Student loan account", "Credit card account"], answer: 1, topic: "Banking & Credit Intro" },
+
+  // Debt
+  { q: "What is APR?", options: ["Annual Profit Rate", "Annual Percentage Rate", "Account Payment Ratio", "Average Premium Rate"], answer: 1, topic: "Debt: The Basics" },
+  { q: "Good debt vs bad debt — which is 'good'?", options: ["Credit card for shopping", "A student loan for education", "Payday loan", "Buy-now-pay-later for clothes"], answer: 1, topic: "Debt: The Basics" },
+  { q: "The minimum payment trap means:", options: ["Paying too much", "Mostly paying interest, barely reducing balance", "Getting a discount", "Paying off debt quickly"], answer: 1, topic: "Debt: The Basics" },
+
+  // Saving
+  { q: "What is an emergency fund?", options: ["Money for vacations", "3-6 months of expenses saved", "A type of investment", "A bank loan"], answer: 1, topic: "Saving: The Basics" },
+  { q: "What is compound interest?", options: ["Interest on original only", "Interest on interest + principal", "A bank fee", "A tax deduction"], answer: 1, topic: "Saving: The Basics" },
+  { q: "'Pay yourself first' means:", options: ["Buy treats first", "Save before spending on wants", "Pay bills first", "Borrow money upfront"], answer: 1, topic: "Saving: The Basics" },
+  { q: "Where should you keep emergency savings?", options: ["Under your mattress", "In stocks", "In a high-yield savings account", "In cryptocurrency"], answer: 2, topic: "Saving: The Basics" },
+
+  // Investing
+  { q: "What is an ETF?", options: ["Electronic Transfer Fund", "Exchange-Traded Fund", "Extra Tax Filing", "Emergency Trust Fund"], answer: 1, topic: "Investing: A First Look" },
+  { q: "What does 'diversification' mean?", options: ["Buying one stock", "Spreading investments across different assets", "Selling everything", "Borrowing to invest"], answer: 1, topic: "Investing: A First Look" },
+  { q: "What is an index fund?", options: ["A list of stocks", "A fund tracking a market index like the S&P 500", "A type of savings account", "A government bond"], answer: 1, topic: "Investing: A First Look" },
+  { q: "Dollar-cost averaging means:", options: ["Always buying at the lowest price", "Investing a fixed amount regularly regardless of price", "Only buying when markets drop", "Splitting investments 50/50"], answer: 1, topic: "Investing: A First Look" },
+  { q: "A Roth IRA is taxed:", options: ["When you withdraw", "When you contribute", "Never", "Twice"], answer: 1, topic: "Investing: A First Look" },
+  { q: "Employer 401k matching is:", options: ["A tax penalty", "Free money you should always take", "A type of loan", "Optional for employers"], answer: 1, topic: "Investing: A First Look" },
+
+  // General / Money Mindset
+  { q: "What is net worth?", options: ["Your salary", "Assets minus liabilities", "Total savings", "Monthly income"], answer: 1, topic: "Your Money Mindset" },
+  { q: "The 24-hour rule helps you avoid:", options: ["Paying bills late", "Impulse purchases", "Low credit scores", "Tax penalties"], answer: 1, topic: "Your Money Mindset" },
+  { q: "Lifestyle inflation means:", options: ["Prices rising over time", "Spending more as you earn more", "Investing your raises", "Reducing expenses"], answer: 1, topic: "Your Money Mindset" },
+  { q: "What is opportunity cost?", options: ["The price of opportunities", "Money spent here can't grow elsewhere", "The cheapest option available", "A type of interest"], answer: 1, topic: "Your Money Mindset" },
+  { q: "FDIC insurance covers deposits up to:", options: ["$100,000", "$250,000", "$500,000", "$1,000,000"], answer: 1, topic: "Your Money Mindset" },
+  { q: "Gross income is:", options: ["After-tax pay", "Before-tax pay", "Investment returns", "Net pay"], answer: 1, topic: "Your Money Mindset" },
 ];
 
-const QuizGame = ({ earnGems, onComplete, personalBest, gemsMultiplier = 1 }: { earnGems?: (n: number) => Promise<void>; onComplete?: (score: number) => void; personalBest?: number | null; gemsMultiplier?: number }) => {
-  const [current, setCurrent] = useState(0);
-  const [score, setScore] = useState(0);
+// Helper to get saved game state from localStorage
+const GAME_SAVE_KEY = "finova_game_saves";
+
+function loadGameState(gameId: string) {
+  try {
+    const raw = localStorage.getItem(GAME_SAVE_KEY);
+    if (!raw) return null;
+    const saves = JSON.parse(raw);
+    return saves[gameId] ?? null;
+  } catch { return null; }
+}
+
+function saveGameState(gameId: string, state: any) {
+  try {
+    const raw = localStorage.getItem(GAME_SAVE_KEY);
+    const saves = raw ? JSON.parse(raw) : {};
+    saves[gameId] = { ...state, savedAt: new Date().toISOString() };
+    localStorage.setItem(GAME_SAVE_KEY, JSON.stringify(saves));
+  } catch { /* ignore */ }
+}
+
+function clearGameState(gameId: string) {
+  try {
+    const raw = localStorage.getItem(GAME_SAVE_KEY);
+    if (!raw) return;
+    const saves = JSON.parse(raw);
+    delete saves[gameId];
+    localStorage.setItem(GAME_SAVE_KEY, JSON.stringify(saves));
+  } catch { /* ignore */ }
+}
+
+const QuizGame = ({ earnGems, onComplete, personalBest, gemsMultiplier = 1, completedModules }: { earnGems?: (n: number) => Promise<void>; onComplete?: (score: number) => void; personalBest?: number | null; gemsMultiplier?: number; completedModules?: string[] }) => {
+  // Split questions into review (from completed lessons) and challenge (from uncompleted)
+  const [questions] = useState(() => {
+    const completed = completedModules ?? [];
+    const reviewQs = quizQuestions.filter(q => completed.includes(q.topic));
+    const challengeQs = quizQuestions.filter(q => !completed.includes(q.topic));
+
+    // Pick ~14 review + ~6 challenge (or fill from whichever pool has more)
+    const shuffled = (arr: typeof quizQuestions) => [...arr].sort(() => Math.random() - 0.5);
+    const reviewPick = shuffled(reviewQs).slice(0, 14);
+    const challengePick = shuffled(challengeQs).slice(0, 6);
+
+    // If not enough of either, fill from the other
+    let combined = [...reviewPick, ...challengePick];
+    if (combined.length < 20) {
+      const remaining = shuffled(quizQuestions.filter(q => !combined.includes(q))).slice(0, 20 - combined.length);
+      combined = [...combined, ...remaining];
+    }
+
+    // Tag each as review or challenge
+    return shuffled(combined).map(q => ({
+      ...q,
+      isReview: completed.includes(q.topic),
+    }));
+  });
+
+  const saved = loadGameState("quiz");
+  const [current, setCurrent] = useState(saved?.current ?? 0);
+  const [score, setScore] = useState(saved?.score ?? 0);
   const [selected, setSelected] = useState<number | null>(null);
-  const [finished, setFinished] = useState(false);
+  const [finished, setFinished] = useState(saved?.finished ?? false);
   const [quizGemsClaimed, setQuizGemsClaimed] = useState(false);
 
+  // Auto-save on state change
+  useEffect(() => {
+    if (!finished && current > 0) {
+      saveGameState("quiz", { current, score, finished });
+    }
+  }, [current, score, finished]);
+
   const quizGems = score >= 18 ? 30 : score >= 14 ? 20 : score >= 10 ? 12 : score >= 6 ? 6 : 2;
-  const totalScore = Math.round((score / quizQuestions.length) * 100);
+  const totalScore = Math.round((score / questions.length) * 100);
 
   const handleAnswer = (i: number) => {
     if (selected !== null) return;
     setSelected(i);
-    if (i === quizQuestions[current].answer) setScore((s) => s + 1);
+    if (i === questions[current].answer) setScore((s) => s + 1);
     setTimeout(() => {
-      if (current + 1 >= quizQuestions.length) setFinished(true);
+      if (current + 1 >= questions.length) {
+        setFinished(true);
+        clearGameState("quiz");
+      }
       else { setCurrent((c) => c + 1); setSelected(null); }
     }, 1000);
   };
 
   if (finished) {
-    const pct = Math.round((score / quizQuestions.length) * 100);
+    const pct = Math.round((score / questions.length) * 100);
     const grade = getGrade(pct);
 
     return (
@@ -275,34 +377,48 @@ const QuizGame = ({ earnGems, onComplete, personalBest, gemsMultiplier = 1 }: { 
         <Trophy className="w-12 h-12 text-duo-gold mx-auto mb-4" />
         {personalBest !== null && personalBest !== undefined && totalScore > personalBest && (
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="bg-yellow-400 text-yellow-900 rounded-xl p-3 font-extrabold text-center mb-3 text-sm">
-            🎉 NEW PERSONAL BEST! {totalScore} beats your old record of {personalBest}!
+            NEW PERSONAL BEST! {totalScore} beats your old record of {personalBest}!
           </motion.div>
         )}
         {personalBest === null && (
-          <div className="bg-emerald-100 text-emerald-800 rounded-xl p-2 text-xs font-bold text-center mb-3">✅ First time playing — score saved!</div>
+          <div className="bg-emerald-100 text-emerald-800 rounded-xl p-2 text-xs font-bold text-center mb-3">First time playing — score saved!</div>
         )}
         <p className="text-4xl font-black font-display mb-1">{grade}</p>
-        <p className="text-xl font-extrabold font-display mb-2">{score}/{quizQuestions.length} Correct</p>
+        <p className="text-xl font-extrabold font-display mb-2">{score}/{questions.length} Correct</p>
         {earnGems && !quizGemsClaimed ? (
           <Button onClick={async () => { await earnGems(quizGems * gemsMultiplier); onComplete?.(totalScore); setQuizGemsClaimed(true); toast.success(`+${quizGems * gemsMultiplier} gems!`); }} className="rounded-xl font-bold bg-cyan-500 text-white w-full mb-2">
             <Diamond className="w-4 h-4 mr-2" /> Claim {quizGems * gemsMultiplier} Gems
             {gemsMultiplier === 2 && <span className="ml-2 text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-bold">2× DAILY</span>}
           </Button>
         ) : quizGemsClaimed ? (
-          <p className="text-cyan-600 font-bold mb-2 text-center">✓ +{quizGems * gemsMultiplier} gems!</p>
+          <p className="text-cyan-600 font-bold mb-2 text-center">+{quizGems * gemsMultiplier} gems!</p>
         ) : null}
         <Button className="rounded-xl w-full" variant="outline" onClick={() => { setCurrent(0); setScore(0); setSelected(null); setFinished(false); setQuizGemsClaimed(false); }}><RotateCcw className="w-4 h-4 mr-1" /> Play Again</Button>
       </div>
     );
   }
 
-  const question = quizQuestions[current];
+  const question = questions[current];
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between text-sm text-muted-foreground font-medium"><span>Q{current + 1}/{quizQuestions.length}</span><span>Score: {score}</span></div>
-      <div className="h-2 rounded-full bg-muted overflow-hidden">
-        <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${((current + 1) / quizQuestions.length) * 100}%` }} />
+      <div className="flex items-center justify-between text-sm text-muted-foreground font-medium">
+        <span className="flex items-center gap-2">
+          Q{current + 1}/{questions.length}
+          <span className={cn(
+            "text-[10px] font-bold px-2 py-0.5 rounded-full",
+            question.isReview
+              ? "bg-emerald-100 text-emerald-700"
+              : "bg-amber-100 text-amber-700"
+          )}>
+            {question.isReview ? "Review" : "Challenge"}
+          </span>
+        </span>
+        <span>Score: {score}</span>
       </div>
+      <div className="h-2 rounded-full bg-muted overflow-hidden">
+        <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${((current + 1) / questions.length) * 100}%` }} />
+      </div>
+      <p className="text-[10px] text-muted-foreground font-medium">Topic: {question.topic}</p>
       <h3 className="font-display font-bold text-lg">{question.q}</h3>
       <div className="space-y-2">
         {question.options.map((opt, i) => (
@@ -393,6 +509,35 @@ const GamesZone = () => {
         }
       });
       return bests;
+    },
+    enabled: !!user,
+  });
+
+  // Completed modules query - to split quiz into review vs challenge
+  const { data: completedModules } = useQuery({
+    queryKey: ["completed-modules", user?.id],
+    queryFn: async () => {
+      const { data: progress } = await supabase
+        .from("user_progress")
+        .select("lesson_id")
+        .eq("user_id", user!.id)
+        .eq("completed", true);
+      if (!progress || progress.length === 0) return [];
+
+      const lessonIds = progress.map(p => p.lesson_id);
+      const { data: lessons } = await supabase
+        .from("lessons")
+        .select("id, module_id")
+        .in("id", lessonIds);
+      if (!lessons) return [];
+
+      const moduleIds = [...new Set(lessons.map(l => l.module_id))];
+      const { data: modules } = await supabase
+        .from("modules")
+        .select("id, title")
+        .in("id", moduleIds);
+
+      return modules?.map(m => m.title) ?? [];
     },
     enabled: !!user,
   });
@@ -574,7 +719,11 @@ const GamesZone = () => {
         </>
       ) : (
         <div>
-          <button onClick={() => setActiveGame(null)} className="text-sm text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1 font-medium">
+          <button onClick={() => {
+            // Save state hint via localStorage before exiting
+            toast.info("Progress saved!", { duration: 1500 });
+            setActiveGame(null);
+          }} className="text-sm text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1 font-medium">
             <ArrowLeft className="w-4 h-4" /> Back to games
           </button>
           <div className="bg-card rounded-2xl border border-border p-6 card-shadow">
@@ -589,7 +738,9 @@ const GamesZone = () => {
                 <Diamond className="w-3 h-3 fill-cyan-500" /> Up to {(activeGameData?.maxGems ?? 30) * gemsMultiplier} gems
               </span>
             </div>
-            {ActiveComponent && <ActiveComponent earnGems={earnGems} onComplete={handleGameComplete} personalBest={personalBests?.[activeGame ?? ""] ?? null} gemsMultiplier={gemsMultiplier} />}
+            {ActiveComponent && activeGame === "quiz"
+              ? <QuizGame earnGems={earnGems} onComplete={handleGameComplete} personalBest={personalBests?.[activeGame ?? ""] ?? null} gemsMultiplier={gemsMultiplier} completedModules={completedModules ?? []} />
+              : ActiveComponent && <ActiveComponent earnGems={earnGems} onComplete={handleGameComplete} personalBest={personalBests?.[activeGame ?? ""] ?? null} gemsMultiplier={gemsMultiplier} />}
           </div>
         </div>
       )}
