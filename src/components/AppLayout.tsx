@@ -17,6 +17,28 @@ import {
   Users,
   Play,
   Snowflake,
+  Crown,
+  Star,
+  Zap,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useState, useRef, useEffect } from "react";
+import { usePremiumAccess } from "@/hooks/usePremiumAccess";
+  LogOut,
+  TrendingUp,
+  Bot,
+  Heart,
+  Diamond,
+  ShoppingBag,
+  Target,
+  ChevronDown,
+  Flame,
+  Gamepad2,
+  Users,
+  Play,
+  Snowflake,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
