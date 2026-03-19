@@ -460,7 +460,7 @@ const LearningPath = () => {
               {/* Module header */}
               <div className={cn("rounded-2xl p-4 mb-4 text-center border-2", isModuleUnlocked ? colors.border : "border-border opacity-50")}>
                 <div className="flex items-center justify-center gap-2 mb-1">
-                  <span className="text-2xl">{emoji}</span>
+                  <ModIcon className={cn("w-6 h-6", isModuleUnlocked ? colors.text : "text-muted-foreground")} />
                   <h3 className={cn("font-black font-display text-lg", isModuleUnlocked ? colors.text : "text-muted-foreground")}>{mod.title}</h3>
                 </div>
                 <p className="text-xs text-muted-foreground font-semibold">{completedCount}/{modLessons.length} lessons{quizCompleted ? " · ✓ Certified" : ""}</p>
