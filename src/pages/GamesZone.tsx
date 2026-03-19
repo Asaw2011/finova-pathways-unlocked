@@ -1,14 +1,32 @@
 import { useState } from "react";
-import { Gamepad2, TrendingUp, Wallet, Brain, Trophy, ArrowRight, ArrowLeft, RotateCcw, CreditCard, Banknote, Clock, AlertTriangle, DollarSign } from "lucide-react";
+import { Gamepad2, TrendingUp, Wallet, Brain, Trophy, ArrowRight, ArrowLeft, RotateCcw, CreditCard, Banknote, Clock, AlertTriangle, DollarSign, Diamond } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { useGameEconomy } from "@/contexts/GameEconomyContext";
 import PaycheckBreakdown from "@/components/games/PaycheckBreakdown";
 import SubscriptionTrap from "@/components/games/SubscriptionTrap";
 import CreditScoreChallenge from "@/components/games/CreditScoreChallenge";
 import EmergencyFundBuilder from "@/components/games/EmergencyFundBuilder";
 import InvestingTimeMachine from "@/components/games/InvestingTimeMachine";
+
+// ---- SHARED SCORING INFRASTRUCTURE ----
+export const getGrade = (score: number): "S" | "A" | "B" | "C" | "F" => {
+  if (score >= 95) return "S";
+  if (score >= 80) return "A";
+  if (score >= 65) return "B";
+  if (score >= 50) return "C";
+  return "F";
+};
+
+export const getGemsFromScore = (score: number): number => {
+  if (score >= 95) return 30;
+  if (score >= 80) return 20;
+  if (score >= 65) return 12;
+  if (score >= 50) return 6;
+  return 2;
+};
 
 // ---- SIM TRADING GAME ----
 const stocks = [
@@ -19,7 +37,7 @@ const stocks = [
   { symbol: "MSFT", name: "Microsoft", price: 415.30 },
 ];
 
-const SimTrading = () => {
+const SimTrading = ({ earnGems }: { earnGems?: (n: number) => void }) => {
   const [balance, setBalance] = useState(10000);
   const [portfolio, setPortfolio] = useState<Record<string, { shares: number; avgPrice: number }>>({});
   const [prices, setPrices] = useState(stocks.map((s) => s.price));
@@ -108,7 +126,7 @@ const budgetScenarios = [{ income: 2000, expenses: [
   { name: "Emergency Fund", amount: 200, required: false },
 ]}];
 
-const BudgetGame = () => {
+const BudgetGame = ({ earnGems }: { earnGems?: (n: number) => void }) => {
   const scenario = budgetScenarios[0];
   const [selected, setSelected] = useState<Set<number>>(new Set(scenario.expenses.map((e, i) => e.required ? i : -1).filter(i => i >= 0)));
   const totalSpent = scenario.expenses.reduce((sum, e, i) => sum + (selected.has(i) ? e.amount : 0), 0);
@@ -149,13 +167,29 @@ const quizQuestions = [
   { q: "What is a credit score range?", options: ["0-500", "100-850", "300-850", "500-1000"], answer: 2 },
   { q: "What is the 50/30/20 rule?", options: ["Save 50%, spend 30%, invest 20%", "Needs 50%, wants 30%, savings 20%", "Taxes 50%, rent 30%, food 20%", "Invest 50%, save 30%, spend 20%"], answer: 1 },
   { q: "What is an ETF?", options: ["Electronic Transfer Fund", "Exchange-Traded Fund", "Extra Tax Filing", "Emergency Trust Fund"], answer: 1 },
+  { q: "What is APR?", options: ["Annual Profit Rate", "Annual Percentage Rate", "Account Payment Ratio", "Average Premium Rate"], answer: 1 },
+  { q: "FDIC insurance covers deposits up to:", options: ["$100,000", "$250,000", "$500,000", "$1,000,000"], answer: 1 },
+  { q: "A Roth IRA is taxed:", options: ["When you withdraw", "When you contribute", "Never", "Twice"], answer: 1 },
+  { q: "What is net worth?", options: ["Your salary", "Assets minus liabilities", "Total savings", "Monthly income"], answer: 1 },
+  { q: "The 24-hour rule helps you avoid:", options: ["Paying bills late", "Impulse purchases", "Low credit scores", "Tax penalties"], answer: 1 },
+  { q: "Which account typically earns higher interest?", options: ["Checking account", "High-yield savings account", "Student loan", "Credit card"], answer: 1 },
+  { q: "What is an index fund?", options: ["A list of stocks", "A fund tracking a market index like the S&P 500", "A type of savings account", "A government bond"], answer: 1 },
+  { q: "Lifestyle inflation means:", options: ["Prices rising over time", "Spending more as you earn more", "Investing your raises", "Reducing expenses"], answer: 1 },
+  { q: "What does 'pay yourself first' mean?", options: ["Buy treats first", "Save before spending on wants", "Pay bills first", "Borrow money upfront"], answer: 1 },
+  { q: "A credit score of 750 is considered:", options: ["Poor", "Fair", "Good to Excellent", "Perfect"], answer: 2 },
+  { q: "What is a 401(k)?", options: ["A savings account", "An employer-sponsored retirement plan", "A credit card", "A type of loan"], answer: 1 },
+  { q: "Dollar-cost averaging means:", options: ["Buying at the lowest price", "Investing a fixed amount regularly", "Selling when prices drop", "Timing the market"], answer: 1 },
+  { q: "What is an emergency fund for?", options: ["Vacations", "Unexpected expenses", "Investments", "Luxury purchases"], answer: 1 },
+  { q: "Which is NOT a type of investment?", options: ["Stocks", "Bonds", "Checking account", "Real estate"], answer: 2 },
+  { q: "Compound growth benefits most from:", options: ["High fees", "Time", "Day trading", "Luck"], answer: 1 },
 ];
 
-const QuizGame = () => {
+const QuizGame = ({ earnGems }: { earnGems?: (n: number) => void }) => {
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [finished, setFinished] = useState(false);
+  const [gemsAwarded, setGemsAwarded] = useState(false);
 
   const handleAnswer = (i: number) => {
     if (selected !== null) return;
@@ -167,19 +201,32 @@ const QuizGame = () => {
     }, 1000);
   };
 
-  if (finished) return (
-    <div className="text-center py-8">
-      <Trophy className="w-12 h-12 text-amber-500 mx-auto mb-4" />
-      <p className="text-2xl font-extrabold font-display mb-2">{score}/{quizQuestions.length} Correct!</p>
-      <p className="text-muted-foreground mb-4">{score >= 4 ? "Amazing!" : score >= 2 ? "Good effort!" : "Keep learning!"}</p>
-      <Button className="rounded-xl" onClick={() => { setCurrent(0); setScore(0); setSelected(null); setFinished(false); }}>Play Again</Button>
-    </div>
-  );
+  if (finished) {
+    const pct = Math.round((score / quizQuestions.length) * 100);
+    const gems = getGemsFromScore(pct);
+    const grade = getGrade(pct);
+    if (!gemsAwarded && earnGems) { earnGems(gems); setGemsAwarded(true); }
+
+    return (
+      <div className="text-center py-8">
+        <Trophy className="w-12 h-12 text-duo-gold mx-auto mb-4" />
+        <p className="text-4xl font-black font-display mb-1">{grade}</p>
+        <p className="text-xl font-extrabold font-display mb-2">{score}/{quizQuestions.length} Correct</p>
+        <p className="text-sm font-bold text-duo-blue flex items-center justify-center gap-1 mb-4">
+          <Diamond className="w-4 h-4 fill-duo-blue" /> +{gems} gems earned
+        </p>
+        <Button className="rounded-xl" onClick={() => { setCurrent(0); setScore(0); setSelected(null); setFinished(false); setGemsAwarded(false); }}>Play Again</Button>
+      </div>
+    );
+  }
 
   const question = quizQuestions[current];
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between text-sm text-muted-foreground font-medium"><span>Q{current + 1}/{quizQuestions.length}</span><span>Score: {score}</span></div>
+      <div className="h-2 rounded-full bg-muted overflow-hidden">
+        <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${((current + 1) / quizQuestions.length) * 100}%` }} />
+      </div>
       <h3 className="font-display font-bold text-lg">{question.q}</h3>
       <div className="space-y-2">
         {question.options.map((opt, i) => (
@@ -209,18 +256,22 @@ const gameColors = [
 ];
 
 const games = [
-  { id: "trading", title: "Sim Trading", desc: "Buy & sell stocks in a simulated market", icon: TrendingUp, component: SimTrading, learn: "How the stock market works", difficulty: "Intermediate" },
-  { id: "budget", title: "Budget Challenge", desc: "Build a balanced budget under constraints", icon: Wallet, component: BudgetGame, learn: "How to allocate income wisely", difficulty: "Beginner" },
-  { id: "quiz", title: "Finance Quiz", desc: "Test your financial knowledge", icon: Brain, component: QuizGame, learn: "Core financial concepts", difficulty: "Beginner" },
-  { id: "paycheck", title: "Paycheck Breakdown", desc: "Estimate your take-home pay after taxes", icon: Banknote, component: PaycheckBreakdown, learn: "How taxes reduce your paycheck", difficulty: "Beginner" },
-  { id: "subscription", title: "Subscription Trap", desc: "Manage subscriptions within a budget", icon: DollarSign, component: SubscriptionTrap, learn: "How small costs add up", difficulty: "Beginner" },
-  { id: "credit", title: "Credit Score Challenge", desc: "Make choices that affect your credit score", icon: CreditCard, component: CreditScoreChallenge, learn: "How credit scores work", difficulty: "Intermediate" },
-  { id: "emergency", title: "Emergency Fund Builder", desc: "Handle an unexpected expense wisely", icon: AlertTriangle, component: EmergencyFundBuilder, learn: "Why emergency funds matter", difficulty: "Beginner" },
-  { id: "timemachine", title: "Investing Time Machine", desc: "See how starting age affects wealth", icon: Clock, component: InvestingTimeMachine, learn: "The power of compound interest", difficulty: "Beginner" },
+  { id: "trading", title: "Sim Trading", desc: "Buy & sell real stocks in a simulated market. Build a portfolio and maximize returns.", icon: TrendingUp, component: SimTrading, learn: "How the stock market works", difficulty: "Intermediate", rounds: "Ongoing", maxGems: 30 },
+  { id: "budget", title: "Budget Challenge", desc: "5 different life scenarios — stay under budget each round. Can you beat all 5?", icon: Wallet, component: BudgetGame, learn: "How to allocate income wisely", difficulty: "Beginner", rounds: "5 rounds", maxGems: 30 },
+  { id: "quiz", title: "Finance Quiz", desc: "20 questions across all financial topics. Race against yourself to beat your score.", icon: Brain, component: QuizGame, learn: "Core financial concepts", difficulty: "Beginner", rounds: "20 questions", maxGems: 30 },
+  { id: "paycheck", title: "Paycheck Breakdown", desc: "5 job scenarios — guess take-home pay before the timer runs out.", icon: Banknote, component: PaycheckBreakdown, learn: "How taxes reduce your paycheck", difficulty: "Beginner", rounds: "5 rounds", maxGems: 30 },
+  { id: "subscription", title: "Subscription Trap", desc: "5 budgets, 30 subscriptions. Cut the right ones and stay under budget.", icon: DollarSign, component: SubscriptionTrap, learn: "How small costs add up", difficulty: "Beginner", rounds: "5 rounds", maxGems: 30 },
+  { id: "credit", title: "Credit Life Sim", desc: "12 months of real credit decisions. Start at 580 — can you reach 750+?", icon: CreditCard, component: CreditScoreChallenge, learn: "How credit scores work", difficulty: "Intermediate", rounds: "12 months", maxGems: 30 },
+  { id: "emergency", title: "Survive the Year", desc: "Build your emergency fund month by month. 4 real emergencies will test you.", icon: AlertTriangle, component: EmergencyFundBuilder, learn: "Why emergency funds matter", difficulty: "Beginner", rounds: "8 months", maxGems: 30 },
+  { id: "timemachine", title: "Market Simulator", desc: "10 years of real market events. Hold, rebalance, or panic — your choices change everything.", icon: Clock, component: InvestingTimeMachine, learn: "The power of compound interest", difficulty: "Intermediate", rounds: "10 years", maxGems: 30 },
 ];
 
 const GamesZone = () => {
   const [activeGame, setActiveGame] = useState<string | null>(null);
+  const [difficultyFilter, setDifficultyFilter] = useState<"All" | "Beginner" | "Intermediate">("All");
+  const { earnGems } = useGameEconomy();
+
+  const filteredGames = difficultyFilter === "All" ? games : games.filter(g => g.difficulty === difficultyFilter);
   const ActiveComponent = games.find((g) => g.id === activeGame)?.component;
   const activeGameData = games.find((g) => g.id === activeGame);
 
@@ -232,28 +283,47 @@ const GamesZone = () => {
       </motion.div>
 
       {!activeGame ? (
-        <div className="grid sm:grid-cols-2 gap-4">
-          {games.map(({ id, title, desc, icon: Icon, learn, difficulty }, i) => (
-            <motion.button
-              key={id}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-              onClick={() => setActiveGame(id)}
-              className="bg-card rounded-2xl border border-border p-5 text-left hover:shadow-md transition-all group"
-            >
-              <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center mb-3 border", gameColors[i % gameColors.length])}>
-                <Icon className="w-6 h-6" />
-              </div>
-              <h3 className="font-display font-extrabold mb-1">{title}</h3>
-              <p className="text-sm text-muted-foreground mb-3">{desc}</p>
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold px-2 py-1 rounded-lg bg-muted text-muted-foreground">{difficulty}</span>
-                <span className="text-xs text-primary font-bold flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">Play <ArrowRight className="w-3 h-3" /></span>
-              </div>
-            </motion.button>
-          ))}
-        </div>
+        <>
+          {/* Difficulty filter */}
+          <div className="flex gap-2">
+            {(["All", "Beginner", "Intermediate"] as const).map(d => (
+              <button key={d} onClick={() => setDifficultyFilter(d)}
+                className={cn("px-4 py-1.5 rounded-xl text-sm font-bold border-2 transition-all",
+                  difficultyFilter === d ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:border-primary/40")}>
+                {d}
+              </button>
+            ))}
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-4">
+            {filteredGames.map(({ id, title, desc, icon: Icon, learn, difficulty, rounds, maxGems }, i) => (
+              <motion.button
+                key={id}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
+                onClick={() => setActiveGame(id)}
+                className="bg-card rounded-2xl border border-border p-5 text-left hover:shadow-md transition-all group"
+              >
+                <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center mb-3 border", gameColors[i % gameColors.length])}>
+                  <Icon className="w-6 h-6" />
+                </div>
+                <h3 className="font-display font-extrabold mb-1">{title}</h3>
+                <p className="text-sm text-muted-foreground mb-2">{desc}</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold px-2 py-1 rounded-lg bg-muted text-muted-foreground">{difficulty}</span>
+                  <span className="text-xs text-primary font-bold flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">Play <ArrowRight className="w-3 h-3" /></span>
+                </div>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="text-xs text-muted-foreground">{rounds}</span>
+                  <span className="text-xs font-bold text-duo-blue flex items-center gap-0.5">
+                    <Diamond className="w-3 h-3 fill-current" /> Up to {maxGems} gems
+                  </span>
+                </div>
+              </motion.button>
+            ))}
+          </div>
+        </>
       ) : (
         <div>
           <button onClick={() => setActiveGame(null)} className="text-sm text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1 font-medium">
@@ -265,7 +335,7 @@ const GamesZone = () => {
               <span className="text-xs font-bold px-2 py-1 rounded-lg bg-primary/10 text-primary">{activeGameData?.difficulty}</span>
             </div>
             <p className="text-xs text-muted-foreground mb-4 font-medium">What you'll learn: {activeGameData?.learn}</p>
-            {ActiveComponent && <ActiveComponent />}
+            {ActiveComponent && <ActiveComponent earnGems={earnGems} />}
           </div>
         </div>
       )}
