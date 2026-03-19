@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, ExternalLink, Instagram } from "lucide-react";
+import { ArrowRight, ExternalLink, Instagram, Heart, BookOpen, Zap, Shield, Star, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroIllustration from "@/assets/hero-illustration.png";
 import featureLessons from "@/assets/feature-lessons.png";
