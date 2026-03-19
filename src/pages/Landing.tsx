@@ -18,7 +18,7 @@ const featureSections = [
 
 const Landing = () => {
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col texture-dots">
       {/* Header */}
       <header className="w-full border-b border-border/40 bg-background/90 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-6xl mx-auto flex items-center justify-between px-6 h-14">
@@ -40,7 +40,7 @@ const Landing = () => {
       </header>
 
       {/* Hero */}
-      <section className="flex items-center justify-center px-6 py-16 md:py-24">
+      <section className="flex items-center justify-center px-6 py-16 md:py-24 texture-noise">
         <div className="max-w-2xl w-full text-center">
           <img src={heroIllustration} alt="People learning about money" className="w-40 md:w-52 h-auto mx-auto mb-8" />
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-display leading-tight mb-4">
@@ -61,7 +61,7 @@ const Landing = () => {
       </section>
 
       {/* Social Proof */}
-      <section className="px-6 py-10 bg-card border-y border-border/40">
+      <section className="px-6 py-10 bg-card border-y border-border/40 texture-grid">
         <div className="max-w-3xl mx-auto flex justify-center gap-12 md:gap-20 text-center">
           <div>
             <p className="text-3xl font-extrabold font-display text-primary">7</p>
@@ -80,7 +80,7 @@ const Landing = () => {
 
       {/* Feature sections */}
       {featureSections.map(({ headline, body, image, alt }, i) => (
-        <section key={headline} className={`px-6 py-16 md:py-24 ${i % 2 === 0 ? "bg-background" : "bg-card"}`}>
+        <section key={headline} className={`px-6 py-16 md:py-24 ${i % 2 === 0 ? "bg-background texture-dots" : "bg-card texture-grid"}`}>
           <div className={`max-w-5xl mx-auto flex flex-col items-center gap-8 md:gap-16 ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}>
             <div className="flex-1 text-center md:text-left">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold font-display lowercase gradient-text mb-4">{headline}</h2>
@@ -94,7 +94,7 @@ const Landing = () => {
       ))}
 
       {/* How It Works */}
-      <section className="px-6 py-16 md:py-20 bg-background">
+      <section className="px-6 py-16 md:py-20 bg-background texture-noise">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-extrabold font-display mb-10">How Finova Works</h2>
           <div className="grid sm:grid-cols-3 gap-6">
@@ -146,7 +146,7 @@ const Landing = () => {
       </section>
 
       {/* Bottom CTA */}
-      <section className="px-6 py-16 md:py-20 bg-card">
+      <section className="px-6 py-16 md:py-20 bg-card texture-grid">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-extrabold font-display mb-4">Ready to start?</h2>
           <Link to="/auth">
