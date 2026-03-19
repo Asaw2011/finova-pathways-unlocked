@@ -238,17 +238,17 @@ const Dashboard = () => {
 
       {/* Quick Links */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
-        className="grid grid-cols-2 gap-3">
+        className="grid grid-cols-4 gap-2">
         {[
-          { to: "/quests", icon: "⚡", title: "Quests", color: "bg-duo-gold/10 border-duo-gold/20" },
-          { to: "/rankings", icon: "🏆", title: "Leaderboard", color: "bg-duo-orange/10 border-duo-orange/20" },
-          { to: "/games", icon: "🎮", title: "Games", color: "bg-duo-blue/10 border-duo-blue/20" },
-          { to: "/shop", icon: "🛍️", title: "Shop", color: "bg-duo-purple/10 border-duo-purple/20" },
-        ].map(({ to, icon, title, color }) => (
+          { to: "/quests", icon: "⚡", title: "Quests" },
+          { to: "/rankings", icon: "🏆", title: "League" },
+          { to: "/games", icon: "🎮", title: "Games" },
+          { to: "/shop", icon: "🛍️", title: "Shop" },
+        ].map(({ to, icon, title }) => (
           <Link key={to} to={to}
-            className={cn("rounded-2xl border-2 p-4 text-center hover:shadow-md transition-all", color)}>
-            <span className="text-2xl block mb-1">{icon}</span>
-            <p className="text-sm font-bold">{title}</p>
+            className="rounded-xl border border-border p-2.5 text-center hover:bg-muted transition-all">
+            <span className="text-lg block">{icon}</span>
+            <p className="text-[10px] font-bold mt-0.5">{title}</p>
           </Link>
         ))}
       </motion.div>
