@@ -6,66 +6,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { usePremiumAccess } from "@/hooks/usePremiumAccess";
 
-const XP_LEVELS = [
-  { name: "Penny", min: 0 },
-  { name: "Nickel", min: 100 },
-  { name: "Dime", min: 300 },
-  { name: "Quarter", min: 600 },
-  { name: "Dollar", min: 1000 },
-  { name: "Investor", min: 2000 },
-  { name: "Trader", min: 4000 },
-  { name: "Banker", min: 7000 },
-  { name: "Tycoon", min: 12000 },
-  { name: "Quant", min: 20000 },
-];
-
-const getRank = (xp: number) => {
-  let rank = XP_LEVELS[0];
-  let nextRank = XP_LEVELS[1];
-  for (let i = XP_LEVELS.length - 1; i >= 0; i--) {
-    if (xp >= XP_LEVELS[i].min) {
-      rank = XP_LEVELS[i];
-      nextRank = XP_LEVELS[i + 1] || null;
-      break;
-    }
-  }
-  return { rank, nextRank };
-};
-
 const Shop = () => {
   const {
     hearts, maxHearts, gems, streakFreezes,
     buyHeartWithGems, buyFullRefillWithGems, buyStreakFreeze, watchAdForHeart,
     HEART_COST, REFILL_COST, FREEZE_COST,
   } = useGameEconomy();
-  const { user } = useAuth();
   const { hasAccess: isPro } = usePremiumAccess();
 
   const [watchingAd, setWatchingAd] = useState(false);
   const [adTimer, setAdTimer] = useState(15);
-
-  const { data: totalXp } = useQuery({
-    queryKey: ["total-xp", user?.id],
-    queryFn: async () => {
-      const { data } = await supabase.from("user_xp").select("xp_amount").eq("user_id", user!.id);
-      return data?.reduce((s, r) => s + r.xp_amount, 0) ?? 0;
-    },
-    enabled: !!user,
-  });
-
-  const { data: dailyQuests } = useQuery({
-    queryKey: ["daily-quests-sidebar", user?.id],
-    queryFn: async () => {
-      const today = new Date().toISOString().split("T")[0];
-      const { data } = await supabase.from("quests").select("*").eq("user_id", user!.id).eq("quest_date", today).eq("quest_type", "daily");
-      return data ?? [];
-    },
-    enabled: !!user,
-  });
-
-  const xp = totalXp ?? 0;
-  const { rank, nextRank } = getRank(xp);
-  const progress = nextRank ? ((xp - rank.min) / (nextRank.min - rank.min)) * 100 : 100;
 
   const handleWatchAd = () => {
     if (hearts >= maxHearts) return;
