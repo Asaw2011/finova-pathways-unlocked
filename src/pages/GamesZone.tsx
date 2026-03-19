@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
-import { Gamepad2, TrendingUp, Wallet, Brain, Trophy, ArrowRight, ArrowLeft, RotateCcw, CreditCard, Banknote, Clock, AlertTriangle, DollarSign, Diamond } from "lucide-react";
+import { Gamepad2, TrendingUp, Wallet, Brain, Trophy, ArrowRight, ArrowLeft, RotateCcw, CreditCard, Banknote, Clock, AlertTriangle, DollarSign, Diamond, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { useGameEconomy } from "@/contexts/GameEconomyContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import PaycheckBreakdown from "@/components/games/PaycheckBreakdown";
 import SubscriptionTrap from "@/components/games/SubscriptionTrap";
 import CreditScoreChallenge from "@/components/games/CreditScoreChallenge";
@@ -28,6 +31,13 @@ export const getGemsFromScore = (score: number): number => {
   return 2;
 };
 
+// ---- XP AWARDING ----
+const awardGameXP = async (userId: string, gameId: string, score: number) => {
+  const xpAmount = score >= 95 ? 50 : score >= 80 ? 35 : score >= 65 ? 20 : score >= 50 ? 10 : 5;
+  await supabase.from("user_xp").insert({ user_id: userId, xp_amount: xpAmount, source: "game", source_id: gameId });
+  await supabase.from("games_played").insert({ user_id: userId, game_id: gameId, score });
+};
+
 // ---- SIM TRADING GAME ----
 const stocks = [
   { symbol: "AAPL", name: "Apple Inc.", price: 178.50 },
@@ -37,7 +47,7 @@ const stocks = [
   { symbol: "MSFT", name: "Microsoft", price: 415.30 },
 ];
 
-const SimTrading = ({ earnGems }: { earnGems?: (n: number) => void }) => {
+const SimTrading = ({ earnGems, onComplete, personalBest, gemsMultiplier = 1 }: { earnGems?: (n: number) => void; onComplete?: (score: number) => void; personalBest?: number | null; gemsMultiplier?: number }) => {
   const initialBalance = 10000;
   const [balance, setBalance] = useState(initialBalance);
   const [portfolio, setPortfolio] = useState<Record<string, { shares: number; avgPrice: number }>>({});
@@ -149,7 +159,7 @@ const budgetScenarios = [
   { title: "Post-Graduation Budget", income: 4200, expenses: [{ name: "Rent", amount: 1400, required: true }, { name: "Student Loan Payment", amount: 350, required: true }, { name: "Groceries", amount: 350, required: true }, { name: "Car & Insurance", amount: 450, required: true }, { name: "Phone", amount: 70, required: true }, { name: "Gym", amount: 50, required: false }, { name: "Dining Out", amount: 250, required: false }, { name: "Streaming", amount: 40, required: false }, { name: "Savings", amount: 500, required: false }, { name: "401k Contribution", amount: 420, required: false }, { name: "Emergency Fund", amount: 200, required: false }] },
 ];
 
-const BudgetGame = ({ earnGems }: { earnGems?: (n: number) => void }) => {
+const BudgetGame = ({ earnGems, onComplete, personalBest, gemsMultiplier = 1 }: { earnGems?: (n: number) => void; onComplete?: (score: number) => void; personalBest?: number | null; gemsMultiplier?: number }) => {
   const [scenarioIndex, setScenarioIndex] = useState(0);
   const scenario = budgetScenarios[scenarioIndex];
   const [selected, setSelected] = useState<Set<number>>(new Set(scenario.expenses.map((e, i) => e.required ? i : -1).filter(i => i >= 0)));
@@ -236,7 +246,7 @@ const quizQuestions = [
   { q: "Dollar-cost averaging means:", options: ["Always buying at the lowest price", "Investing a fixed amount regularly regardless of price", "Only buying when markets drop", "Splitting investments 50/50"], answer: 1 },
 ];
 
-const QuizGame = ({ earnGems }: { earnGems?: (n: number) => Promise<void> }) => {
+const QuizGame = ({ earnGems, onComplete, personalBest, gemsMultiplier = 1 }: { earnGems?: (n: number) => Promise<void>; onComplete?: (score: number) => void; personalBest?: number | null; gemsMultiplier?: number }) => {
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
@@ -244,6 +254,7 @@ const QuizGame = ({ earnGems }: { earnGems?: (n: number) => Promise<void> }) => 
   const [quizGemsClaimed, setQuizGemsClaimed] = useState(false);
 
   const quizGems = score >= 18 ? 30 : score >= 14 ? 20 : score >= 10 ? 12 : score >= 6 ? 6 : 2;
+  const totalScore = Math.round((score / quizQuestions.length) * 100);
 
   const handleAnswer = (i: number) => {
     if (selected !== null) return;
@@ -262,14 +273,23 @@ const QuizGame = ({ earnGems }: { earnGems?: (n: number) => Promise<void> }) => 
     return (
       <div className="text-center py-8 space-y-3">
         <Trophy className="w-12 h-12 text-duo-gold mx-auto mb-4" />
+        {personalBest !== null && personalBest !== undefined && totalScore > personalBest && (
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="bg-yellow-400 text-yellow-900 rounded-xl p-3 font-extrabold text-center mb-3 text-sm">
+            🎉 NEW PERSONAL BEST! {totalScore} beats your old record of {personalBest}!
+          </motion.div>
+        )}
+        {personalBest === null && (
+          <div className="bg-emerald-100 text-emerald-800 rounded-xl p-2 text-xs font-bold text-center mb-3">✅ First time playing — score saved!</div>
+        )}
         <p className="text-4xl font-black font-display mb-1">{grade}</p>
         <p className="text-xl font-extrabold font-display mb-2">{score}/{quizQuestions.length} Correct</p>
         {earnGems && !quizGemsClaimed ? (
-          <Button onClick={async () => { await earnGems(quizGems); setQuizGemsClaimed(true); toast.success(`+${quizGems} gems!`); }} className="rounded-xl font-bold bg-cyan-500 text-white w-full mb-2">
-            <Diamond className="w-4 h-4 mr-2" /> Claim {quizGems} Gems
+          <Button onClick={async () => { await earnGems(quizGems * gemsMultiplier); onComplete?.(totalScore); setQuizGemsClaimed(true); toast.success(`+${quizGems * gemsMultiplier} gems!`); }} className="rounded-xl font-bold bg-cyan-500 text-white w-full mb-2">
+            <Diamond className="w-4 h-4 mr-2" /> Claim {quizGems * gemsMultiplier} Gems
+            {gemsMultiplier === 2 && <span className="ml-2 text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-bold">2× DAILY</span>}
           </Button>
         ) : quizGemsClaimed ? (
-          <p className="text-cyan-600 font-bold mb-2 text-center">✓ +{quizGems} gems!</p>
+          <p className="text-cyan-600 font-bold mb-2 text-center">✓ +{quizGems * gemsMultiplier} gems!</p>
         ) : null}
         <Button className="rounded-xl w-full" variant="outline" onClick={() => { setCurrent(0); setScore(0); setSelected(null); setFinished(false); setQuizGemsClaimed(false); }}><RotateCcw className="w-4 h-4 mr-1" /> Play Again</Button>
       </div>
@@ -322,10 +342,85 @@ const games = [
   { id: "timemachine", title: "Market Simulator", desc: "10 years of real market events. Hold, rebalance, or panic — your choices change everything.", icon: Clock, component: InvestingTimeMachine, learn: "The power of compound interest", difficulty: "Intermediate", rounds: "10 years", maxGems: 30 },
 ];
 
+// ---- DAILY FEATURED GAME ----
+const getDailyFeaturedGame = () => {
+  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
+  return games[dayOfYear % games.length].id;
+};
+
+// ---- BADGE CHECKING ----
+const checkAndAwardGameBadges = async (userId: string, gameId: string, score: number) => {
+  const { data: allGamesPlayed } = await supabase.from("games_played").select("game_id, score").eq("user_id", userId);
+  const uniqueGames = new Set(allGamesPlayed?.map(g => g.game_id)).size;
+  const totalGames = allGamesPlayed?.length ?? 0;
+  const topScore = Math.max(...(allGamesPlayed?.map(g => g.score ?? 0) ?? [0]));
+  const aRankGames = new Set(allGamesPlayed?.filter(g => (g.score ?? 0) >= 80).map(g => g.game_id)).size;
+
+  const { data: existingBadges } = await supabase.from("user_badges").select("badge_name").eq("user_id", userId);
+  const earned = new Set(existingBadges?.map(b => b.badge_name) ?? []);
+
+  const toAward: { name: string; icon: string }[] = [];
+  if (!earned.has("Game On") && totalGames >= 1) toAward.push({ name: "Game On", icon: "🎮" });
+  if (!earned.has("Game Master") && uniqueGames >= 8) toAward.push({ name: "Game Master", icon: "🕹️" });
+  if (!earned.has("S-Rank") && topScore >= 95) toAward.push({ name: "S-Rank", icon: "⭐" });
+  if (!earned.has("Straight A's") && aRankGames >= 5) toAward.push({ name: "Straight A's", icon: "📊" });
+  if (!earned.has("Tax Expert") && gameId === "paycheck" && score >= 95) toAward.push({ name: "Tax Expert", icon: "🧾" });
+
+  for (const badge of toAward) {
+    await supabase.from("user_badges").insert({ user_id: userId, badge_name: badge.name, badge_icon: badge.icon });
+    toast.success(`🏅 Badge unlocked: ${badge.icon} ${badge.name}!`, { duration: 4000 });
+  }
+};
+
 const GamesZone = () => {
   const [activeGame, setActiveGame] = useState<string | null>(null);
   const [difficultyFilter, setDifficultyFilter] = useState<"All" | "Beginner" | "Intermediate">("All");
   const { earnGems } = useGameEconomy();
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+
+  const dailyFeaturedGameId = getDailyFeaturedGame();
+
+  // Personal bests query
+  const { data: personalBests } = useQuery({
+    queryKey: ["personal-bests", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase.from("games_played").select("game_id, score").eq("user_id", user!.id).order("score", { ascending: false });
+      const bests: Record<string, number> = {};
+      data?.forEach(row => {
+        if (!bests[row.game_id] || (row.score ?? 0) > bests[row.game_id]) {
+          bests[row.game_id] = row.score ?? 0;
+        }
+      });
+      return bests;
+    },
+    enabled: !!user,
+  });
+
+  // Daily game played check
+  const { data: playedTodayData } = useQuery({
+    queryKey: ["played-today", user?.id, dailyFeaturedGameId],
+    queryFn: async () => {
+      const today = new Date().toISOString().split("T")[0];
+      const { data } = await supabase.from("games_played").select("id").eq("user_id", user!.id).eq("game_id", dailyFeaturedGameId).gte("played_at", `${today}T00:00:00.000Z`);
+      return (data?.length ?? 0) > 0;
+    },
+    enabled: !!user,
+  });
+  const dailyGameCompleted = playedTodayData ?? false;
+
+  // Game completion handler
+  const handleGameComplete = async (score: number) => {
+    if (!user || !activeGame) return;
+    await awardGameXP(user.id, activeGame, score);
+    await checkAndAwardGameBadges(user.id, activeGame, score);
+    queryClient.invalidateQueries({ queryKey: ["user-xp"] });
+    queryClient.invalidateQueries({ queryKey: ["personal-bests"] });
+    queryClient.invalidateQueries({ queryKey: ["played-today"] });
+  };
+
+  const isDaily = activeGame === dailyFeaturedGameId && !dailyGameCompleted;
+  const gemsMultiplier = isDaily ? 2 : 1;
 
   const filteredGames = difficultyFilter === "All" ? games : games.filter(g => g.difficulty === difficultyFilter);
   const ActiveComponent = games.find((g) => g.id === activeGame)?.component;
@@ -340,6 +435,81 @@ const GamesZone = () => {
 
       {!activeGame ? (
         <>
+          {/* LAYER 4 — Game Stats */}
+          {personalBests && Object.keys(personalBests).length > 0 && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-card rounded-2xl border border-border p-5 card-shadow">
+              <h3 className="font-extrabold font-display flex items-center gap-2 mb-4 text-base">
+                <Trophy className="w-5 h-5 text-amber-500" /> My Game Stats
+              </h3>
+              <div className="grid grid-cols-3 gap-3 mb-4">
+                <div className="bg-muted/50 rounded-xl p-3 text-center">
+                  <p className="text-2xl font-extrabold font-display text-primary">{Object.keys(personalBests).length}/8</p>
+                  <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">Games Played</p>
+                </div>
+                <div className="bg-muted/50 rounded-xl p-3 text-center">
+                  <p className="text-2xl font-extrabold font-display text-amber-500">{Math.max(...Object.values(personalBests))}</p>
+                  <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">Top Score</p>
+                </div>
+                <div className="bg-muted/50 rounded-xl p-3 text-center">
+                  <p className="text-2xl font-extrabold font-display text-emerald-500">{Object.values(personalBests).filter(s => s >= 80).length}</p>
+                  <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">A+ Ranks</p>
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between text-xs font-bold mb-1.5">
+                  <span className="text-muted-foreground">Game Collection</span>
+                  <span className="text-primary">{Object.keys(personalBests).length}/8 played</span>
+                </div>
+                <div className="flex gap-1">
+                  {games.map(g => (
+                    <div key={g.id} className={cn(
+                      "flex-1 h-2.5 rounded-full transition-all",
+                      personalBests[g.id] !== undefined
+                        ? personalBests[g.id] >= 95 ? "bg-yellow-400"
+                          : personalBests[g.id] >= 80 ? "bg-emerald-500"
+                            : personalBests[g.id] >= 65 ? "bg-blue-400"
+                              : "bg-amber-400"
+                        : "bg-muted"
+                    )} />
+                  ))}
+                </div>
+                <div className="flex justify-between text-[9px] text-muted-foreground mt-1">
+                  <span>🟡 S rank</span><span>🟢 A</span><span>🔵 B</span><span>🟠 C/F</span><span>⬜ Not played</span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* LAYER 5 — Daily Featured Game */}
+          {!dailyGameCompleted && (
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+              className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-4 text-white cursor-pointer hover:opacity-95 transition-opacity"
+              onClick={() => setActiveGame(dailyFeaturedGameId)}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-bold opacity-80 uppercase tracking-wide mb-0.5">⚡ Daily Featured Game</p>
+                  <p className="font-extrabold font-display text-lg">{games.find(g => g.id === dailyFeaturedGameId)?.title}</p>
+                  <p className="text-xs opacity-80 mt-0.5">Play today for 2× gems bonus!</p>
+                </div>
+                <div className="text-right shrink-0">
+                  <div className="bg-white/20 rounded-xl px-3 py-2 text-center">
+                    <Diamond className="w-5 h-5 fill-white mx-auto mb-0.5" />
+                    <p className="text-xs font-extrabold">2× GEMS</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+          {dailyGameCompleted && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-center gap-3">
+              <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
+              <div>
+                <p className="text-sm font-bold text-emerald-700">Daily game completed!</p>
+                <p className="text-xs text-emerald-600">Come back tomorrow for a new featured game and 2× gems.</p>
+              </div>
+            </div>
+          )}
+
           {/* Difficulty filter */}
           <div className="flex gap-2">
             {(["All", "Beginner", "Intermediate"] as const).map(d => (
@@ -370,11 +540,33 @@ const GamesZone = () => {
                   <span className="text-xs font-bold px-2 py-1 rounded-lg bg-muted text-muted-foreground">{difficulty}</span>
                   <span className="text-xs text-primary font-bold flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">Play <ArrowRight className="w-3 h-3" /></span>
                 </div>
+                {/* Personal best display */}
+                {personalBests?.[id] !== undefined ? (
+                  <div className="flex items-center gap-1.5 mt-2">
+                    <span className="text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-lg flex items-center gap-1">
+                      🏆 Best: {personalBests[id]}/100
+                    </span>
+                    <span className={cn(
+                      "text-[10px] font-bold px-1.5 py-0.5 rounded",
+                      personalBests[id] >= 95 ? "bg-yellow-100 text-yellow-700"
+                        : personalBests[id] >= 80 ? "bg-emerald-100 text-emerald-700"
+                          : personalBests[id] >= 65 ? "bg-blue-100 text-blue-700"
+                            : "bg-muted text-muted-foreground"
+                    )}>
+                      {personalBests[id] >= 95 ? "S" : personalBests[id] >= 80 ? "A" : personalBests[id] >= 65 ? "B" : personalBests[id] >= 50 ? "C" : "F"}
+                    </span>
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted-foreground mt-2 italic">No score yet — be the first!</p>
+                )}
                 <div className="flex items-center gap-2 mt-2">
                   <span className="text-xs text-muted-foreground">{rounds}</span>
                   <span className="text-xs font-bold text-duo-blue flex items-center gap-0.5">
                     <Diamond className="w-3 h-3 fill-current" /> Up to {maxGems} gems
                   </span>
+                  {id === dailyFeaturedGameId && !dailyGameCompleted && (
+                    <span className="text-[10px] font-extrabold bg-amber-500 text-white px-2 py-0.5 rounded-lg">2× TODAY</span>
+                  )}
                 </div>
               </motion.button>
             ))}
@@ -389,14 +581,15 @@ const GamesZone = () => {
             <div className="flex items-center gap-3 mb-1">
               <h2 className="font-display font-extrabold text-xl">{activeGameData?.title}</h2>
               <span className="text-xs font-bold px-2 py-1 rounded-lg bg-primary/10 text-primary">{activeGameData?.difficulty}</span>
+              {isDaily && <span className="text-[10px] font-extrabold bg-amber-500 text-white px-2 py-0.5 rounded-lg">2× GEMS TODAY</span>}
             </div>
             <div className="flex items-center justify-between mb-4">
               <p className="text-xs text-muted-foreground font-medium">What you'll learn: {activeGameData?.learn}</p>
               <span className="text-xs font-bold text-cyan-600 flex items-center gap-0.5">
-                <Diamond className="w-3 h-3 fill-cyan-500" /> Up to {activeGameData?.maxGems} gems
+                <Diamond className="w-3 h-3 fill-cyan-500" /> Up to {(activeGameData?.maxGems ?? 30) * gemsMultiplier} gems
               </span>
             </div>
-            {ActiveComponent && <ActiveComponent earnGems={earnGems} />}
+            {ActiveComponent && <ActiveComponent earnGems={earnGems} onComplete={handleGameComplete} personalBest={personalBests?.[activeGame ?? ""] ?? null} gemsMultiplier={gemsMultiplier} />}
           </div>
         </div>
       )}
