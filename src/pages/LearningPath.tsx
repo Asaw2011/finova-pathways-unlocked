@@ -352,22 +352,21 @@ const LearningPath = () => {
               {/* Step connector between modules */}
               {mi > 0 && (
                 <div className="flex flex-col items-center mb-4">
-                  {/* Animated stepping stones */}
+                  {/* Animated staircase steps between modules */}
                   {[0, 1, 2].map((stepIdx) => {
                     const prevDone = modules[mi - 1].lessons.every(l => completedLessons.has(l.id)) && completedQuizzes.has(modules[mi - 1].id);
                     return (
                       <motion.div
                         key={stepIdx}
-                        initial={{ opacity: 0, scale: 0 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: mi * 0.08 + stepIdx * 0.1, type: "spring", stiffness: 300 }}
-                        className="flex flex-col items-center"
-                      >
-                        <div className={cn(
-                          "w-3 h-3 rounded-full my-1 transition-colors duration-500",
+                        initial={{ scaleY: 0 }}
+                        animate={{ scaleY: 1 }}
+                        transition={{ delay: mi * 0.08 + stepIdx * 0.08, duration: 0.2 }}
+                        className={cn(
+                          "w-2 h-4 rounded-full my-0.5 transition-colors duration-500",
                           prevDone ? colors.bg : "bg-border"
-                        )} />
-                      </motion.div>
+                        )}
+                        style={{ transformOrigin: "top" }}
+                      />
                     );
                   })}
 
