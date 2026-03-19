@@ -125,19 +125,21 @@ const Dashboard = () => {
     <div className="space-y-5">
       <OnboardingModal open={showOnboarding} onClose={() => setShowOnboarding(false)} />
 
-      {/* Streak Card */}
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl p-5 text-center bg-gradient-to-br from-duo-orange to-[hsl(25,100%,55%)] text-primary-foreground">
-        <span className="text-5xl block mb-1">🔥</span>
-        <p className="text-3xl font-black font-display">{currentStreak} Day Streak</p>
-        <p className="text-sm font-semibold opacity-80 mt-1">{currentStreak > 0 ? "Come back tomorrow to keep it going!" : "Start your streak today!"}</p>
-        <div className="flex justify-center gap-2 mt-3">
+      {/* Streak Card — compact inline */}
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+        className="rounded-2xl px-4 py-3 flex items-center gap-3 bg-gradient-to-r from-duo-orange to-[hsl(25,100%,55%)] text-primary-foreground">
+        <span className="text-2xl">🔥</span>
+        <div className="flex-1 min-w-0">
+          <p className="text-base font-black font-display leading-tight">{currentStreak} Day Streak</p>
+          <p className="text-[11px] font-semibold opacity-75">{currentStreak > 0 ? "Keep it going!" : "Start today!"}</p>
+        </div>
+        <div className="flex gap-1">
           {daysOfWeek.map((d, i) => (
             <div key={i} className={cn(
-              "w-8 h-8 rounded-full flex items-center justify-center text-xs font-black",
+              "w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-black",
               i <= todayDayIdx && currentStreak > todayDayIdx - i
-                ? "bg-primary-foreground/30 text-primary-foreground"
-                : "bg-primary-foreground/10 text-primary-foreground/50"
+                ? "bg-primary-foreground/30"
+                : "bg-primary-foreground/10 opacity-50"
             )}>{d}</div>
           ))}
         </div>
