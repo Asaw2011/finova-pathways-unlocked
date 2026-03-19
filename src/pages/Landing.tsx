@@ -40,7 +40,7 @@ const Landing = () => {
       </header>
 
       {/* Hero */}
-      <section className="flex items-center justify-center px-6 py-16 md:py-24">
+      <section className="flex items-center justify-center px-6 py-16 md:py-24 texture-noise">
         <div className="max-w-2xl w-full text-center">
           <img src={heroIllustration} alt="People learning about money" className="w-40 md:w-52 h-auto mx-auto mb-8" />
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-display leading-tight mb-4">
