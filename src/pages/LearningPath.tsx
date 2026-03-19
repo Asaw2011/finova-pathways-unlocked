@@ -461,16 +461,11 @@ const LearningPath = () => {
                 {/* Quiz node with step connector */}
                 <div className="flex flex-col items-center">
                   {/* Step connector to quiz */}
-                  <div className="flex flex-col items-center gap-0 -my-0.5">
-                    <motion.div initial={{ scaleY: 0 }} animate={{ scaleY: 1 }}
-                      transition={{ delay: mi * 0.05 + modLessons.length * 0.06, duration: 0.2 }}
-                      className={cn("w-1.5 h-3 rounded-full", quizCompleted ? "bg-duo-gold" : "bg-border")}
-                      style={{ transformOrigin: "top" }} />
-                    <motion.div initial={{ scaleY: 0 }} animate={{ scaleY: 1 }}
-                      transition={{ delay: mi * 0.05 + modLessons.length * 0.06 + 0.15, duration: 0.2 }}
-                      className={cn("w-1.5 h-3 rounded-full", quizCompleted ? "bg-duo-gold" : "bg-border")}
-                      style={{ transformOrigin: "top" }} />
-                  </div>
+                  <StepConnector
+                    type={quizCompleted ? "completed" : quizUnlocked ? "active" : "locked"}
+                    stepNumber={modLessons.length + 1}
+                    delay={mi * 0.05 + modLessons.length * 0.06}
+                  />
                   <motion.button
                     onClick={() => { if (quizUnlocked) setShowUnitQuiz(mod.id); }}
                     disabled={!quizUnlocked}
