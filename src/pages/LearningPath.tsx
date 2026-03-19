@@ -399,43 +399,25 @@ const LearningPath = () => {
 
                   return (
                     <div key={lesson.id} className="flex flex-col items-center" style={{ marginLeft: offset }}>
-                      {/* Step connector — actual staircase steps */}
+                      {/* Step connector — staircase stepping stones */}
                       {li > 0 && (() => {
-                        const prevOffset = (li - 1) % 3 === 0 ? 0 : (li - 1) % 3 === 1 ? 50 : -50;
-                        const direction = offset - prevOffset; // positive = going right, negative = going left
                         const stepColor = completed || isCurrent ? colors.bg : "bg-border";
                         return (
-                          <div className="flex flex-col items-center gap-0 -my-0.5">
-                            {/* Vertical riser */}
-                            <motion.div
-                              initial={{ scaleY: 0 }}
-                              animate={{ scaleY: 1 }}
-                              transition={{ delay: mi * 0.05 + li * 0.06, duration: 0.2 }}
-                              className={cn("w-1.5 h-3 rounded-full", stepColor)}
-                              style={{ transformOrigin: "top" }}
-                            />
-                            {/* Horizontal tread */}
-                            {direction !== 0 && (
+                          <div className="flex flex-col items-center gap-[3px] py-1">
+                            {[0, 1, 2].map((si) => (
                               <motion.div
-                                initial={{ scaleX: 0 }}
-                                animate={{ scaleX: 1 }}
-                                transition={{ delay: mi * 0.05 + li * 0.06 + 0.1, duration: 0.15 }}
-                                className={cn("h-1.5 rounded-full", stepColor)}
+                                key={si}
+                                initial={{ scaleY: 0, opacity: 0 }}
+                                animate={{ scaleY: 1, opacity: 1 }}
+                                transition={{ delay: mi * 0.05 + li * 0.06 + si * 0.05, duration: 0.2 }}
+                                className={cn("rounded-sm", stepColor)}
                                 style={{
-                                  width: Math.abs(direction) * 0.6,
-                                  transformOrigin: direction > 0 ? "left" : "right",
-                                  marginLeft: direction > 0 ? 8 : -8,
+                                  width: si === 1 ? 14 : 10,
+                                  height: si === 1 ? 6 : 5,
+                                  transformOrigin: "top",
                                 }}
                               />
-                            )}
-                            {/* Vertical riser */}
-                            <motion.div
-                              initial={{ scaleY: 0 }}
-                              animate={{ scaleY: 1 }}
-                              transition={{ delay: mi * 0.05 + li * 0.06 + 0.2, duration: 0.2 }}
-                              className={cn("w-1.5 h-3 rounded-full", stepColor)}
-                              style={{ transformOrigin: "top" }}
-                            />
+                            ))}
                           </div>
                         );
                       })()}
