@@ -124,7 +124,7 @@ const TopBar = () => {
   });
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 h-14 bg-background/95 backdrop-blur-sm border-b border-border px-4 flex items-center justify-between md:justify-end md:left-[64px]">
+    <div className="fixed top-0 left-0 right-0 z-50 h-14 bg-background/95 backdrop-blur-sm border-b border-border px-4 flex items-center justify-between md:justify-end md:left-[200px]">
       {/* Mobile logo */}
       <Link to="/learning-path" className="flex items-center gap-2 md:hidden">
         <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center">
