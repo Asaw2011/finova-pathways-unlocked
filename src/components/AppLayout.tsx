@@ -27,6 +27,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useRef, useEffect } from "react";
 import { usePremiumAccess } from "@/hooks/usePremiumAccess";
+import MoneyCoachWidget from "@/components/MoneyCoachWidget";
 
 
 
@@ -435,6 +436,9 @@ const AppLayoutInner = () => {
             <RightSidebar />
           </div>
         </main>
+
+        {/* Floating Money Coach */}
+        <MoneyCoachWidget />
       </div>
     </GameEconomyProvider>
   );
