@@ -608,9 +608,10 @@ const LearningPath = () => {
           className="flex flex-col items-center mb-8"
         >
           {[0, 1, 2].map((i) => (
-            <motion.div key={i} initial={{ scale: 0 }} animate={{ scale: 1 }}
-              transition={{ delay: 0.9 + i * 0.1, type: "spring" }}
-              className={cn("w-3 h-3 rounded-full my-1", completedModules === totalModules ? "bg-duo-gold" : "bg-border")}
+            <motion.div key={i} initial={{ scaleY: 0 }} animate={{ scaleY: 1 }}
+              transition={{ delay: 0.9 + i * 0.08, duration: 0.2 }}
+              className={cn("w-2 h-4 rounded-full my-0.5", completedModules === totalModules ? "bg-duo-gold" : "bg-border")}
+              style={{ transformOrigin: "top" }}
             />
           ))}
           <motion.div
