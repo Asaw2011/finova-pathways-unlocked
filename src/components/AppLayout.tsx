@@ -20,6 +20,7 @@ import {
   Crown,
   Star,
   Zap,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
