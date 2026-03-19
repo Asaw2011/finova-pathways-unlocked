@@ -243,9 +243,14 @@ const Awards = () => {
                     {cert.score !== null && (
                       <p className="text-sm mb-4">Score: <span className="font-bold text-primary">{cert.score}%</span></p>
                     )}
-                    <Button size="sm" variant="outline" onClick={() => handleShare(cert)} className="rounded-xl">
-                      <Share2 className="w-3 h-3 mr-1" /> Share
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" onClick={() => handleShare(cert)} className="rounded-xl">
+                        <Share2 className="w-3 h-3 mr-1" /> Share
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => handlePrint(cert)} className="rounded-xl">
+                        <Printer className="w-3 h-3 mr-1" /> Print
+                      </Button>
+                    </div>
                   </div>
                 </motion.div>
               ))}
