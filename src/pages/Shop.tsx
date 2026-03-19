@@ -95,9 +95,7 @@ const Shop = () => {
   ];
 
   return (
-    <div className="flex gap-6">
-      {/* Main shop content */}
-      <div className="flex-1 space-y-6 max-w-lg mx-auto">
+    <div className="space-y-6 max-w-lg mx-auto">
         {/* Header with balances */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="text-2xl font-extrabold font-display flex items-center gap-2">
