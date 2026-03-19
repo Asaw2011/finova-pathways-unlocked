@@ -150,17 +150,29 @@ const AppLayoutInner = () => {
                     )}
                   >
                     <Icon className="w-5 h-5 shrink-0" />
-                    <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 whitespace-nowrap">{label}</span>
+                    <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 whitespace-nowrap flex-1">{label}</span>
+                    {sub && (
+                      <ChevronDown className={cn(
+                        "w-3.5 h-3.5 shrink-0 opacity-0 group-hover/sidebar:opacity-100 transition-all duration-200",
+                        expanded ? "rotate-180 text-primary" : "text-muted-foreground"
+                      )} />
+                    )}
                   </Link>
                   {sub && expanded && (
-                    <div className="ml-7 space-y-0.5 mt-0.5 opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200">
+                    <div className="space-y-0.5 mt-0.5">
                       {sub.map(s => (
                         <Link key={s.to} to={s.to}
                           className={cn(
-                            "block px-2 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all",
-                            location.pathname === s.to ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                            "flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all",
+                            location.pathname === s.to ? "text-primary bg-primary/5" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                           )}
-                        >{s.label}</Link>
+                        >
+                          <span className={cn(
+                            "w-1.5 h-1.5 rounded-full shrink-0",
+                            location.pathname === s.to ? "bg-primary" : "bg-border"
+                          )} />
+                          <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200">{s.label}</span>
+                        </Link>
                       ))}
                     </div>
                   )}
