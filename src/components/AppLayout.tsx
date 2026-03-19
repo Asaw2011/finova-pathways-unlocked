@@ -20,6 +20,7 @@ import {
   Crown,
   Star,
   Zap,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -123,7 +124,7 @@ const TopBar = () => {
   });
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 h-14 bg-background/95 backdrop-blur-sm border-b border-border px-4 flex items-center justify-between md:justify-end md:left-[64px]">
+    <div className="fixed top-0 left-0 right-0 z-50 h-14 bg-background/95 backdrop-blur-sm border-b border-border px-4 flex items-center justify-between md:justify-end md:left-[200px]">
       {/* Mobile logo */}
       <Link to="/learning-path" className="flex items-center gap-2 md:hidden">
         <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center">
@@ -310,6 +311,7 @@ const sideNavItems: NavItem[] = [
     { to: "/awards", label: "Awards" },
     { to: "/rankings", label: "Rankings" },
   ]},
+  { to: "/settings", label: "Settings", icon: Settings },
 ];
 
 const AppLayoutInner = () => {
@@ -338,12 +340,12 @@ const AppLayoutInner = () => {
         <TopBar />
 
         {/* Desktop Sidebar */}
-        <aside className="hidden md:flex w-[64px] hover:w-[200px] group/sidebar flex-col border-r border-border bg-background py-3 px-2 fixed left-0 top-14 bottom-0 z-40 transition-all duration-200 overflow-hidden">
+        <aside className="hidden md:flex w-[200px] flex-col border-r border-border bg-background py-3 px-2 fixed left-0 top-14 bottom-0 z-40">
           <Link to="/learning-path" className="flex items-center gap-2 px-1.5 mb-4">
             <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shrink-0">
               <TrendingUp className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="text-lg font-black font-display text-foreground opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 whitespace-nowrap">FinOva</span>
+            <span className="text-lg font-black font-display text-foreground whitespace-nowrap">FinOva</span>
           </Link>
 
           <nav className="flex-1 space-y-0.5 overflow-y-auto">
@@ -364,10 +366,10 @@ const AppLayoutInner = () => {
                     )}
                   >
                     <Icon className="w-5 h-5 shrink-0" />
-                    <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 whitespace-nowrap flex-1">{label}</span>
+                    <span className="whitespace-nowrap flex-1">{label}</span>
                     {sub && (
                       <ChevronDown className={cn(
-                        "w-3.5 h-3.5 shrink-0 opacity-0 group-hover/sidebar:opacity-100 transition-all duration-200",
+                        "w-3.5 h-3.5 shrink-0 transition-all duration-200",
                         expanded ? "rotate-180 text-primary" : "text-muted-foreground"
                       )} />
                     )}
@@ -385,7 +387,7 @@ const AppLayoutInner = () => {
                             "w-1.5 h-1.5 rounded-full shrink-0",
                             location.pathname === s.to ? "bg-primary" : "bg-border"
                           )} />
-                          <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200">{s.label}</span>
+                          <span>{s.label}</span>
                         </Link>
                       ))}
                     </div>
@@ -400,7 +402,7 @@ const AppLayoutInner = () => {
             className="flex items-center gap-2.5 px-2 py-2 rounded-xl text-sm font-bold text-muted-foreground hover:bg-muted transition-colors"
           >
             <LogOut className="w-5 h-5 shrink-0" />
-            <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 whitespace-nowrap">Sign Out</span>
+            <span className="whitespace-nowrap">Sign Out</span>
           </button>
         </aside>
 
@@ -425,7 +427,7 @@ const AppLayoutInner = () => {
         </nav>
 
         {/* Main content + Right sidebar */}
-        <main className="flex-1 overflow-auto pb-20 md:pb-0 pt-14 md:ml-[64px]">
+        <main className="flex-1 overflow-auto pb-20 md:pb-0 pt-14 md:ml-[200px]">
           <div className="flex justify-center">
             <div className="flex-1 min-w-0 p-4 md:p-8 max-w-2xl">
               <Outlet />

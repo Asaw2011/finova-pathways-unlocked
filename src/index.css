@@ -66,6 +66,61 @@
     --font-display: 'Nunito', system-ui, sans-serif;
     --font-body: 'Nunito', system-ui, sans-serif;
   }
+
+  .dark {
+    --background: 220 20% 10%;
+    --foreground: 40 10% 90%;
+
+    --card: 220 18% 13%;
+    --card-foreground: 40 10% 90%;
+
+    --popover: 220 20% 10%;
+    --popover-foreground: 40 10% 90%;
+
+    --primary: 152 60% 42%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 15% 18%;
+    --secondary-foreground: 40 10% 90%;
+
+    --muted: 220 12% 20%;
+    --muted-foreground: 220 10% 55%;
+
+    --accent: 205 70% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 4 80% 58%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 12% 22%;
+    --input: 220 12% 22%;
+    --ring: 152 60% 42%;
+
+    --sidebar-background: 220 20% 10%;
+    --sidebar-foreground: 40 10% 90%;
+    --sidebar-primary: 152 60% 42%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 15% 18%;
+    --sidebar-accent-foreground: 40 10% 90%;
+    --sidebar-border: 220 12% 22%;
+    --sidebar-ring: 152 60% 42%;
+
+    --duo-green: 152 60% 42%;
+    --duo-green-dark: 152 55% 34%;
+    --duo-gold: 38 90% 50%;
+    --duo-red: 4 80% 58%;
+    --duo-blue: 205 70% 50%;
+    --duo-purple: 265 55% 60%;
+    --duo-orange: 25 85% 55%;
+
+    --success: 152 60% 42%;
+    --warning: 25 85% 55%;
+    --info: 205 70% 50%;
+    --gold: 38 90% 50%;
+
+    --shadow-card: 0 1px 3px hsl(0 0% 0% / 0.2), 0 2px 8px hsl(0 0% 0% / 0.15);
+    --shadow-card-hover: 0 4px 12px hsl(0 0% 0% / 0.3);
+  }
 }
 
 @layer base {

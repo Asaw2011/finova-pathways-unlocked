@@ -31,6 +31,7 @@ import Rankings from "./pages/Rankings";
 import PaperTrading from "./pages/PaperTrading";
 import Friends from "./pages/Friends";
 import NotFound from "./pages/NotFound";
+import SettingsPage from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -74,6 +75,7 @@ const App = () => (
                 <Route path="/paper-trading" element={<PaperTrading />} />
                 <Route path="/friends" element={<Friends />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/resource-hub" element={<Library />} />
               </Route>
 
