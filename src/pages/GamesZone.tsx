@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Gamepad2, TrendingUp, Wallet, Brain, Trophy, ArrowRight, ArrowLeft, RotateCcw, CreditCard, Banknote, Clock, AlertTriangle, DollarSign, Diamond } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -114,35 +114,40 @@ const SimTrading = ({ earnGems }: { earnGems?: (n: number) => void }) => {
 };
 
 // ---- BUDGET CHALLENGE ----
-const budgetScenarios = [{ income: 2000, expenses: [
-  { name: "Rent", amount: 800, required: true },
-  { name: "Groceries", amount: 300, required: true },
-  { name: "Phone Bill", amount: 60, required: true },
-  { name: "Streaming Services", amount: 45, required: false },
-  { name: "Eating Out", amount: 200, required: false },
-  { name: "New Sneakers", amount: 150, required: false },
-  { name: "Savings", amount: 400, required: false },
-  { name: "Transportation", amount: 100, required: true },
-  { name: "Emergency Fund", amount: 200, required: false },
-]}];
+const budgetScenarios = [
+  { title: "First Job Budget", income: 2000, expenses: [{ name: "Rent", amount: 800, required: true }, { name: "Groceries", amount: 300, required: true }, { name: "Phone Bill", amount: 60, required: true }, { name: "Transportation", amount: 100, required: true }, { name: "Streaming Services", amount: 45, required: false }, { name: "Eating Out", amount: 200, required: false }, { name: "New Sneakers", amount: 150, required: false }, { name: "Savings", amount: 400, required: false }, { name: "Emergency Fund", amount: 200, required: false }] },
+  { title: "College Student Budget", income: 1200, expenses: [{ name: "Tuition (monthly)", amount: 400, required: true }, { name: "Groceries", amount: 200, required: true }, { name: "Transportation", amount: 80, required: true }, { name: "Phone Bill", amount: 45, required: true }, { name: "Textbooks", amount: 100, required: false }, { name: "Eating Out", amount: 150, required: false }, { name: "Entertainment", amount: 80, required: false }, { name: "Savings", amount: 200, required: false }] },
+  { title: "Side Hustle Budget", income: 3500, expenses: [{ name: "Rent", amount: 1100, required: true }, { name: "Car Payment", amount: 350, required: true }, { name: "Insurance", amount: 150, required: true }, { name: "Groceries", amount: 400, required: true }, { name: "Streaming x3", amount: 45, required: false }, { name: "Gym Membership", amount: 50, required: false }, { name: "Dining Out", amount: 300, required: false }, { name: "Clothing", amount: 150, required: false }, { name: "Investments", amount: 500, required: false }, { name: "Emergency Fund", amount: 200, required: false }] },
+  { title: "Minimum Wage Challenge", income: 1400, expenses: [{ name: "Shared Rent", amount: 500, required: true }, { name: "Groceries", amount: 250, required: true }, { name: "Bus Pass", amount: 60, required: true }, { name: "Phone", amount: 40, required: true }, { name: "Utilities share", amount: 80, required: true }, { name: "Eating Out", amount: 120, required: false }, { name: "Savings", amount: 150, required: false }, { name: "Entertainment", amount: 60, required: false }, { name: "Clothing", amount: 80, required: false }] },
+  { title: "Post-Graduation Budget", income: 4200, expenses: [{ name: "Rent", amount: 1400, required: true }, { name: "Student Loan Payment", amount: 350, required: true }, { name: "Groceries", amount: 350, required: true }, { name: "Car & Insurance", amount: 450, required: true }, { name: "Phone", amount: 70, required: true }, { name: "Gym", amount: 50, required: false }, { name: "Dining Out", amount: 250, required: false }, { name: "Streaming", amount: 40, required: false }, { name: "Savings", amount: 500, required: false }, { name: "401k Contribution", amount: 420, required: false }, { name: "Emergency Fund", amount: 200, required: false }] },
+];
 
 const BudgetGame = ({ earnGems }: { earnGems?: (n: number) => void }) => {
-  const scenario = budgetScenarios[0];
+  const [scenarioIndex, setScenarioIndex] = useState(0);
+  const scenario = budgetScenarios[scenarioIndex];
   const [selected, setSelected] = useState<Set<number>>(new Set(scenario.expenses.map((e, i) => e.required ? i : -1).filter(i => i >= 0)));
+  const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    setSelected(new Set(budgetScenarios[scenarioIndex].expenses.map((e, i) => e.required ? i : -1).filter(i => i >= 0)));
+    setSubmitted(false);
+  }, [scenarioIndex]);
+
   const totalSpent = scenario.expenses.reduce((sum, e, i) => sum + (selected.has(i) ? e.amount : 0), 0);
   const remaining = scenario.income - totalSpent;
-  const toggle = (i: number) => { if (scenario.expenses[i].required) return; setSelected((prev) => { const next = new Set(prev); next.has(i) ? next.delete(i) : next.add(i); return next; }); };
+  const toggle = (i: number) => { if (scenario.expenses[i].required || submitted) return; setSelected((prev) => { const next = new Set(prev); next.has(i) ? next.delete(i) : next.add(i); return next; }); };
 
   return (
     <div className="space-y-4">
+      <p className="text-xs font-bold text-muted-foreground mb-1">{scenario.title} — Scenario {scenarioIndex + 1}/5</p>
       <div className="flex items-center justify-between">
         <div><p className="text-xs text-muted-foreground font-medium">Monthly Income</p><p className="text-2xl font-extrabold font-display">${scenario.income.toLocaleString()}</p></div>
-        <div className="text-right"><p className="text-xs text-muted-foreground font-medium">Remaining</p><p className={cn("text-2xl font-extrabold font-display", remaining >= 0 ? "text-emerald-600" : "text-red-500")}>${remaining.toLocaleString()}</p></div>
+        <div className="text-right"><p className="text-xs text-muted-foreground font-medium">Remaining</p><p className={cn("text-2xl font-extrabold font-display", remaining >= 0 ? "text-emerald-600" : "text-destructive")}>${remaining.toLocaleString()}</p></div>
       </div>
       <p className="text-sm text-muted-foreground">Select expenses. Required ones can't be removed.</p>
       <div className="space-y-2">
         {scenario.expenses.map((expense, i) => (
-          <button key={i} onClick={() => toggle(i)} className={cn("w-full bg-card rounded-xl border p-3 flex items-center justify-between transition-all text-left", selected.has(i) ? "border-primary/30 bg-primary/5" : "border-border opacity-60", expense.required && "cursor-default")}>
+          <button key={i} onClick={() => toggle(i)} className={cn("w-full bg-card rounded-xl border p-3 flex items-center justify-between transition-all text-left", selected.has(i) ? "border-primary/30 bg-primary/5" : "border-border opacity-60", (expense.required || submitted) && "cursor-default")}>
             <div className="flex items-center gap-2">
               <div className={cn("w-5 h-5 rounded-md border-2 flex items-center justify-center", selected.has(i) ? "bg-primary border-primary text-white" : "border-muted-foreground")}>
                 {selected.has(i) && <span className="text-xs">✓</span>}
@@ -154,8 +159,28 @@ const BudgetGame = ({ earnGems }: { earnGems?: (n: number) => void }) => {
           </button>
         ))}
       </div>
-      {remaining >= 0 && remaining < 200 && <p className="text-xs text-amber-600 font-medium">Consider saving more from remaining funds.</p>}
-      {remaining < 0 && <p className="text-xs text-red-500 font-medium">Over budget! Remove optional expenses.</p>}
+      {!submitted && remaining >= 0 && remaining < 200 && <p className="text-xs text-amber-600 font-medium">Consider saving more from remaining funds.</p>}
+      {!submitted && remaining < 0 && <p className="text-xs text-destructive font-medium">Over budget! Remove optional expenses.</p>}
+      {!submitted && (
+        <Button onClick={() => setSubmitted(true)} className="w-full rounded-xl font-bold" disabled={remaining < 0}>
+          {remaining >= 0 ? "✓ Lock In Budget" : "Over Budget!"}
+        </Button>
+      )}
+      {submitted && (
+        <div className="rounded-xl border-2 border-emerald-300 bg-emerald-50 p-4 text-center space-y-2">
+          <p className="text-lg font-bold">✅ Budget Locked!</p>
+          <p className="text-sm text-muted-foreground">You kept ${remaining.toLocaleString()} remaining from ${scenario.income.toLocaleString()} income.</p>
+          <Button size="sm" variant="outline" onClick={() => setSubmitted(false)} className="rounded-xl"><RotateCcw className="w-3 h-3 mr-1" /> Try Again</Button>
+          {scenarioIndex < budgetScenarios.length - 1 && (
+            <Button size="sm" onClick={() => setScenarioIndex(i => i + 1)} className="rounded-xl mt-2 w-full font-bold">
+              Next Scenario →
+            </Button>
+          )}
+          {scenarioIndex === budgetScenarios.length - 1 && (
+            <p className="text-xs text-emerald-600 font-bold mt-2 text-center">🎉 You completed all 5 scenarios!</p>
+          )}
+        </div>
+      )}
     </div>
   );
 };
@@ -172,24 +197,26 @@ const quizQuestions = [
   { q: "A Roth IRA is taxed:", options: ["When you withdraw", "When you contribute", "Never", "Twice"], answer: 1 },
   { q: "What is net worth?", options: ["Your salary", "Assets minus liabilities", "Total savings", "Monthly income"], answer: 1 },
   { q: "The 24-hour rule helps you avoid:", options: ["Paying bills late", "Impulse purchases", "Low credit scores", "Tax penalties"], answer: 1 },
-  { q: "Which account typically earns higher interest?", options: ["Checking account", "High-yield savings account", "Student loan", "Credit card"], answer: 1 },
+  { q: "Which account typically earns higher interest?", options: ["Checking account", "High-yield savings account", "Student loan account", "Credit card account"], answer: 1 },
   { q: "What is an index fund?", options: ["A list of stocks", "A fund tracking a market index like the S&P 500", "A type of savings account", "A government bond"], answer: 1 },
   { q: "Lifestyle inflation means:", options: ["Prices rising over time", "Spending more as you earn more", "Investing your raises", "Reducing expenses"], answer: 1 },
   { q: "What does 'pay yourself first' mean?", options: ["Buy treats first", "Save before spending on wants", "Pay bills first", "Borrow money upfront"], answer: 1 },
-  { q: "A credit score of 750 is considered:", options: ["Poor", "Fair", "Good to Excellent", "Perfect"], answer: 2 },
-  { q: "What is a 401(k)?", options: ["A savings account", "An employer-sponsored retirement plan", "A credit card", "A type of loan"], answer: 1 },
-  { q: "Dollar-cost averaging means:", options: ["Buying at the lowest price", "Investing a fixed amount regularly", "Selling when prices drop", "Timing the market"], answer: 1 },
-  { q: "What is an emergency fund for?", options: ["Vacations", "Unexpected expenses", "Investments", "Luxury purchases"], answer: 1 },
-  { q: "Which is NOT a type of investment?", options: ["Stocks", "Bonds", "Checking account", "Real estate"], answer: 2 },
-  { q: "Compound growth benefits most from:", options: ["High fees", "Time", "Day trading", "Luck"], answer: 1 },
+  { q: "A credit score of 750 is considered:", options: ["Poor", "Fair", "Good to Excellent", "Not real"], answer: 2 },
+  { q: "The biggest factor in your credit score is:", options: ["Length of history", "Payment history (35%)", "Credit mix", "New credit"], answer: 1 },
+  { q: "What is an emergency fund?", options: ["Money for vacations", "3-6 months of expenses saved", "A type of investment", "A bank loan"], answer: 1 },
+  { q: "Employer 401k matching is:", options: ["A tax penalty", "Free money you should always take", "A type of loan", "Optional for employers"], answer: 1 },
+  { q: "What is opportunity cost?", options: ["The price of opportunities", "Money spent here can't grow elsewhere", "The cheapest option available", "A type of interest"], answer: 1 },
+  { q: "Dollar-cost averaging means:", options: ["Always buying at the lowest price", "Investing a fixed amount regularly regardless of price", "Only buying when markets drop", "Splitting investments 50/50"], answer: 1 },
 ];
 
-const QuizGame = ({ earnGems }: { earnGems?: (n: number) => void }) => {
+const QuizGame = ({ earnGems }: { earnGems?: (n: number) => Promise<void> }) => {
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [finished, setFinished] = useState(false);
-  const [gemsAwarded, setGemsAwarded] = useState(false);
+  const [quizGemsClaimed, setQuizGemsClaimed] = useState(false);
+
+  const quizGems = score >= 18 ? 30 : score >= 14 ? 20 : score >= 10 ? 12 : score >= 6 ? 6 : 2;
 
   const handleAnswer = (i: number) => {
     if (selected !== null) return;
@@ -203,19 +230,21 @@ const QuizGame = ({ earnGems }: { earnGems?: (n: number) => void }) => {
 
   if (finished) {
     const pct = Math.round((score / quizQuestions.length) * 100);
-    const gems = getGemsFromScore(pct);
     const grade = getGrade(pct);
-    if (!gemsAwarded && earnGems) { earnGems(gems); setGemsAwarded(true); }
 
     return (
-      <div className="text-center py-8">
+      <div className="text-center py-8 space-y-3">
         <Trophy className="w-12 h-12 text-duo-gold mx-auto mb-4" />
         <p className="text-4xl font-black font-display mb-1">{grade}</p>
         <p className="text-xl font-extrabold font-display mb-2">{score}/{quizQuestions.length} Correct</p>
-        <p className="text-sm font-bold text-duo-blue flex items-center justify-center gap-1 mb-4">
-          <Diamond className="w-4 h-4 fill-duo-blue" /> +{gems} gems earned
-        </p>
-        <Button className="rounded-xl" onClick={() => { setCurrent(0); setScore(0); setSelected(null); setFinished(false); setGemsAwarded(false); }}>Play Again</Button>
+        {earnGems && !quizGemsClaimed ? (
+          <Button onClick={async () => { await earnGems(quizGems); setQuizGemsClaimed(true); toast.success(`+${quizGems} gems!`); }} className="rounded-xl font-bold bg-cyan-500 text-white w-full mb-2">
+            <Diamond className="w-4 h-4 mr-2" /> Claim {quizGems} Gems
+          </Button>
+        ) : quizGemsClaimed ? (
+          <p className="text-cyan-600 font-bold mb-2 text-center">✓ +{quizGems} gems!</p>
+        ) : null}
+        <Button className="rounded-xl w-full" variant="outline" onClick={() => { setCurrent(0); setScore(0); setSelected(null); setFinished(false); setQuizGemsClaimed(false); }}><RotateCcw className="w-4 h-4 mr-1" /> Play Again</Button>
       </div>
     );
   }
