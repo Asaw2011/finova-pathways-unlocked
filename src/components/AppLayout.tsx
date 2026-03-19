@@ -209,7 +209,7 @@ const RightSidebar = () => {
   const progress = nextRank ? ((xp - rank.min) / (nextRank.min - rank.min)) * 100 : 100;
 
   return (
-    <aside className="hidden xl:flex flex-col gap-4 w-72 shrink-0 sticky top-20 self-start pt-14 pr-4">
+    <aside className="hidden lg:flex flex-col gap-4 w-72 shrink-0 sticky top-20 self-start pt-14 pr-4">
       {/* Upgrade to Plus */}
       {!isPro && (
         <Link to="/shop" className="block rounded-2xl border-2 border-amber-400 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 p-4 space-y-2 hover:shadow-md transition-shadow">
@@ -426,8 +426,8 @@ const AppLayoutInner = () => {
 
         {/* Main content + Right sidebar */}
         <main className="flex-1 overflow-auto pb-20 md:pb-0 pt-14 md:ml-[64px]">
-          <div className="flex max-w-6xl mx-auto">
-            <div className="flex-1 min-w-0 p-4 md:p-8 max-w-3xl">
+          <div className="flex justify-center">
+            <div className="flex-1 min-w-0 p-4 md:p-8 max-w-2xl">
               <Outlet />
             </div>
             <RightSidebar />
