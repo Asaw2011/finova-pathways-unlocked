@@ -402,7 +402,7 @@ const AppLayoutInner = () => {
             className="flex items-center gap-2.5 px-2 py-2 rounded-xl text-sm font-bold text-muted-foreground hover:bg-muted transition-colors"
           >
             <LogOut className="w-5 h-5 shrink-0" />
-            <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 whitespace-nowrap">Sign Out</span>
+            <span className="whitespace-nowrap">Sign Out</span>
           </button>
         </aside>
 
