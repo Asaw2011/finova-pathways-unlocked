@@ -7,13 +7,13 @@ import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
 
 const TIERS = [
-  { name: "Bronze", xp: 0, color: "bg-amber-700", textColor: "text-amber-700", bgLight: "bg-amber-100", icon: Shield, emoji: "🥉" },
-  { name: "Silver", xp: 500, color: "bg-gray-400", textColor: "text-gray-500", bgLight: "bg-gray-100", icon: Shield, emoji: "🥈" },
-  { name: "Gold", xp: 1500, color: "bg-yellow-500", textColor: "text-yellow-600", bgLight: "bg-yellow-100", icon: Star, emoji: "🥇" },
-  { name: "Diamond", xp: 4000, color: "bg-cyan-500", textColor: "text-cyan-600", bgLight: "bg-cyan-100", icon: Zap, emoji: "💎" },
-  { name: "Elite", xp: 8000, color: "bg-purple-600", textColor: "text-purple-600", bgLight: "bg-purple-100", icon: Flame, emoji: "🔥" },
-  { name: "Titan", xp: 15000, color: "bg-red-600", textColor: "text-red-600", bgLight: "bg-red-100", icon: Trophy, emoji: "⚡" },
-  { name: "Champion", xp: 30000, color: "bg-gradient-to-r from-amber-500 to-red-600", textColor: "text-amber-600", bgLight: "bg-amber-50", icon: Crown, emoji: "👑" },
+  { name: "Bronze", xp: 0, color: "bg-amber-700", textColor: "text-amber-700", bgLight: "bg-amber-100", icon: Shield },
+  { name: "Silver", xp: 500, color: "bg-gray-400", textColor: "text-gray-500", bgLight: "bg-gray-100", icon: Shield },
+  { name: "Gold", xp: 1500, color: "bg-yellow-500", textColor: "text-yellow-600", bgLight: "bg-yellow-100", icon: Star },
+  { name: "Diamond", xp: 4000, color: "bg-cyan-500", textColor: "text-cyan-600", bgLight: "bg-cyan-100", icon: Zap },
+  { name: "Elite", xp: 8000, color: "bg-purple-600", textColor: "text-purple-600", bgLight: "bg-purple-100", icon: Flame },
+  { name: "Titan", xp: 15000, color: "bg-red-600", textColor: "text-red-600", bgLight: "bg-red-100", icon: Trophy },
+  { name: "Champion", xp: 30000, color: "bg-gradient-to-r from-amber-500 to-red-600", textColor: "text-amber-600", bgLight: "bg-amber-50", icon: Crown },
 ];
 
 const getTier = (xp: number) => {
