@@ -89,15 +89,14 @@ const sideNavItems: NavItem[] = [
     { to: "/courses", label: "Courses" },
     { to: "/quests", label: "Quests" },
     { to: "/mistakes", label: "Review" },
+    { to: "/paper-trading", label: "Trade" },
   ]},
   { to: "/money-coach", label: "Coach", icon: Bot },
   { to: "/games", label: "Games", icon: Gamepad2 },
   { to: "/rankings", label: "League", icon: Trophy, sub: [
     { to: "/awards", label: "Awards" },
   ]},
-  { to: "/paper-trading", label: "Trade", icon: BarChart3, sub: [
-    { to: "/shop", label: "Shop" },
-  ]},
+  { to: "/shop", label: "Shop", icon: ShoppingBag },
   { to: "/profile", label: "Profile", icon: User },
 ];
 
