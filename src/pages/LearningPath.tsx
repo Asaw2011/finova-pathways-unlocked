@@ -352,72 +352,14 @@ const LearningPath = () => {
               {/* Step connector between modules */}
               {mi > 0 && (
                 <div className="flex flex-col items-center mb-4">
-                  {/* Animated staircase steps between modules */}
-                  {[0, 1, 2].map((stepIdx) => {
+                  {[0, 1, 2, 3, 4].map((stepIdx) => {
                     const prevDone = modules[mi - 1].lessons.every(l => completedLessons.has(l.id)) && completedQuizzes.has(modules[mi - 1].id);
                     return (
                       <motion.div
                         key={stepIdx}
                         initial={{ scaleY: 0 }}
                         animate={{ scaleY: 1 }}
-                        transition={{ delay: mi * 0.08 + stepIdx * 0.08, duration: 0.2 }}
-                        className={cn(
-                          "w-2 h-4 rounded-full my-0.5 transition-colors duration-500",
-                          prevDone ? colors.bg : "bg-border"
-                        )}
-                        style={{ transformOrigin: "top" }}
-                      />
-                    );
-                  })}
-
-                  {/* Goal milestone card */}
-                  {milestone && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: mi * 0.08 + 0.3, type: "spring" }}
-                      className={cn(
-                        "flex items-center gap-3 px-4 py-3 rounded-2xl border-2 my-2 w-full",
-                        isModuleUnlocked
-                          ? cn(colors.light, colors.border)
-                          : "bg-muted/50 border-border opacity-60"
-                      )}
-                    >
-                      <motion.div
-                        animate={isModuleUnlocked && !isModuleComplete ? { scale: [1, 1.15, 1] } : {}}
-                        transition={{ repeat: Infinity, duration: 2 }}
-                      >
-                        {(() => { const MIcon = milestone.icon; return <MIcon className={cn("w-7 h-7", isModuleUnlocked ? colors.text : "text-muted-foreground")} />; })()}
-                      </motion.div>
-                      <div className="flex-1 min-w-0">
-                        <p className={cn("text-sm font-extrabold", isModuleUnlocked ? colors.text : "text-muted-foreground")}>
-                          {milestone.label}
-                        </p>
-                        <p className="text-xs text-muted-foreground font-semibold">
-                          Reward: {milestone.reward}
-                        </p>
-                      </div>
-                      {isModuleComplete && quizCompleted && (
-                        <motion.div
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          transition={{ type: "spring", stiffness: 400 }}
-                        >
-                          <CheckCircle2 className="w-6 h-6 text-primary" />
-                        </motion.div>
-                      )}
-                    </motion.div>
-                  )}
-
-                  {/* Post-milestone steps */}
-                  {[0, 1].map((stepIdx) => {
-                    const prevDone = modules[mi - 1].lessons.every(l => completedLessons.has(l.id)) && completedQuizzes.has(modules[mi - 1].id);
-                    return (
-                      <motion.div
-                        key={`post-${stepIdx}`}
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        transition={{ delay: mi * 0.08 + 0.5 + stepIdx * 0.08, duration: 0.2 }}
+                        transition={{ delay: mi * 0.08 + stepIdx * 0.06, duration: 0.2 }}
                         className={cn(
                           "w-2 h-4 rounded-full my-0.5 transition-colors duration-500",
                           prevDone ? colors.bg : "bg-border"
