@@ -366,7 +366,7 @@ const AppLayoutInner = () => {
                     )}
                   >
                     <Icon className="w-5 h-5 shrink-0" />
-                    <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 whitespace-nowrap flex-1">{label}</span>
+                    <span className="whitespace-nowrap flex-1">{label}</span>
                     {sub && (
                       <ChevronDown className={cn(
                         "w-3.5 h-3.5 shrink-0 opacity-0 group-hover/sidebar:opacity-100 transition-all duration-200",
