@@ -234,9 +234,9 @@ const Awards = () => {
                       </span>
                     </div>
                     <h3 className="font-display font-extrabold text-lg mb-1">
-                      {cert.courses?.title || "Financial Literacy"}
+                      {getModuleTitle(cert)}
                     </h3>
-                    <p className="text-xs text-muted-foreground mb-1">{cert.courses?.category || "Learning Path"}</p>
+                    <p className="text-xs text-muted-foreground mb-1">{getModuleCategory(cert)}</p>
                     <p className="text-xs text-muted-foreground mb-4">
                       Issued: {new Date(cert.issued_at).toLocaleDateString()} • ID: {cert.certificate_number}
                     </p>
