@@ -18,7 +18,7 @@ const scenarios = [
 
 const TIMER_SECONDS = 20;
 
-const PaycheckBreakdown = ({ earnGems }: { earnGems: (n: number) => Promise<void> }) => {
+const PaycheckBreakdown = ({ earnGems, onComplete, personalBest, gemsMultiplier = 1 }: { earnGems: (n: number) => Promise<void>; onComplete?: (score: number) => void; personalBest?: number | null; gemsMultiplier?: number }) => {
   const [round, setRound] = useState(0);
   const [guess, setGuess] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -72,14 +72,23 @@ const PaycheckBreakdown = ({ earnGems }: { earnGems: (n: number) => Promise<void
         </div>
 
         <div className="text-center space-y-3">
+          {personalBest !== null && personalBest !== undefined && totalScore > personalBest && (
+            <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="bg-yellow-400 text-yellow-900 rounded-xl p-3 font-extrabold text-center mb-3 text-sm">
+              🎉 NEW PERSONAL BEST! {totalScore} beats your old record of {personalBest}!
+            </motion.div>
+          )}
+          {personalBest === null && (
+            <div className="bg-emerald-100 text-emerald-800 rounded-xl p-2 text-xs font-bold text-center mb-3">✅ First time playing — score saved!</div>
+          )}
           <p className="text-5xl font-black font-display">{grade}</p>
           <p className="text-2xl font-bold">{totalScore}/100</p>
           <p className="text-sm text-muted-foreground">{summary}</p>
           {!gemsClaimed ? (
-            <Button onClick={async () => { await earnGems(gems); setGemsClaimed(true); toast.success(`+${gems} gems earned!`); }} className="w-full rounded-xl font-bold bg-cyan-500 hover:bg-cyan-600 text-white mb-3">
-              <Diamond className="w-4 h-4 mr-1" /> Claim {gems} Gems
+            <Button onClick={async () => { await earnGems(gems * gemsMultiplier); onComplete?.(totalScore); setGemsClaimed(true); toast.success(`+${gems * gemsMultiplier} gems earned!`); }} className="w-full rounded-xl font-bold bg-cyan-500 hover:bg-cyan-600 text-white mb-3">
+              <Diamond className="w-4 h-4 mr-1" /> Claim {gems * gemsMultiplier} Gems
+              {gemsMultiplier === 2 && <span className="ml-2 text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-bold">2× DAILY</span>}
             </Button>
-          ) : <p className="text-sm font-bold text-cyan-600">✓ +{gems} gems claimed!</p>}
+          ) : <p className="text-sm font-bold text-cyan-600">✓ +{gems * gemsMultiplier} gems claimed!</p>}
           <Button variant="outline" onClick={resetGame} className="w-full rounded-xl font-bold"><RotateCcw className="w-4 h-4 mr-1" /> Play Again</Button>
         </div>
       </motion.div>
@@ -98,7 +107,6 @@ const PaycheckBreakdown = ({ earnGems }: { earnGems: (n: number) => Promise<void
             <div key={i} className={cn("w-8 h-2 rounded-full transition-all", i < round ? "bg-primary" : i === round ? "bg-primary/50" : "bg-muted")} />
           ))}
         </div>
-
         <div className={cn("flex items-center gap-1 font-mono font-bold text-sm px-3 py-1 rounded-full", timer <= 5 ? "bg-destructive/10 text-destructive animate-pulse" : "bg-muted text-muted-foreground")}>
           <Clock className="w-3.5 h-3.5" /> {timer}s
         </div>
@@ -112,12 +120,10 @@ const PaycheckBreakdown = ({ earnGems }: { earnGems: (n: number) => Promise<void
             <p className="text-xs text-muted-foreground">{scenario.state} • Round {round + 1}/5</p>
           </div>
         </div>
-
         <div className="flex items-baseline justify-between">
           <span className="text-sm text-muted-foreground">Gross Monthly Pay:</span>
           <span className="text-2xl font-black font-display">${scenario.grossMonthly.toLocaleString()}</span>
         </div>
-
         <div className="space-y-2 border-t border-border pt-3">
           {scenario.deductions.filter(d => d.rate > 0).map(d => (
             <div key={d.name} className="flex items-center justify-between text-sm">
@@ -126,7 +132,6 @@ const PaycheckBreakdown = ({ earnGems }: { earnGems: (n: number) => Promise<void
             </div>
           ))}
         </div>
-
         {!submitted && <button onClick={() => setShowHint(v => !v)} className="mt-3 text-xs text-primary font-bold hover:underline">{showHint ? "Hide hint ↑" : "💡 Need a hint?"}</button>}
         {showHint && !submitted && <p className="text-xs text-muted-foreground italic bg-muted/50 rounded-lg p-2">{scenario.hint}</p>}
       </div>
