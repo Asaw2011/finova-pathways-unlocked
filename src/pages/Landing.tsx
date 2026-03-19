@@ -94,7 +94,7 @@ const Landing = () => {
       ))}
 
       {/* How It Works */}
-      <section className="px-6 py-16 md:py-20 bg-background">
+      <section className="px-6 py-16 md:py-20 bg-background texture-noise">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-extrabold font-display mb-10">How Finova Works</h2>
           <div className="grid sm:grid-cols-3 gap-6">
