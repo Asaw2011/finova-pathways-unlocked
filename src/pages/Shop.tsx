@@ -1,13 +1,9 @@
 import { useState } from "react";
 import { useGameEconomy } from "@/contexts/GameEconomyContext";
-import { Heart, Diamond, Snowflake, Play, Crown, Zap, Shield, BookOpen, Star } from "lucide-react";
+import { Heart, Diamond, Snowflake, Play, Crown, Zap, Shield, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { usePremiumAccess } from "@/hooks/usePremiumAccess";
 
 const XP_LEVELS = [
