@@ -168,9 +168,9 @@ const bottomNavItems = [
   { to: "/profile", label: "Profile", icon: User },
 ];
 const XP_LEVELS = [
-  { name: "Penny", min: 0 }, { name: "Nickel", min: 100 }, { name: "Dime", min: 300 },
-  { name: "Quarter", min: 600 }, { name: "Dollar", min: 1000 }, { name: "Investor", min: 2000 },
-  { name: "Trader", min: 4000 }, { name: "Banker", min: 7000 }, { name: "Tycoon", min: 12000 }, { name: "Quant", min: 20000 },
+  { name: "Bronze", min: 0 }, { name: "Silver", min: 200 }, { name: "Gold", min: 500 },
+  { name: "Platinum", min: 1000 }, { name: "Diamond", min: 2000 }, { name: "Master", min: 4000 },
+  { name: "Grandmaster", min: 7000 }, { name: "Champion", min: 12000 }, { name: "Legend", min: 20000 },
 ];
 
 const getRank = (xp: number) => {
