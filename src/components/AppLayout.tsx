@@ -340,12 +340,12 @@ const AppLayoutInner = () => {
         <TopBar />
 
         {/* Desktop Sidebar */}
-        <aside className="hidden md:flex w-[64px] hover:w-[200px] group/sidebar flex-col border-r border-border bg-background py-3 px-2 fixed left-0 top-14 bottom-0 z-40 transition-all duration-200 overflow-hidden">
+        <aside className="hidden md:flex w-[200px] flex-col border-r border-border bg-background py-3 px-2 fixed left-0 top-14 bottom-0 z-40">
           <Link to="/learning-path" className="flex items-center gap-2 px-1.5 mb-4">
             <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shrink-0">
               <TrendingUp className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="text-lg font-black font-display text-foreground opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 whitespace-nowrap">FinOva</span>
+            <span className="text-lg font-black font-display text-foreground whitespace-nowrap">FinOva</span>
           </Link>
 
           <nav className="flex-1 space-y-0.5 overflow-y-auto">
