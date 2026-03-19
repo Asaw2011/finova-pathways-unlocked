@@ -541,7 +541,7 @@ const LearningPath = () => {
                         {completed ? (
                           <CheckCircle2 className="w-7 h-7" />
                         ) : isCurrent ? (
-                          <span className="text-2xl">{emoji}</span>
+                          <ModIcon className="w-6 h-6" />
                         ) : (
                           <Lock className="w-5 h-5" />
                         )}
