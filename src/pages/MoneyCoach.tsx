@@ -14,12 +14,14 @@ type Msg = { role: "user" | "assistant"; content: string };
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/money-coach`;
 
 const suggestedQuestions = [
-  "Based on my profile, what should I focus on first?",
-  "How do I start saving money effectively?",
-  "What's the difference between a debit and credit card?",
-  "How does compound interest work?",
-  "What's the 50/30/20 budgeting rule?",
-  "How do I build my credit score?",
+  "How do I start budgeting?",
+  "Explain compound interest simply",
+  "What credit score do I need for an apartment?",
+  "How much should I save each month?",
+  "What's the difference between a Roth and Traditional IRA?",
+  "How do I start investing with $100?",
+  "What is an emergency fund?",
+  "How do I improve my credit score fast?",
 ];
 
 const MoneyCoach = () => {

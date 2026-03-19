@@ -108,7 +108,7 @@ const Rankings = () => {
 
   const getProfileName = (userId: string) => {
     const p = profiles?.find(pr => pr.user_id === userId);
-    return p?.display_name || "Learner";
+    return p?.display_name || "Anonymous Learner";
   };
 
   const userRank = leaderboard?.findIndex(r => r.user_id === user?.id);
