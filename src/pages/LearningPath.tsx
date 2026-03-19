@@ -286,13 +286,13 @@ const LearningPath = () => {
 
   // Goal milestones between modules
   const goalMilestones = [
-    { after: 0, emoji: "🎯", label: "Goal: Understand Your Money", reward: "Money Master Badge" },
-    { after: 1, emoji: "🏆", label: "Goal: Bank Like a Pro", reward: "Savings Pro Badge" },
-    { after: 2, emoji: "💪", label: "Goal: Budget With Confidence", reward: "Budget Boss Badge" },
-    { after: 3, emoji: "⚡", label: "Goal: Master Your Credit", reward: "Credit Pro Badge" },
-    { after: 4, emoji: "🚀", label: "Goal: Start Investing", reward: "Investor Badge" },
-    { after: 5, emoji: "👑", label: "Goal: Build Real Wealth", reward: "Wealth Builder Badge" },
-    { after: 6, emoji: "🎓", label: "FINAL GOAL: Financial Freedom", reward: "Independence Champion" },
+    { after: 0, icon: Target, label: "Goal: Understand Your Money", reward: "Money Master Badge" },
+    { after: 1, icon: Trophy, label: "Goal: Bank Like a Pro", reward: "Savings Pro Badge" },
+    { after: 2, icon: Zap, label: "Goal: Budget With Confidence", reward: "Budget Boss Badge" },
+    { after: 3, icon: Shield, label: "Goal: Master Your Credit", reward: "Credit Pro Badge" },
+    { after: 4, icon: TrendingUp, label: "Goal: Start Investing", reward: "Investor Badge" },
+    { after: 5, icon: Crown, label: "Goal: Build Real Wealth", reward: "Wealth Builder Badge" },
+    { after: 6, icon: GraduationCap, label: "FINAL GOAL: Financial Freedom", reward: "Independence Champion" },
   ];
 
   const totalModules = modules.length;
