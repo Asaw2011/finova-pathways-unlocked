@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Award, Flame, Zap, ChevronRight, Trophy, Target, Lock, CheckCircle2, Map, BookOpen, Bot, Heart, Diamond, ShoppingBag, AlertTriangle, Crown } from "lucide-react";
+import { Award, Flame, Zap, ChevronRight, Trophy, Target, Lock, CheckCircle2, Map, BookOpen, Bot, Heart, Diamond, ShoppingBag, AlertTriangle, Crown, MessageSquare, Shield } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -11,8 +11,8 @@ import { modules } from "@/pages/LearningPath";
 import { useGameEconomy } from "@/contexts/GameEconomyContext";
 import { usePremiumAccess } from "@/hooks/usePremiumAccess";
 import FinancialAssessment from "@/components/onboarding/FinancialAssessment";
+import OnboardingModal from "@/components/OnboardingModal";
 
-// Badge definitions for achievements
 const achievementBadges = [
   { id: "first-lesson", name: "First Step", desc: "Complete your first lesson", icon: "🎯", check: (lessons: number) => lessons >= 1 },
   { id: "five-lessons", name: "Getting Started", desc: "Complete 5 lessons", icon: "📚", check: (lessons: number) => lessons >= 5 },
@@ -27,6 +27,16 @@ const streakBadges = [
   { id: "streak-30", name: "Monthly Master", desc: "30-day learning streak", icon: "💎", check: (streak: number) => streak >= 30 },
 ];
 
+const motivationalQuotes = [
+  { text: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb" },
+  { text: "Do not save what is left after spending, but spend what is left after saving.", author: "Warren Buffett" },
+  { text: "Financial freedom is available to those who learn about it and work for it.", author: "Robert Kiyosaki" },
+  { text: "It's not how much money you make, but how much money you keep.", author: "Robert Kiyosaki" },
+  { text: "The habit of saving is itself an education.", author: "T.T. Munger" },
+  { text: "Wealth is not about having a lot of money; it's about having a lot of options.", author: "Chris Rock" },
+  { text: "You must gain control over your money or the lack of it will forever control you.", author: "Dave Ramsey" },
+];
+
 const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -34,8 +44,8 @@ const Dashboard = () => {
   const { hearts, maxHearts, gems, streakFreezes } = useGameEconomy();
   const { hasAccess: isPlusUser } = usePremiumAccess();
   const [assessmentDone, setAssessmentDone] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
-  // Check if user has completed financial assessment (for ALL users)
   const { data: financialProfile, isLoading: profileLoading } = useQuery({
     queryKey: ["financial-profile", user?.id],
     queryFn: async () => {
@@ -59,6 +69,17 @@ const Dashboard = () => {
     },
     enabled: !!user,
   });
+
+  // Check onboarding
+  useEffect(() => {
+    if (user && profile) {
+      const onboarded = localStorage.getItem(`finova_onboarded_${user.id}`);
+      const profileOnboarded = (profile as any).onboarding_completed;
+      if (!onboarded && !profileOnboarded && (!profile.display_name || profile.display_name === user.email?.split("@")[0])) {
+        setShowOnboarding(true);
+      }
+    }
+  }, [user, profile]);
 
   const { data: xpRecords } = useQuery({
     queryKey: ["user-xp", user?.id],
@@ -87,20 +108,22 @@ const Dashboard = () => {
     enabled: !!user,
   });
 
-  const { data: certificates } = useQuery({
-    queryKey: ["certificates", user?.id],
-    queryFn: async () => {
-      const { data } = await supabase.from("certificates").select("*").eq("user_id", user!.id);
-      return data ?? [];
-    },
-    enabled: !!user,
-  });
-
   const totalXP = xpRecords?.reduce((sum, x) => sum + x.xp_amount, 0) ?? 0;
   const lessonsCompleted = xpRecords?.filter(x => x.source === "lesson").length ?? 0;
   const completedLessons = new Set(xpRecords?.filter(x => x.source === "lesson").map(x => x.source_id) ?? []);
   const completedQuizzes = new Set(xpRecords?.filter(x => x.source === "unit-quiz").map(x => x.source_id) ?? []);
   const currentStreak = streak?.current_streak ?? 0;
+
+  // Weekly summary
+  const getWeekStart = () => {
+    const d = new Date();
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    return new Date(d.getFullYear(), d.getMonth(), diff).toISOString();
+  };
+  const weekStart = getWeekStart();
+  const weekXP = xpRecords?.filter(x => x.earned_at >= weekStart).reduce((s, x) => s + x.xp_amount, 0) ?? 0;
+  const weekLessons = xpRecords?.filter(x => x.source === "lesson" && x.earned_at >= weekStart).length ?? 0;
 
   const earnedAchievements = achievementBadges.filter(b => b.check(lessonsCompleted));
   const earnedStreaks = streakBadges.filter(b => b.check(currentStreak));
@@ -141,12 +164,12 @@ const Dashboard = () => {
   };
 
   const nextLesson = findNextLesson();
+  const allComplete = !nextLesson;
 
   const totalLessons = modules.reduce((sum, m) => sum + m.lessons.length, 0);
   const progressPercent = Math.round((lessonsCompleted / totalLessons) * 100);
 
   const currentModule = nextLesson?.module ?? modules[modules.length - 1];
-  const currentModuleIndex = nextLesson?.moduleIndex ?? modules.length - 1;
 
   const stats = [
     { label: "Hearts", value: `${hearts}/${maxHearts}`, icon: Heart, color: "bg-red-100 text-red-500" },
@@ -157,6 +180,10 @@ const Dashboard = () => {
 
   const sectionColors = ["bg-emerald-500", "bg-blue-500", "bg-purple-500", "bg-amber-500", "bg-pink-500", "bg-teal-500", "bg-sky-500", "bg-violet-500"];
   const sectionTextColors = ["text-emerald-600", "text-blue-600", "text-purple-600", "text-amber-600", "text-pink-600", "text-teal-600", "text-sky-600", "text-violet-600"];
+
+  // Daily quote
+  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
+  const dailyQuote = motivationalQuotes[dayOfYear % motivationalQuotes.length];
 
   if (needsAssessment) {
     return (
@@ -172,6 +199,9 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6">
+      {/* Onboarding Modal */}
+      <OnboardingModal open={showOnboarding} onClose={() => setShowOnboarding(false)} />
+
       {/* Welcome + Streak */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
         <div>
@@ -185,6 +215,17 @@ const Dashboard = () => {
           <span className="font-bold text-orange-600">{currentStreak} day streak</span>
         </div>
       </motion.div>
+
+      {/* Streak Freeze Warning */}
+      {streakFreezes === 0 && currentStreak > 3 && (
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+          className="rounded-xl p-3 bg-amber-50 border border-amber-200 flex items-center gap-3">
+          <Shield className="w-5 h-5 text-amber-500 shrink-0" />
+          <p className="text-xs font-semibold text-amber-700">
+            ⚠️ Protect your {currentStreak}-day streak! <Link to="/shop" className="text-primary underline font-bold">Get a Streak Freeze in the Shop.</Link>
+          </p>
+        </motion.div>
+      )}
 
       {/* Stats */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -204,14 +245,36 @@ const Dashboard = () => {
         <DailyChallenge />
       </motion.div>
 
+      {/* Weekly Summary */}
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }}
+        className="bg-card rounded-2xl border border-border p-5 card-shadow">
+        <h3 className="font-bold font-display flex items-center gap-2 mb-3">
+          📊 This Week
+        </h3>
+        <div className="grid grid-cols-3 gap-3 text-center">
+          <div className="bg-muted rounded-xl p-3">
+            <p className="text-lg font-extrabold font-display">{weekLessons}</p>
+            <p className="text-[10px] text-muted-foreground font-semibold">Lessons</p>
+          </div>
+          <div className="bg-muted rounded-xl p-3">
+            <p className="text-lg font-extrabold font-display">{weekXP}</p>
+            <p className="text-[10px] text-muted-foreground font-semibold">XP Earned</p>
+          </div>
+          <div className="bg-muted rounded-xl p-3">
+            <p className="text-lg font-extrabold font-display">{currentStreak}</p>
+            <p className="text-[10px] text-muted-foreground font-semibold">Day Streak</p>
+          </div>
+        </div>
+      </motion.div>
+
       {/* Continue Learning CTA */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-        <Link to="/learning-path" className="block bg-primary rounded-2xl p-6 text-primary-foreground hover:opacity-95 transition-opacity card-shadow">
+        <Link to={allComplete ? "/awards" : "/learning-path"} className="block bg-primary rounded-2xl p-6 text-primary-foreground hover:opacity-95 transition-opacity card-shadow">
           <div className="flex items-center justify-between">
             <div className="flex-1">
-              <p className="text-sm font-semibold opacity-80">Continue Learning</p>
+              <p className="text-sm font-semibold opacity-80">{allComplete ? "🎉 All Lessons Complete!" : "Continue Learning"}</p>
               <h2 className="text-xl font-extrabold font-display mt-1">
-                {nextLesson ? `${currentModule.title}: ${nextLesson.isQuiz ? "Unit Quiz" : nextLesson.lesson?.title}` : "All lessons complete! 🎉"}
+                {allComplete ? "View your awards and certificates!" : `${currentModule.title}: ${nextLesson?.isQuiz ? "Unit Quiz" : nextLesson?.lesson?.title}`}
               </h2>
               <div className="flex items-center gap-4 mt-2">
                 <p className="text-sm opacity-80">{lessonsCompleted}/{totalLessons} lessons · {progressPercent}% complete</p>
@@ -241,14 +304,8 @@ const Dashboard = () => {
             const progress = Math.round((modCompleted / mod.lessons.length) * 100);
 
             return (
-              <Link
-                key={mod.id}
-                to="/learning-path"
-                className={cn(
-                  "bg-card rounded-2xl border border-border p-4 hover:shadow-md transition-all flex items-center gap-4",
-                  !isUnlocked && "opacity-50"
-                )}
-              >
+              <Link key={mod.id} to="/learning-path"
+                className={cn("bg-card rounded-2xl border border-border p-4 hover:shadow-md transition-all flex items-center gap-4", !isUnlocked && "opacity-50")}>
                 <div className={cn("w-11 h-11 rounded-xl flex items-center justify-center text-white font-extrabold text-sm shrink-0",
                   isComplete ? "bg-emerald-500" : isUnlocked ? sectionColors[mi % sectionColors.length] : "bg-muted-foreground/30"
                 )}>
@@ -331,6 +388,18 @@ const Dashboard = () => {
           </div>
         </motion.div>
       )}
+
+      {/* Motivational Quote */}
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}
+        className="bg-card rounded-2xl border border-border p-5 card-shadow">
+        <div className="flex items-start gap-3">
+          <MessageSquare className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm italic text-foreground/80">"{dailyQuote.text}"</p>
+            <p className="text-xs font-semibold text-muted-foreground mt-1">— {dailyQuote.author}</p>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 };

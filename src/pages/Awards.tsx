@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Award, Trophy, Share2, Medal, Star, Flame, BookOpen } from "lucide-react";
+import { Award, Trophy, Share2, Medal, Star, Flame, BookOpen, Printer } from "lucide-react";
+import { modules } from "@/pages/LearningPath";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -66,8 +67,11 @@ const Awards = () => {
   const lessonsCompleted = xpRecords?.filter(x => x.source === "lesson").length ?? 0;
   const currentStreak = streak?.current_streak ?? 0;
 
+  const getModuleTitle = (cert: any) => cert.courses?.title || modules.find(m => m.id === cert.course_id)?.title || "Financial Literacy";
+  const getModuleCategory = (cert: any) => cert.courses?.category || "Learning Path Module";
+
   const handleShare = (cert: any) => {
-    const text = `I just earned a Finova Certificate in ${cert.courses?.title || "Financial Literacy"}! 🎓 #Finova #FinancialLiteracy`;
+    const text = `I just earned a Finova Certificate in ${getModuleTitle(cert)}! 🎓 #Finova #FinancialLiteracy`;
     if (navigator.share) {
       navigator.share({ title: "Finova Certificate", text });
     } else {
@@ -75,6 +79,27 @@ const Awards = () => {
       toast.success("Copied to clipboard!");
     }
   };
+
+  const handlePrint = (cert: any) => {
+    const title = getModuleTitle(cert);
+    const name = profile?.display_name || "Learner";
+    const w = window.open("", "_blank");
+    if (!w) return;
+    w.document.write(`<html><head><title>Certificate</title><style>body{font-family:Georgia,serif;text-align:center;padding:60px;border:8px double #c4a35a;margin:40px;min-height:80vh;display:flex;flex-direction:column;justify-content:center}h1{color:#c4a35a;font-size:18px;letter-spacing:4px;margin-bottom:8px}h2{font-size:32px;margin:20px 0}p{color:#555;font-size:16px;line-height:1.6}</style></head><body><h1>FINOVA</h1><h2>Certificate of Completion</h2><p>This certifies that<br/><strong style="font-size:24px;color:#222">${name}</strong><br/>has successfully completed<br/><strong style="font-size:20px;color:#222">${title}</strong></p><p style="margin-top:40px;font-size:12px">Certificate #${cert.certificate_number}<br/>Issued: ${new Date(cert.issued_at).toLocaleDateString()}</p></body></html>`);
+    w.document.close();
+    w.print();
+  };
+
+  // profile data for print
+  const { data: profileData } = useQuery({
+    queryKey: ["profile", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase.from("profiles").select("*").eq("user_id", user!.id).single();
+      return data;
+    },
+    enabled: !!user,
+  });
+  const profile = profileData;
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -209,18 +234,23 @@ const Awards = () => {
                       </span>
                     </div>
                     <h3 className="font-display font-extrabold text-lg mb-1">
-                      {cert.courses?.title || "Financial Literacy"}
+                      {getModuleTitle(cert)}
                     </h3>
-                    <p className="text-xs text-muted-foreground mb-1">{cert.courses?.category || "Learning Path"}</p>
+                    <p className="text-xs text-muted-foreground mb-1">{getModuleCategory(cert)}</p>
                     <p className="text-xs text-muted-foreground mb-4">
                       Issued: {new Date(cert.issued_at).toLocaleDateString()} • ID: {cert.certificate_number}
                     </p>
                     {cert.score !== null && (
                       <p className="text-sm mb-4">Score: <span className="font-bold text-primary">{cert.score}%</span></p>
                     )}
-                    <Button size="sm" variant="outline" onClick={() => handleShare(cert)} className="rounded-xl">
-                      <Share2 className="w-3 h-3 mr-1" /> Share
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" onClick={() => handleShare(cert)} className="rounded-xl">
+                        <Share2 className="w-3 h-3 mr-1" /> Share
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => handlePrint(cert)} className="rounded-xl">
+                        <Printer className="w-3 h-3 mr-1" /> Print
+                      </Button>
+                    </div>
                   </div>
                 </motion.div>
               ))}

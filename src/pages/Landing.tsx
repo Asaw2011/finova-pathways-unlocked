@@ -9,36 +9,11 @@ import featureTrading from "@/assets/feature-trading.png";
 import featureRewards from "@/assets/feature-rewards.png";
 
 const featureSections = [
-  {
-    headline: "learn by doing",
-    body: "Quick, interactive lessons that teach real financial skills — not boring textbook stuff.",
-    image: featureLessons,
-    alt: "Person reading a money book",
-  },
-  {
-    headline: "play money games",
-    body: "Build budgets, dodge subscription traps, and grow your credit score — all through games.",
-    image: featureGames,
-    alt: "Person playing financial games",
-  },
-  {
-    headline: "get smart advice",
-    body: "Your personal AI money coach answers questions and guides your learning journey.",
-    image: featureCoach,
-    alt: "AI money coach robot",
-  },
-  {
-    headline: "practice investing",
-    body: "Trade real stocks with virtual money. Zero risk, real experience.",
-    image: featureTrading,
-    alt: "Person with stock chart",
-  },
-  {
-    headline: "stay motivated",
-    body: "Earn gems, badges, and certificates. Compete with friends on the leaderboard.",
-    image: featureRewards,
-    alt: "Person celebrating with trophies",
-  },
+  { headline: "learn by doing", body: "Quick, interactive lessons that teach real financial skills — not boring textbook stuff.", image: featureLessons, alt: "Person reading a money book" },
+  { headline: "play money games", body: "Build budgets, dodge subscription traps, and grow your credit score — all through games.", image: featureGames, alt: "Person playing financial games" },
+  { headline: "get smart advice", body: "Your personal AI money coach answers questions and guides your learning journey.", image: featureCoach, alt: "AI money coach robot" },
+  { headline: "practice investing", body: "Trade real stocks with virtual money. Zero risk, real experience.", image: featureTrading, alt: "Person with stock chart" },
+  { headline: "stay motivated", body: "Earn gems, badges, and certificates. Compete with friends on the leaderboard.", image: featureRewards, alt: "Person celebrating with trophies" },
 ];
 
 const Landing = () => {
@@ -58,26 +33,20 @@ const Landing = () => {
               <ExternalLink className="w-4 h-4" />
             </a>
             <div className="w-px h-5 bg-border mx-1 hidden sm:block" />
-            <Link to="/auth">
-              <Button variant="ghost" size="sm" className="font-semibold">Log in</Button>
-            </Link>
-            <Link to="/auth">
-              <Button size="sm" className="font-semibold">Get Started</Button>
-            </Link>
+            <Link to="/auth"><Button variant="ghost" size="sm" className="font-semibold">Log in</Button></Link>
+            <Link to="/auth"><Button size="sm" className="font-semibold">Get Started</Button></Link>
           </div>
         </div>
       </header>
 
-      {/* Hero — centered */}
+      {/* Hero */}
       <section className="flex items-center justify-center px-6 py-16 md:py-24">
         <div className="max-w-2xl w-full text-center">
           <img src={heroIllustration} alt="People learning about money" className="w-40 md:w-52 h-auto mx-auto mb-8" />
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-display leading-tight mb-4">
             The free, fun way to <span className="gradient-text">master money</span>
           </h1>
-          <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto">
-            Financial literacy for everyone. Gamified.
-          </p>
+          <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto">Financial literacy for everyone. Gamified.</p>
           <div className="flex flex-col sm:flex-row gap-3 max-w-sm mx-auto">
             <Link to="/auth" className="flex-1">
               <Button size="lg" className="w-full font-bold glow-primary rounded-xl">
@@ -85,32 +54,37 @@ const Landing = () => {
               </Button>
             </Link>
             <Link to="/auth" className="flex-1">
-              <Button size="lg" variant="outline" className="w-full font-bold rounded-xl">
-                I have an account
-              </Button>
+              <Button size="lg" variant="outline" className="w-full font-bold rounded-xl">I have an account</Button>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Feature sections — alternating layout like Duolingo */}
+      {/* Social Proof */}
+      <section className="px-6 py-10 bg-card border-y border-border/40">
+        <div className="max-w-3xl mx-auto flex justify-center gap-12 md:gap-20 text-center">
+          <div>
+            <p className="text-3xl font-extrabold font-display text-primary">7</p>
+            <p className="text-sm text-muted-foreground font-medium">Learning Modules</p>
+          </div>
+          <div>
+            <p className="text-3xl font-extrabold font-display text-primary">43</p>
+            <p className="text-sm text-muted-foreground font-medium">Lessons</p>
+          </div>
+          <div>
+            <p className="text-3xl font-extrabold font-display text-primary">8</p>
+            <p className="text-sm text-muted-foreground font-medium">Interactive Games</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Feature sections */}
       {featureSections.map(({ headline, body, image, alt }, i) => (
-        <section
-          key={headline}
-          className={`px-6 py-16 md:py-24 ${i % 2 === 0 ? "bg-background" : "bg-card"}`}
-        >
-          <div
-            className={`max-w-5xl mx-auto flex flex-col items-center gap-8 md:gap-16 ${
-              i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-            }`}
-          >
+        <section key={headline} className={`px-6 py-16 md:py-24 ${i % 2 === 0 ? "bg-background" : "bg-card"}`}>
+          <div className={`max-w-5xl mx-auto flex flex-col items-center gap-8 md:gap-16 ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}>
             <div className="flex-1 text-center md:text-left">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold font-display lowercase gradient-text mb-4">
-                {headline}
-              </h2>
-              <p className="text-muted-foreground text-lg max-w-md mx-auto md:mx-0">
-                {body}
-              </p>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold font-display lowercase gradient-text mb-4">{headline}</h2>
+              <p className="text-muted-foreground text-lg max-w-md mx-auto md:mx-0">{body}</p>
             </div>
             <div className="flex-shrink-0">
               <img src={image} alt={alt} className="w-48 md:w-56 lg:w-64 h-auto" />
@@ -118,6 +92,28 @@ const Landing = () => {
           </div>
         </section>
       ))}
+
+      {/* How It Works */}
+      <section className="px-6 py-16 md:py-20 bg-background">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-2xl md:text-3xl font-extrabold font-display mb-10">How Finova Works</h2>
+          <div className="grid sm:grid-cols-3 gap-6">
+            {[
+              { step: "1", title: "Create your free account", desc: "Sign up in seconds. No credit card required." },
+              { step: "2", title: "Follow your learning path", desc: "Work through 7 modules covering every money skill you need." },
+              { step: "3", title: "Earn rewards as you go", desc: "Collect gems, badges, and certificates as you level up." },
+            ].map(({ step, title, desc }) => (
+              <div key={step} className="text-center">
+                <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground font-extrabold text-lg flex items-center justify-center mx-auto mb-3">
+                  {step}
+                </div>
+                <h3 className="font-bold font-display mb-1">{title}</h3>
+                <p className="text-sm text-muted-foreground">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Plus banner */}
       <section className="px-6 py-16 md:py-20 bg-card">
@@ -135,12 +131,24 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Bottom CTA */}
-      <section className="px-6 py-16 md:py-20">
+      {/* FFI Partnership */}
+      <section className="px-6 py-14 md:py-16 bg-background">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-2xl md:text-3xl font-extrabold font-display mb-4">
-            Ready to start?
-          </h2>
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide mb-2">Built In Partnership With</p>
+          <h3 className="text-xl font-extrabold font-display mb-2">Financial Freedom Initiative</h3>
+          <p className="text-sm text-muted-foreground mb-4">A student-led financial literacy organization reaching high schoolers nationwide.</p>
+          <Link to="/financial-freedom-initiative">
+            <Button variant="outline" size="sm" className="rounded-xl font-bold">
+              Learn about FFI →
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* Bottom CTA */}
+      <section className="px-6 py-16 md:py-20 bg-card">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-2xl md:text-3xl font-extrabold font-display mb-4">Ready to start?</h2>
           <Link to="/auth">
             <Button size="lg" className="font-bold glow-primary rounded-xl px-8">
               Get Started — it's free <ArrowRight className="w-4 h-4 ml-2" />
