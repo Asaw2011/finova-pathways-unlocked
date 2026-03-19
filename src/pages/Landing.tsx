@@ -146,7 +146,7 @@ const Landing = () => {
       </section>
 
       {/* Bottom CTA */}
-      <section className="px-6 py-16 md:py-20 bg-card">
+      <section className="px-6 py-16 md:py-20 bg-card texture-grid">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-extrabold font-display mb-4">Ready to start?</h2>
           <Link to="/auth">
