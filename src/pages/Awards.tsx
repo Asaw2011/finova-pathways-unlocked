@@ -90,7 +90,16 @@ const Awards = () => {
     w.print();
   };
 
-  const profile = profiles;
+  // profile data for print
+  const { data: profileData } = useQuery({
+    queryKey: ["profile", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase.from("profiles").select("*").eq("user_id", user!.id).single();
+      return data;
+    },
+    enabled: !!user,
+  });
+  const profile = profileData;
 
   return (
     <div className="space-y-6 animate-fade-in">
