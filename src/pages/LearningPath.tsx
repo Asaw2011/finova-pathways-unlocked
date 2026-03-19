@@ -485,23 +485,46 @@ const LearningPath = () => {
 
                   return (
                     <div key={lesson.id} className="flex flex-col items-center" style={{ marginLeft: offset }}>
-                      {/* Step connector with animated dots */}
-                      {li > 0 && (
-                        <div className="flex flex-col items-center">
-                          {[0, 1, 2].map((dotIdx) => (
+                      {/* Step connector — actual staircase steps */}
+                      {li > 0 && (() => {
+                        const prevOffset = (li - 1) % 3 === 0 ? 0 : (li - 1) % 3 === 1 ? 50 : -50;
+                        const direction = offset - prevOffset; // positive = going right, negative = going left
+                        const stepColor = completed || isCurrent ? colors.bg : "bg-border";
+                        return (
+                          <div className="flex flex-col items-center gap-0 -my-0.5">
+                            {/* Vertical riser */}
                             <motion.div
-                              key={dotIdx}
-                              initial={{ opacity: 0, scale: 0 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              transition={{ delay: mi * 0.05 + li * 0.04 + dotIdx * 0.06, type: "spring", stiffness: 400 }}
-                              className={cn(
-                                "w-2 h-2 rounded-full my-0.5",
-                                completed || isCurrent ? colors.bg : "bg-border"
-                              )}
+                              initial={{ scaleY: 0 }}
+                              animate={{ scaleY: 1 }}
+                              transition={{ delay: mi * 0.05 + li * 0.06, duration: 0.2 }}
+                              className={cn("w-1.5 h-3 rounded-full", stepColor)}
+                              style={{ transformOrigin: "top" }}
                             />
-                          ))}
-                        </div>
-                      )}
+                            {/* Horizontal tread */}
+                            {direction !== 0 && (
+                              <motion.div
+                                initial={{ scaleX: 0 }}
+                                animate={{ scaleX: 1 }}
+                                transition={{ delay: mi * 0.05 + li * 0.06 + 0.1, duration: 0.15 }}
+                                className={cn("h-1.5 rounded-full", stepColor)}
+                                style={{
+                                  width: Math.abs(direction) * 0.6,
+                                  transformOrigin: direction > 0 ? "left" : "right",
+                                  marginLeft: direction > 0 ? 8 : -8,
+                                }}
+                              />
+                            )}
+                            {/* Vertical riser */}
+                            <motion.div
+                              initial={{ scaleY: 0 }}
+                              animate={{ scaleY: 1 }}
+                              transition={{ delay: mi * 0.05 + li * 0.06 + 0.2, duration: 0.2 }}
+                              className={cn("w-1.5 h-3 rounded-full", stepColor)}
+                              style={{ transformOrigin: "top" }}
+                            />
+                          </div>
+                        );
+                      })()}
 
                       {/* Node */}
                       <motion.button
