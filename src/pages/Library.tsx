@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Play, Gamepad2, BookOpen, Bookmark, Heart, X, ArrowLeft, ChevronRight } from "lucide-react";
+import { Play, Gamepad2, BookOpen, Bookmark, Heart, X, ArrowLeft, ChevronRight, TrendingUp, Wallet, Brain, Banknote, RefreshCw, CreditCard, Shield, Clock, BarChart3, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
