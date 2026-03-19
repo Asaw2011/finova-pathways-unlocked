@@ -6,62 +6,62 @@
 
 @layer base {
   :root {
-    /* Duolingo-inspired color system */
-    --background: 0 0% 100%;
-    --foreground: 0 0% 24%;
+    /* Warm, friendly palette — approachable without looking AI-generated */
+    --background: 40 20% 99%;
+    --foreground: 220 20% 20%;
 
-    --card: 0 0% 97%;
-    --card-foreground: 0 0% 24%;
+    --card: 40 25% 97%;
+    --card-foreground: 220 20% 20%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 24%;
+    --popover: 40 20% 99%;
+    --popover-foreground: 220 20% 20%;
 
-    --primary: 101 95% 40%;
+    --primary: 152 60% 42%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 24%;
+    --secondary: 40 15% 94%;
+    --secondary-foreground: 220 20% 20%;
 
-    --muted: 0 0% 94%;
-    --muted-foreground: 0 0% 47%;
+    --muted: 40 12% 92%;
+    --muted-foreground: 220 10% 50%;
 
-    --accent: 199 92% 52%;
+    --accent: 205 70% 50%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 100% 64%;
+    --destructive: 4 80% 58%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 101 95% 40%;
+    --border: 40 12% 88%;
+    --input: 40 12% 88%;
+    --ring: 152 60% 42%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 0 0% 24%;
-    --sidebar-primary: 101 95% 40%;
+    --sidebar-background: 40 20% 99%;
+    --sidebar-foreground: 220 20% 20%;
+    --sidebar-primary: 152 60% 42%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 96%;
-    --sidebar-accent-foreground: 0 0% 24%;
-    --sidebar-border: 0 0% 92%;
-    --sidebar-ring: 101 95% 40%;
+    --sidebar-accent: 40 15% 94%;
+    --sidebar-accent-foreground: 220 20% 20%;
+    --sidebar-border: 40 12% 90%;
+    --sidebar-ring: 152 60% 42%;
 
-    /* Duolingo custom tokens */
-    --duo-green: 101 95% 40%;
-    --duo-green-dark: 101 90% 32%;
-    --duo-gold: 45 100% 39%;
-    --duo-red: 0 100% 64%;
-    --duo-blue: 199 92% 52%;
-    --duo-purple: 271 100% 75%;
-    --duo-orange: 33 100% 50%;
+    /* Brand tokens */
+    --duo-green: 152 60% 42%;
+    --duo-green-dark: 152 55% 34%;
+    --duo-gold: 38 90% 50%;
+    --duo-red: 4 80% 58%;
+    --duo-blue: 205 70% 50%;
+    --duo-purple: 265 55% 60%;
+    --duo-orange: 25 85% 55%;
 
-    --success: 101 95% 40%;
-    --warning: 33 100% 50%;
-    --info: 199 92% 52%;
-    --gold: 45 100% 39%;
+    --success: 152 60% 42%;
+    --warning: 25 85% 55%;
+    --info: 205 70% 50%;
+    --gold: 38 90% 50%;
 
-    --shadow-card: 0 2px 8px hsl(0 0% 0% / 0.06);
-    --shadow-card-hover: 0 4px 16px hsl(0 0% 0% / 0.1);
+    --shadow-card: 0 1px 3px hsl(220 20% 20% / 0.04), 0 2px 8px hsl(220 20% 20% / 0.03);
+    --shadow-card-hover: 0 4px 12px hsl(220 20% 20% / 0.08);
 
     --font-display: 'Nunito', system-ui, sans-serif;
     --font-body: 'Nunito', system-ui, sans-serif;
@@ -85,7 +85,8 @@
 
 @layer utilities {
   .glass {
-    @apply bg-card border border-border shadow-sm;
+    @apply bg-card border border-border;
+    box-shadow: var(--shadow-card);
   }
 
   .glow-primary {
@@ -114,7 +115,7 @@
     box-shadow: var(--shadow-card-hover);
   }
 
-  /* Duolingo-style pressed button */
+  /* Pressed button */
   .duo-btn {
     @apply relative font-bold rounded-2xl transition-all active:translate-y-[2px];
     box-shadow: 0 4px 0 hsl(var(--duo-green-dark));
@@ -125,8 +126,8 @@
 
   /* Pulse animation for current node */
   @keyframes duo-pulse {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 hsl(101 95% 40% / 0.4); }
-    50% { transform: scale(1.05); box-shadow: 0 0 0 12px hsl(101 95% 40% / 0); }
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 hsl(152 60% 42% / 0.3); }
+    50% { transform: scale(1.05); box-shadow: 0 0 0 12px hsl(152 60% 42% / 0); }
   }
   .duo-pulse {
     animation: duo-pulse 2s ease-in-out infinite;

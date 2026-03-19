@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Award, Trophy, Share2, Medal, Star, Flame, BookOpen, Printer } from "lucide-react";
+import { Award, Trophy, Share2, Medal, Star, Flame, BookOpen, Printer, Target, Zap, Brain, GraduationCap, Heart, Crown, Shield, Gem } from "lucide-react";
 import { modules } from "@/pages/LearningPath";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -10,14 +10,14 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 
 const achievementBadges = [
-  { id: "first-lesson", name: "First Step", desc: "Complete your first lesson", icon: "🎯" },
-  { id: "five-lessons", name: "Getting Started", desc: "Complete 5 lessons", icon: "📚" },
-  { id: "ten-lessons", name: "Dedicated Learner", desc: "Complete 10 lessons", icon: "🔥" },
-  { id: "twenty-lessons", name: "Knowledge Seeker", desc: "Complete 20 lessons", icon: "🧠" },
-  { id: "all-lessons", name: "Financial Scholar", desc: "Complete all lessons", icon: "🏆" },
-  { id: "streak-3", name: "3-Day Streak", desc: "Learn 3 days in a row", icon: "⚡" },
-  { id: "streak-7", name: "Week Warrior", desc: "7-day learning streak", icon: "🌟" },
-  { id: "streak-30", name: "Monthly Master", desc: "30-day learning streak", icon: "💎" },
+  { id: "first-lesson", name: "First Step", desc: "Complete your first lesson", icon: Target },
+  { id: "five-lessons", name: "Getting Started", desc: "Complete 5 lessons", icon: BookOpen },
+  { id: "ten-lessons", name: "Dedicated Learner", desc: "Complete 10 lessons", icon: Flame },
+  { id: "twenty-lessons", name: "Knowledge Seeker", desc: "Complete 20 lessons", icon: Brain },
+  { id: "all-lessons", name: "Financial Scholar", desc: "Complete all lessons", icon: Trophy },
+  { id: "streak-3", name: "3-Day Streak", desc: "Learn 3 days in a row", icon: Zap },
+  { id: "streak-7", name: "Week Warrior", desc: "7-day learning streak", icon: Star },
+  { id: "streak-30", name: "Monthly Master", desc: "30-day learning streak", icon: Gem },
 ];
 
 const Awards = () => {
