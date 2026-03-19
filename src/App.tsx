@@ -31,6 +31,7 @@ import Rankings from "./pages/Rankings";
 import PaperTrading from "./pages/PaperTrading";
 import Friends from "./pages/Friends";
 import NotFound from "./pages/NotFound";
+import SettingsPage from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
