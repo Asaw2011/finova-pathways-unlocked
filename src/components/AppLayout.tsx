@@ -26,24 +26,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useRef, useEffect } from "react";
 import { usePremiumAccess } from "@/hooks/usePremiumAccess";
-  LogOut,
-  TrendingUp,
-  Bot,
-  Heart,
-  Diamond,
-  ShoppingBag,
-  Target,
-  ChevronDown,
-  Flame,
-  Gamepad2,
-  Users,
-  Play,
-  Snowflake,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useState, useRef, useEffect } from "react";
+
+
 
 const HeartPopup = ({ onClose }: { onClose: () => void }) => {
   const { hearts, maxHearts, gems, buyHeartWithGems, buyFullRefillWithGems, watchAdForHeart, HEART_COST, REFILL_COST } = useGameEconomy();
