@@ -2,26 +2,17 @@ import { Navigate, Outlet, useLocation, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { GameEconomyProvider, useGameEconomy } from "@/contexts/GameEconomyContext";
 import {
-  LayoutDashboard,
   BookOpen,
-  Award,
   User,
   LogOut,
   TrendingUp,
-  Map,
-  Library,
   Bot,
   Heart,
   Diamond,
   ShoppingBag,
-  Target,
   Trophy,
-  AlertTriangle,
-  BarChart3,
   Gamepad2,
-  Home,
-  Search,
-  DollarSign,
+  Target,
   ChevronDown,
   Flame,
 } from "lucide-react";
@@ -30,7 +21,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 const TopBar = () => {
-  const { hearts, maxHearts, gems } = useGameEconomy();
+  const { hearts, gems } = useGameEconomy();
   const { user } = useAuth();
 
   const { data: streak } = useQuery({
@@ -43,27 +34,27 @@ const TopBar = () => {
   });
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 h-14 bg-background border-b border-border px-4 flex items-center justify-between">
-      <Link to="/dashboard" className="flex items-center gap-2">
+    <div className="fixed top-0 left-0 right-0 z-50 h-14 bg-background border-b border-border px-4 flex items-center justify-between md:justify-end md:left-[64px]">
+      {/* Mobile logo */}
+      <Link to="/learning-path" className="flex items-center gap-2 md:hidden">
         <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center">
           <TrendingUp className="w-4 h-4 text-primary-foreground" />
         </div>
-        <span className="text-lg font-black font-display text-foreground hidden sm:inline">FinOva</span>
+        <span className="text-lg font-black font-display text-foreground">FinOva</span>
       </Link>
 
-      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-duo-orange/10">
-        <Flame className="w-4 h-4 text-duo-orange" />
-        <span className="text-sm font-extrabold text-duo-orange">{streak?.current_streak ?? 0}</span>
-      </div>
-
       <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-duo-orange/10">
+          <Flame className="w-4 h-4 text-duo-orange" />
+          <span className="text-sm font-extrabold text-duo-orange">{streak?.current_streak ?? 0}</span>
+        </div>
+        <div className="flex items-center gap-1 px-2.5 py-1 rounded-xl hover:bg-muted transition-colors">
+          <Heart className="w-4 h-4 text-duo-red fill-duo-red" />
+          <span className="text-sm font-extrabold text-duo-red">{hearts}</span>
+        </div>
         <Link to="/shop" className="flex items-center gap-1 px-2.5 py-1 rounded-xl hover:bg-muted transition-colors">
           <Diamond className="w-4 h-4 text-duo-blue fill-duo-blue" />
           <span className="text-sm font-extrabold text-duo-blue">{gems}</span>
-        </Link>
-        <Link to="/shop" className="flex items-center gap-1 px-2.5 py-1 rounded-xl hover:bg-muted transition-colors">
-          <Heart className="w-4 h-4 text-duo-red fill-duo-red" />
-          <span className="text-sm font-extrabold text-duo-red">{hearts}</span>
         </Link>
       </div>
     </div>
@@ -71,10 +62,10 @@ const TopBar = () => {
 };
 
 const bottomNavItems = [
-  { to: "/dashboard", label: "Home", icon: Home },
   { to: "/learning-path", label: "Learn", icon: BookOpen },
   { to: "/games", label: "Games", icon: Gamepad2 },
-  { to: "/rankings", label: "League", icon: Trophy },
+  { to: "/quests", label: "Quests", icon: Target },
+  { to: "/shop", label: "Shop", icon: ShoppingBag },
   { to: "/profile", label: "Profile", icon: User },
 ];
 
@@ -86,20 +77,20 @@ type NavItem = {
 };
 
 const sideNavItems: NavItem[] = [
-  { to: "/dashboard", label: "Home", icon: Home },
   { to: "/learning-path", label: "Learn", icon: BookOpen, sub: [
     { to: "/courses", label: "Courses" },
-    { to: "/quests", label: "Quests" },
     { to: "/mistakes", label: "Review" },
+  ]},
+  { to: "/games", label: "Games", icon: Gamepad2, sub: [
     { to: "/paper-trading", label: "Trade" },
   ]},
+  { to: "/quests", label: "Quests", icon: Target },
   { to: "/money-coach", label: "Coach", icon: Bot },
-  { to: "/games", label: "Games", icon: Gamepad2 },
-  { to: "/rankings", label: "League", icon: Trophy, sub: [
-    { to: "/awards", label: "Awards" },
-  ]},
   { to: "/shop", label: "Shop", icon: ShoppingBag },
-  { to: "/profile", label: "Profile", icon: User },
+  { to: "/profile", label: "Profile", icon: User, sub: [
+    { to: "/awards", label: "Awards" },
+    { to: "/rankings", label: "Rankings" },
+  ]},
 ];
 
 const AppLayoutInner = () => {
@@ -124,9 +115,12 @@ const AppLayoutInner = () => {
   return (
     <GameEconomyProvider>
       <div className="flex min-h-screen bg-background">
+        {/* Persistent top bar — always visible */}
+        <TopBar />
+
         {/* Desktop Sidebar */}
         <aside className="hidden md:flex w-[64px] hover:w-[200px] group/sidebar flex-col border-r border-border bg-background py-3 px-2 fixed left-0 top-0 bottom-0 z-40 transition-all duration-200 overflow-hidden">
-          <Link to="/dashboard" className="flex items-center gap-2 px-1.5 mb-4">
+          <Link to="/learning-path" className="flex items-center gap-2 px-1.5 mb-4">
             <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shrink-0">
               <TrendingUp className="w-4 h-4 text-primary-foreground" />
             </div>
@@ -135,7 +129,7 @@ const AppLayoutInner = () => {
 
           <nav className="flex-1 space-y-0.5 overflow-y-auto">
             {sideNavItems.map(({ to, label, icon: Icon, sub }) => {
-              const active = location.pathname === to || (to !== "/dashboard" && location.pathname.startsWith(to));
+              const active = location.pathname === to || (location.pathname.startsWith(to) && to !== "/profile");
               const subActive = sub?.some(s => location.pathname === s.to || location.pathname.startsWith(s.to));
               const expanded = active || subActive;
               return (
@@ -191,15 +185,10 @@ const AppLayoutInner = () => {
           </button>
         </aside>
 
-        {/* Mobile Top Bar */}
-        <div className="md:hidden">
-          <TopBar />
-        </div>
-
         {/* Mobile Bottom Nav */}
         <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background px-2 py-1.5 flex justify-around safe-area-bottom">
           {bottomNavItems.map(({ to, label, icon: Icon }) => {
-            const active = location.pathname === to || (to !== "/dashboard" && location.pathname.startsWith(to));
+            const active = location.pathname === to || (location.pathname.startsWith(to) && to !== "/profile");
             return (
               <Link
                 key={to}
@@ -217,7 +206,7 @@ const AppLayoutInner = () => {
         </nav>
 
         {/* Main content */}
-        <main className="flex-1 overflow-auto pb-20 md:pb-0 pt-14 md:pt-0 md:ml-[64px]">
+        <main className="flex-1 overflow-auto pb-20 md:pb-0 pt-14 md:ml-[64px]">
           <div className="max-w-2xl mx-auto p-4 md:p-8">
             <Outlet />
           </div>
