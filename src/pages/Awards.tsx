@@ -163,7 +163,7 @@ const Awards = () => {
                       earned ? "bg-amber-50 border-amber-200 shadow-sm" : "bg-muted/30 border-border opacity-40"
                     )}
                   >
-                    <span className="text-3xl block mb-2">{badge.icon}</span>
+                    {(() => { const BadgeIcon = badge.icon; return <BadgeIcon className={cn("w-8 h-8 mx-auto mb-2", earned ? "text-amber-500" : "text-muted-foreground")} />; })()}
                     <p className="text-xs font-extrabold font-display">{badge.name}</p>
                     <p className="text-[10px] text-muted-foreground mt-0.5">{badge.desc}</p>
                     {earned && (
