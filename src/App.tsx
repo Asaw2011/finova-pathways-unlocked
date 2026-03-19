@@ -8,7 +8,6 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
 import AppLayout from "./components/AppLayout";
-import Dashboard from "./pages/Dashboard";
 import Courses from "./pages/Courses";
 import CoursePlayer from "./pages/CoursePlayer";
 import Awards from "./pages/Awards";
@@ -30,6 +29,7 @@ import MistakesReview from "./pages/MistakesReview";
 import Quests from "./pages/Quests";
 import Rankings from "./pages/Rankings";
 import PaperTrading from "./pages/PaperTrading";
+import Friends from "./pages/Friends";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -72,6 +72,7 @@ const App = () => (
                 <Route path="/quests" element={<Quests />} />
                 <Route path="/rankings" element={<Rankings />} />
                 <Route path="/paper-trading" element={<PaperTrading />} />
+                <Route path="/friends" element={<Friends />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/resource-hub" element={<Library />} />
               </Route>
