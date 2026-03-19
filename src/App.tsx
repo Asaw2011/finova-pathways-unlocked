@@ -58,7 +58,7 @@ const App = () => (
 
               {/* Authenticated app */}
               <Route element={<AppLayout />}>
-                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/dashboard" element={<Navigate to="/learning-path" replace />} />
                 <Route path="/learning-path" element={<LearningPath />} />
                 <Route path="/library" element={<Library />} />
                 <Route path="/money-coach" element={<MoneyCoach />} />
