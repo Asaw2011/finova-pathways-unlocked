@@ -341,7 +341,7 @@ const LearningPath = () => {
           const quizUnlocked = isUnitQuizUnlocked(mi);
           const quizCompleted = completedQuizzes.has(mod.id);
           const colors = moduleColors[mi % moduleColors.length];
-          const emoji = moduleEmojis[mi % moduleEmojis.length];
+          const ModIcon = moduleIcons[mi % moduleIcons.length];
           const currentLessonIdx = modLessons.findIndex(l => !completedLessons.has(l.id));
           const milestone = goalMilestones[mi];
 
