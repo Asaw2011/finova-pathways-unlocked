@@ -3,6 +3,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Flame, Zap, Award, Trophy, Lock, CheckCircle2, ChevronRight, Target, Heart, Diamond, Banknote, Landmark, CreditCard, TrendingUp, PiggyBank, Shield, GraduationCap, Crown } from "lucide-react";
+import LessonTooltip from "@/components/learning-path/LessonTooltip";
+import StepConnector from "@/components/learning-path/StepConnector";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -352,22 +354,12 @@ const LearningPath = () => {
               {/* Step connector between modules */}
               {mi > 0 && (
                 <div className="flex flex-col items-center mb-4">
-                  {[0, 1, 2, 3, 4].map((stepIdx) => {
+                  {(() => {
                     const prevDone = modules[mi - 1].lessons.every(l => completedLessons.has(l.id)) && completedQuizzes.has(modules[mi - 1].id);
-                    return (
-                      <motion.div
-                        key={stepIdx}
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        transition={{ delay: mi * 0.08 + stepIdx * 0.06, duration: 0.2 }}
-                        className={cn(
-                          "w-2 h-4 rounded-full my-0.5 transition-colors duration-500",
-                          prevDone ? colors.bg : "bg-border"
-                        )}
-                        style={{ transformOrigin: "top" }}
-                      />
-                    );
-                  })}
+                    const currUnlocked = isModuleUnlocked;
+                    const type = prevDone && currUnlocked ? "completed" : prevDone ? "active" : "locked";
+                    return <StepConnector type={type as any} stepNumber={mi + 1} delay={mi * 0.08} />;
+                  })()}
                 </div>
               )}
 
@@ -397,65 +389,71 @@ const LearningPath = () => {
                   const isCurrent = unlocked && !completed && isModuleUnlocked;
                   const offset = li % 3 === 0 ? 0 : li % 3 === 1 ? 50 : -50;
 
+                  // Determine connector type
+                  let connectorType: "completed" | "active" | "locked" | "far-locked" | null = null;
+                  if (li > 0) {
+                    const prevCompleted = completedLessons.has(modLessons[li - 1].id);
+                    if (prevCompleted && completed) connectorType = "completed";
+                    else if (prevCompleted && isCurrent) connectorType = "active";
+                    else if (prevCompleted && !unlocked) connectorType = "locked";
+                    else if (!prevCompleted && !completed) {
+                      // Check if both are locked (further away)
+                      const prevUnlocked = isLessonUnlocked(mi, li - 1);
+                      const prevIsCurrent = prevUnlocked && !prevCompleted && isModuleUnlocked;
+                      connectorType = prevIsCurrent ? "locked" : "far-locked";
+                    } else connectorType = "locked";
+                  }
+
+                  // Calculate global step number for connector badge
+                  let globalStep = 1;
+                  for (let m = 0; m < mi; m++) globalStep += modules[m].lessons.length;
+                  globalStep += li + 1;
+
+                  const tooltipStatus = completed ? "completed" : isCurrent ? "current" : "locked";
+
                   return (
                     <div key={lesson.id} className="flex flex-col items-center" style={{ marginLeft: offset }}>
-                      {/* Step connector — staircase stepping stones */}
-                      {li > 0 && (() => {
-                        const stepColor = completed || isCurrent ? colors.bg : "bg-border";
-                        return (
-                          <div className="flex flex-col items-center gap-[3px] py-1">
-                            {[0, 1, 2].map((si) => (
-                              <motion.div
-                                key={si}
-                                initial={{ scaleY: 0, opacity: 0 }}
-                                animate={{ scaleY: 1, opacity: 1 }}
-                                transition={{ delay: mi * 0.05 + li * 0.06 + si * 0.05, duration: 0.2 }}
-                                className={cn("rounded-sm", stepColor)}
-                                style={{
-                                  width: si === 1 ? 14 : 10,
-                                  height: si === 1 ? 6 : 5,
-                                  transformOrigin: "top",
-                                }}
-                              />
-                            ))}
-                          </div>
-                        );
-                      })()}
+                      {/* Step connector — vertical progress bar */}
+                      {li > 0 && connectorType && (
+                        <StepConnector
+                          type={connectorType}
+                          stepNumber={globalStep - 1}
+                          delay={mi * 0.05 + li * 0.06}
+                        />
+                      )}
 
-                      {/* Node */}
-                      <motion.button
-                        onClick={() => { if (unlocked) { setActiveModule(mod.id); setActiveLesson(lesson.id); } }}
-                        disabled={!unlocked}
-                        whileTap={unlocked ? { scale: 0.95 } : {}}
-                        className={cn(
-                          "relative w-16 h-16 rounded-full flex items-center justify-center transition-all",
-                          completed
-                            ? cn(colors.bg, "text-primary-foreground shadow-lg")
-                            : isCurrent
-                              ? cn("bg-background border-[4px] shadow-lg cursor-pointer duo-pulse", colors.border)
-                              : "bg-muted border-2 border-border text-muted-foreground cursor-not-allowed"
-                        )}
-                        style={completed ? { boxShadow: `0 4px 0 ${colors.hex}80` } : isCurrent ? { borderColor: colors.hex } : {}}
-                      >
-                        {completed ? (
-                          <CheckCircle2 className="w-7 h-7" />
-                        ) : isCurrent ? (
-                          <ModIcon className="w-6 h-6" />
-                        ) : (
-                          <Lock className="w-5 h-5" />
-                        )}
+                      {/* Node with tooltip */}
+                      <LessonTooltip lessonTitle={lesson.title} status={tooltipStatus}>
+                        <motion.button
+                          onClick={() => { if (unlocked) { setActiveModule(mod.id); setActiveLesson(lesson.id); } }}
+                          disabled={!unlocked}
+                          whileTap={unlocked ? { scale: 0.95 } : {}}
+                          className={cn(
+                            "relative w-16 h-16 rounded-full flex items-center justify-center transition-all",
+                            completed
+                              ? cn(colors.bg, "text-primary-foreground shadow-lg")
+                              : isCurrent
+                                ? cn("bg-background border-[4px] shadow-lg cursor-pointer duo-pulse", colors.border)
+                                : "bg-muted border-2 border-border text-muted-foreground cursor-not-allowed"
+                          )}
+                          style={completed ? { boxShadow: `0 4px 0 ${colors.hex}80` } : isCurrent ? { borderColor: colors.hex } : {}}
+                        >
+                          {completed ? (
+                            <CheckCircle2 className="w-7 h-7" />
+                          ) : isCurrent ? (
+                            <ModIcon className="w-6 h-6" />
+                          ) : (
+                            <Lock className="w-5 h-5" />
+                          )}
 
-                        {unlocked && (
-                          <span className={cn(
-                            "absolute -top-1 -right-1 w-5 h-5 rounded-full text-[10px] font-black flex items-center justify-center text-primary-foreground",
-                            completed ? "bg-primary" : colors.bg
-                          )}>{li + 1}</span>
-                        )}
-                      </motion.button>
-
-                      <p className={cn("text-xs font-bold text-center mt-1.5 max-w-[110px] leading-tight",
-                        completed ? colors.text : isCurrent ? "text-foreground" : "text-muted-foreground"
-                      )}>{lesson.title}</p>
+                          {unlocked && (
+                            <span className={cn(
+                              "absolute -top-1 -right-1 w-5 h-5 rounded-full text-[10px] font-black flex items-center justify-center text-primary-foreground",
+                              completed ? "bg-primary" : colors.bg
+                            )}>{li + 1}</span>
+                          )}
+                        </motion.button>
+                      </LessonTooltip>
                     </div>
                   );
                 })}
@@ -463,16 +461,11 @@ const LearningPath = () => {
                 {/* Quiz node with step connector */}
                 <div className="flex flex-col items-center">
                   {/* Step connector to quiz */}
-                  <div className="flex flex-col items-center gap-0 -my-0.5">
-                    <motion.div initial={{ scaleY: 0 }} animate={{ scaleY: 1 }}
-                      transition={{ delay: mi * 0.05 + modLessons.length * 0.06, duration: 0.2 }}
-                      className={cn("w-1.5 h-3 rounded-full", quizCompleted ? "bg-duo-gold" : "bg-border")}
-                      style={{ transformOrigin: "top" }} />
-                    <motion.div initial={{ scaleY: 0 }} animate={{ scaleY: 1 }}
-                      transition={{ delay: mi * 0.05 + modLessons.length * 0.06 + 0.15, duration: 0.2 }}
-                      className={cn("w-1.5 h-3 rounded-full", quizCompleted ? "bg-duo-gold" : "bg-border")}
-                      style={{ transformOrigin: "top" }} />
-                  </div>
+                  <StepConnector
+                    type={quizCompleted ? "completed" : quizUnlocked ? "active" : "locked"}
+                    stepNumber={modLessons.length + 1}
+                    delay={mi * 0.05 + modLessons.length * 0.06}
+                  />
                   <motion.button
                     onClick={() => { if (quizUnlocked) setShowUnitQuiz(mod.id); }}
                     disabled={!quizUnlocked}
@@ -504,13 +497,11 @@ const LearningPath = () => {
           transition={{ delay: 0.8 }}
           className="flex flex-col items-center mb-8"
         >
-          {[0, 1, 2].map((i) => (
-            <motion.div key={i} initial={{ scaleY: 0 }} animate={{ scaleY: 1 }}
-              transition={{ delay: 0.9 + i * 0.08, duration: 0.2 }}
-              className={cn("w-2 h-4 rounded-full my-0.5", completedModules === totalModules ? "bg-duo-gold" : "bg-border")}
-              style={{ transformOrigin: "top" }}
-            />
-          ))}
+          <StepConnector
+            type={completedModules === totalModules ? "completed" : "locked"}
+            stepNumber={totalModules + 1}
+            delay={0.9}
+          />
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
