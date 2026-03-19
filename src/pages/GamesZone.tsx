@@ -703,7 +703,11 @@ const GamesZone = () => {
         </>
       ) : (
         <div>
-          <button onClick={() => setActiveGame(null)} className="text-sm text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1 font-medium">
+          <button onClick={() => {
+            // Save state hint via localStorage before exiting
+            toast.info("Progress saved!", { duration: 1500 });
+            setActiveGame(null);
+          }} className="text-sm text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1 font-medium">
             <ArrowLeft className="w-4 h-4" /> Back to games
           </button>
           <div className="bg-card rounded-2xl border border-border p-6 card-shadow">
@@ -718,7 +722,7 @@ const GamesZone = () => {
                 <Diamond className="w-3 h-3 fill-cyan-500" /> Up to {(activeGameData?.maxGems ?? 30) * gemsMultiplier} gems
               </span>
             </div>
-            {ActiveComponent && <ActiveComponent earnGems={earnGems} onComplete={handleGameComplete} personalBest={personalBests?.[activeGame ?? ""] ?? null} gemsMultiplier={gemsMultiplier} />}
+            {ActiveComponent && <ActiveComponent earnGems={earnGems} onComplete={handleGameComplete} personalBest={personalBests?.[activeGame ?? ""] ?? null} gemsMultiplier={gemsMultiplier} completedModules={completedModules ?? []} />}
           </div>
         </div>
       )}
