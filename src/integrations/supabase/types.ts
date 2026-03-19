@@ -97,6 +97,7 @@ export type Database = {
           challenge_text: string
           completed: boolean
           completed_at: string | null
+          gems_reward: number | null
           id: string
           user_id: string
         }
@@ -105,6 +106,7 @@ export type Database = {
           challenge_text: string
           completed?: boolean
           completed_at?: string | null
+          gems_reward?: number | null
           id?: string
           user_id: string
         }
@@ -113,6 +115,7 @@ export type Database = {
           challenge_text?: string
           completed?: boolean
           completed_at?: string | null
+          gems_reward?: number | null
           id?: string
           user_id?: string
         }
@@ -147,6 +150,30 @@ export type Database = {
           life_stage?: string
           primary_goal?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      games_played: {
+        Row: {
+          game_id: string
+          id: string
+          played_at: string | null
+          score: number | null
+          user_id: string
+        }
+        Insert: {
+          game_id: string
+          id?: string
+          played_at?: string | null
+          score?: number | null
+          user_id: string
+        }
+        Update: {
+          game_id?: string
+          id?: string
+          played_at?: string | null
+          score?: number | null
           user_id?: string
         }
         Relationships: []
@@ -348,6 +375,7 @@ export type Database = {
           date_of_birth: string | null
           display_name: string | null
           id: string
+          onboarding_completed: boolean | null
           updated_at: string
           user_id: string
         }
@@ -357,6 +385,7 @@ export type Database = {
           date_of_birth?: string | null
           display_name?: string | null
           id?: string
+          onboarding_completed?: boolean | null
           updated_at?: string
           user_id: string
         }
@@ -366,6 +395,7 @@ export type Database = {
           date_of_birth?: string | null
           display_name?: string | null
           id?: string
+          onboarding_completed?: boolean | null
           updated_at?: string
           user_id?: string
         }
@@ -377,6 +407,7 @@ export type Database = {
           completed_at: string | null
           created_at: string | null
           id: string
+          quest_category: string | null
           quest_date: string | null
           quest_text: string
           quest_type: string
@@ -388,6 +419,7 @@ export type Database = {
           completed_at?: string | null
           created_at?: string | null
           id?: string
+          quest_category?: string | null
           quest_date?: string | null
           quest_text: string
           quest_type: string
@@ -399,6 +431,7 @@ export type Database = {
           completed_at?: string | null
           created_at?: string | null
           id?: string
+          quest_category?: string | null
           quest_date?: string | null
           quest_text?: string
           quest_type?: string
