@@ -329,7 +329,7 @@ const LearningPath = () => {
         </div>
       </motion.div>
 
-      <DailyChallenge />
+      
 
       {/* Skill Tree with Step Connectors & Goals */}
       <div className="flex flex-col items-center">
