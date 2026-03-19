@@ -113,7 +113,7 @@ const SimTrading = ({ earnGems, onComplete, personalBest, gemsMultiplier = 1 }: 
       <div className="flex gap-2 items-center">
         <Button size="sm" onClick={simulateMarket} className="rounded-xl"><TrendingUp className="w-4 h-4 mr-1" /> Simulate Day</Button>
         <span className="text-xs text-muted-foreground font-bold">Day {dayCount + 1}</span>
-        <Button size="sm" variant="outline" className="rounded-xl ml-auto" onClick={() => { setBalance(initialBalance); setPortfolio({}); setPrices(stocks.map(s => s.price)); setTradeHistory([]); setDayCount(0); }}><RotateCcw className="w-4 h-4 mr-1" /> Reset</Button>
+        <Button size="sm" variant="outline" className="rounded-xl ml-auto" onClick={() => { setBalance(initialBalance); setPortfolio({}); setPrices(stocks.map(s => s.price)); setTradeHistory([]); setDayCount(0); clearGameState("trading"); }}><RotateCcw className="w-4 h-4 mr-1" /> Reset</Button>
       </div>
       <div className="space-y-2">
         {stocks.map((stock, i) => {
