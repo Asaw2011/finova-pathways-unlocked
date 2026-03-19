@@ -390,7 +390,12 @@ const GamesZone = () => {
               <h2 className="font-display font-extrabold text-xl">{activeGameData?.title}</h2>
               <span className="text-xs font-bold px-2 py-1 rounded-lg bg-primary/10 text-primary">{activeGameData?.difficulty}</span>
             </div>
-            <p className="text-xs text-muted-foreground mb-4 font-medium">What you'll learn: {activeGameData?.learn}</p>
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-xs text-muted-foreground font-medium">What you'll learn: {activeGameData?.learn}</p>
+              <span className="text-xs font-bold text-cyan-600 flex items-center gap-0.5">
+                <Diamond className="w-3 h-3 fill-cyan-500" /> Up to {activeGameData?.maxGems} gems
+              </span>
+            </div>
             {ActiveComponent && <ActiveComponent earnGems={earnGems} />}
           </div>
         </div>
