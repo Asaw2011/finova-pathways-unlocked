@@ -38,11 +38,15 @@ const stocks = [
 ];
 
 const SimTrading = ({ earnGems }: { earnGems?: (n: number) => void }) => {
-  const [balance, setBalance] = useState(10000);
+  const initialBalance = 10000;
+  const [balance, setBalance] = useState(initialBalance);
   const [portfolio, setPortfolio] = useState<Record<string, { shares: number; avgPrice: number }>>({});
   const [prices, setPrices] = useState(stocks.map((s) => s.price));
+  const [tradeHistory, setTradeHistory] = useState<{ action: string; symbol: string; price: number; pnl?: number }[]>([]);
+  const [dayCount, setDayCount] = useState(0);
 
   const simulateMarket = () => {
+    setDayCount(d => d + 1);
     setPrices((prev) => prev.map((p) => {
       const change = (Math.random() - 0.48) * p * 0.05;
       return Math.round((p + change) * 100) / 100;
@@ -60,11 +64,13 @@ const SimTrading = ({ earnGems }: { earnGems?: (n: number) => void }) => {
       return { ...prev, [stock.symbol]: { shares: newShares, avgPrice: totalCost / newShares } };
     });
     toast.success(`Bought 1 share of ${stock.symbol}`);
+    setTradeHistory(prev => [...prev, { action: "BUY", symbol: stock.symbol, price }]);
   };
 
   const sell = (index: number) => {
     const stock = stocks[index]; const price = prices[index];
     if (!portfolio[stock.symbol] || portfolio[stock.symbol].shares === 0) { toast.error("No shares to sell!"); return; }
+    const pnl = price - portfolio[stock.symbol].avgPrice;
     setBalance((b) => Math.round((b + price) * 100) / 100);
     setPortfolio((prev) => {
       const existing = prev[stock.symbol];
@@ -72,19 +78,24 @@ const SimTrading = ({ earnGems }: { earnGems?: (n: number) => void }) => {
       return { ...prev, [stock.symbol]: { shares: newShares, avgPrice: newShares > 0 ? existing.avgPrice : 0 } };
     });
     toast.success(`Sold 1 share of ${stock.symbol}`);
+    setTradeHistory(prev => [...prev, { action: "SELL", symbol: stock.symbol, price, pnl: Math.round(pnl * 100) / 100 }]);
   };
 
   const portfolioValue = stocks.reduce((sum, s, i) => sum + (portfolio[s.symbol]?.shares ?? 0) * prices[i], 0);
+  const totalValue = balance + portfolioValue;
+  const totalReturn = ((totalValue - initialBalance) / initialBalance) * 100;
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div><p className="text-xs text-muted-foreground font-medium">Cash</p><p className="text-2xl font-extrabold font-display">${balance.toLocaleString()}</p></div>
-        <div className="text-right"><p className="text-xs text-muted-foreground font-medium">Portfolio</p><p className="text-2xl font-extrabold font-display text-primary">${Math.round(portfolioValue).toLocaleString()}</p></div>
+      <div className="grid grid-cols-3 gap-3">
+        <div><p className="text-xs text-muted-foreground font-medium">Cash</p><p className="text-xl font-extrabold font-display">${balance.toLocaleString()}</p></div>
+        <div><p className="text-xs text-muted-foreground font-medium">Portfolio</p><p className="text-xl font-extrabold font-display text-primary">${Math.round(portfolioValue).toLocaleString()}</p></div>
+        <div><p className="text-xs text-muted-foreground font-medium">Total Return</p><p className={cn("text-xl font-extrabold font-display", totalReturn >= 0 ? "text-emerald-600" : "text-destructive")}>{totalReturn >= 0 ? "+" : ""}{totalReturn.toFixed(1)}%</p></div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 items-center">
         <Button size="sm" onClick={simulateMarket} className="rounded-xl"><TrendingUp className="w-4 h-4 mr-1" /> Simulate Day</Button>
-        <Button size="sm" variant="outline" className="rounded-xl" onClick={() => { setBalance(10000); setPortfolio({}); setPrices(stocks.map(s => s.price)); }}><RotateCcw className="w-4 h-4 mr-1" /> Reset</Button>
+        <span className="text-xs text-muted-foreground font-bold">Day {dayCount + 1}</span>
+        <Button size="sm" variant="outline" className="rounded-xl ml-auto" onClick={() => { setBalance(initialBalance); setPortfolio({}); setPrices(stocks.map(s => s.price)); setTradeHistory([]); setDayCount(0); }}><RotateCcw className="w-4 h-4 mr-1" /> Reset</Button>
       </div>
       <div className="space-y-2">
         {stocks.map((stock, i) => {
@@ -97,7 +108,7 @@ const SimTrading = ({ earnGems }: { earnGems?: (n: number) => void }) => {
               <div className="text-right flex items-center gap-4">
                 <div>
                   <p className="font-display font-bold text-sm">${prices[i].toFixed(2)}</p>
-                  <p className={cn("text-xs font-medium", change >= 0 ? "text-emerald-600" : "text-red-500")}>{change >= 0 ? "+" : ""}{pct}%</p>
+                  <p className={cn("text-xs font-medium", change >= 0 ? "text-emerald-600" : "text-destructive")}>{change >= 0 ? "+" : ""}{pct}%</p>
                 </div>
                 {holding && holding.shares > 0 && <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-lg font-bold">{holding.shares}</span>}
                 <div className="flex gap-1">
@@ -109,6 +120,22 @@ const SimTrading = ({ earnGems }: { earnGems?: (n: number) => void }) => {
           );
         })}
       </div>
+      {tradeHistory.length > 0 && (
+        <div className="glass rounded-xl p-3 space-y-2">
+          <p className="text-xs font-bold text-muted-foreground">Recent Trades</p>
+          {tradeHistory.slice(-5).reverse().map((t, i) => (
+            <div key={i} className="flex items-center justify-between text-xs">
+              <span className={cn("font-bold px-1.5 py-0.5 rounded", t.action === "BUY" ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700")}>{t.action}</span>
+              <span className="text-muted-foreground">{t.symbol} @ ${t.price.toFixed(2)}</span>
+              {t.pnl !== undefined && (
+                <span className={cn("font-bold", t.pnl >= 0 ? "text-emerald-600" : "text-destructive")}>
+                  {t.pnl >= 0 ? "+" : ""}${t.pnl.toFixed(2)}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -308,7 +335,7 @@ const GamesZone = () => {
     <div className="space-y-6">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl md:text-3xl font-extrabold font-display">Game Zone</h1>
-        <p className="text-muted-foreground mt-1">Learn by playing — {games.length} interactive financial games</p>
+        <p className="text-muted-foreground mt-1">8 interactive games — earn gems, learn by doing</p>
       </motion.div>
 
       {!activeGame ? (
@@ -363,7 +390,12 @@ const GamesZone = () => {
               <h2 className="font-display font-extrabold text-xl">{activeGameData?.title}</h2>
               <span className="text-xs font-bold px-2 py-1 rounded-lg bg-primary/10 text-primary">{activeGameData?.difficulty}</span>
             </div>
-            <p className="text-xs text-muted-foreground mb-4 font-medium">What you'll learn: {activeGameData?.learn}</p>
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-xs text-muted-foreground font-medium">What you'll learn: {activeGameData?.learn}</p>
+              <span className="text-xs font-bold text-cyan-600 flex items-center gap-0.5">
+                <Diamond className="w-3 h-3 fill-cyan-500" /> Up to {activeGameData?.maxGems} gems
+              </span>
+            </div>
             {ActiveComponent && <ActiveComponent earnGems={earnGems} />}
           </div>
         </div>
