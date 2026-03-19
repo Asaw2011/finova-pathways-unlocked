@@ -33,9 +33,9 @@ const Shop = () => {
   };
 
   const gemPacks = [
-    { amount: 100, price: "$0.99", label: "Starter Pack", icon: "💎" },
-    { amount: 500, price: "$3.99", label: "Popular Pack", icon: "💎💎", best: false },
-    { amount: 1200, price: "$7.99", label: "Best Value", icon: "💎💎💎", best: true },
+    { amount: 100, price: "$0.99", label: "Starter Pack", count: 1, best: false },
+    { amount: 500, price: "$3.99", label: "Popular Pack", count: 2, best: false },
+    { amount: 1200, price: "$7.99", label: "Best Value", count: 3, best: true },
   ];
 
   return (
