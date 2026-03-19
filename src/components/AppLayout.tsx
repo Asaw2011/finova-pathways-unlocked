@@ -10,19 +10,102 @@ import {
   Heart,
   Diamond,
   ShoppingBag,
-  Trophy,
-  Gamepad2,
   Target,
   ChevronDown,
   Flame,
+  Gamepad2,
+  Users,
+  Play,
+  Snowflake,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useState, useRef, useEffect } from "react";
+
+const HeartPopup = ({ onClose }: { onClose: () => void }) => {
+  const { hearts, maxHearts, gems, buyHeartWithGems, buyFullRefillWithGems, watchAdForHeart, HEART_COST, REFILL_COST } = useGameEconomy();
+  return (
+    <div className="absolute top-full right-0 mt-2 w-64 bg-card border border-border rounded-2xl shadow-lg p-4 space-y-3 z-[60]">
+      <div className="flex items-center justify-between">
+        <span className="font-bold text-sm">Hearts</span>
+        <div className="flex gap-0.5">
+          {Array.from({ length: maxHearts }).map((_, i) => (
+            <Heart key={i} className={cn("w-4 h-4", i < hearts ? "text-duo-red fill-duo-red" : "text-muted-foreground/30")} />
+          ))}
+        </div>
+      </div>
+      <button onClick={() => { watchAdForHeart(); }} disabled={hearts >= maxHearts}
+        className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-semibold bg-muted hover:bg-muted/80 transition-colors disabled:opacity-50">
+        <span className="flex items-center gap-1.5"><Play className="w-3.5 h-3.5" /> Watch Ad</span>
+        <span className="text-xs text-muted-foreground">FREE</span>
+      </button>
+      <button onClick={() => { buyHeartWithGems(); }} disabled={gems < HEART_COST || hearts >= maxHearts}
+        className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-semibold bg-muted hover:bg-muted/80 transition-colors disabled:opacity-50">
+        <span className="flex items-center gap-1.5"><Heart className="w-3.5 h-3.5 text-duo-red" /> +1 Heart</span>
+        <span className="flex items-center gap-1 text-duo-blue text-xs"><Diamond className="w-3 h-3 fill-current" />{HEART_COST}</span>
+      </button>
+      <button onClick={() => { buyFullRefillWithGems(); }} disabled={gems < REFILL_COST || hearts >= maxHearts}
+        className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-semibold bg-duo-red/10 text-duo-red hover:bg-duo-red/20 transition-colors disabled:opacity-50">
+        <span className="flex items-center gap-1.5"><Heart className="w-3.5 h-3.5 fill-current" /> Full Refill</span>
+        <span className="flex items-center gap-1 text-xs"><Diamond className="w-3 h-3" />{REFILL_COST}</span>
+      </button>
+      <Link to="/shop" onClick={onClose} className="block text-center text-xs font-semibold text-primary hover:underline">
+        Go to Shop →
+      </Link>
+    </div>
+  );
+};
+
+const GemPopup = ({ onClose }: { onClose: () => void }) => {
+  const { gems, streakFreezes, buyStreakFreeze, FREEZE_COST } = useGameEconomy();
+  const gemPacks = [
+    { amount: 100, price: "$0.99", label: "Starter" },
+    { amount: 500, price: "$3.99", label: "Popular" },
+    { amount: 1200, price: "$7.99", label: "Best Value" },
+  ];
+  return (
+    <div className="absolute top-full right-0 mt-2 w-64 bg-card border border-border rounded-2xl shadow-lg p-4 space-y-3 z-[60]">
+      <div className="flex items-center justify-between">
+        <span className="font-bold text-sm">Gems</span>
+        <span className="flex items-center gap-1 text-duo-blue font-extrabold text-sm"><Diamond className="w-4 h-4 fill-current" />{gems}</span>
+      </div>
+      <button onClick={() => { buyStreakFreeze(); }} disabled={gems < FREEZE_COST}
+        className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-semibold bg-muted hover:bg-muted/80 transition-colors disabled:opacity-50">
+        <span className="flex items-center gap-1.5"><Snowflake className="w-3.5 h-3.5 text-blue-500" /> Streak Freeze ({streakFreezes})</span>
+        <span className="flex items-center gap-1 text-duo-blue text-xs"><Diamond className="w-3 h-3 fill-current" />{FREEZE_COST}</span>
+      </button>
+      {gemPacks.map(p => (
+        <button key={p.amount}
+          className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-semibold bg-muted hover:bg-muted/80 transition-colors">
+          <span className="flex items-center gap-1.5"><Diamond className="w-3.5 h-3.5 text-duo-blue fill-duo-blue" /> {p.amount} gems</span>
+          <span className="text-xs font-bold text-muted-foreground">{p.price}</span>
+        </button>
+      ))}
+      <Link to="/shop" onClick={onClose} className="block text-center text-xs font-semibold text-primary hover:underline">
+        Go to Shop →
+      </Link>
+    </div>
+  );
+};
 
 const TopBar = () => {
   const { hearts, gems } = useGameEconomy();
   const { user } = useAuth();
+  const [showHeartPopup, setShowHeartPopup] = useState(false);
+  const [showGemPopup, setShowGemPopup] = useState(false);
+  const heartRef = useRef<HTMLButtonElement>(null);
+  const gemRef = useRef<HTMLButtonElement>(null);
+
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (heartRef.current && !heartRef.current.parentElement?.contains(e.target as Node)) setShowHeartPopup(false);
+      if (gemRef.current && !gemRef.current.parentElement?.contains(e.target as Node)) setShowGemPopup(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   const { data: streak } = useQuery({
     queryKey: ["user-streak", user?.id],
@@ -34,7 +117,7 @@ const TopBar = () => {
   });
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 h-14 bg-background border-b border-border px-4 flex items-center justify-between md:justify-end md:left-[64px]">
+    <div className="fixed top-0 left-0 right-0 z-50 h-14 bg-background/95 backdrop-blur-sm border-b border-border px-4 flex items-center justify-between md:justify-end md:left-[64px]">
       {/* Mobile logo */}
       <Link to="/learning-path" className="flex items-center gap-2 md:hidden">
         <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center">
@@ -43,19 +126,29 @@ const TopBar = () => {
         <span className="text-lg font-black font-display text-foreground">FinOva</span>
       </Link>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-duo-orange/10">
           <Flame className="w-4 h-4 text-duo-orange" />
           <span className="text-sm font-extrabold text-duo-orange">{streak?.current_streak ?? 0}</span>
         </div>
-        <div className="flex items-center gap-1 px-2.5 py-1 rounded-xl hover:bg-muted transition-colors">
-          <Heart className="w-4 h-4 text-duo-red fill-duo-red" />
-          <span className="text-sm font-extrabold text-duo-red">{hearts}</span>
+
+        <div className="relative">
+          <button ref={heartRef} onClick={() => { setShowHeartPopup(!showHeartPopup); setShowGemPopup(false); }}
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl hover:bg-muted transition-colors">
+            <Heart className="w-4 h-4 text-duo-red fill-duo-red" />
+            <span className="text-sm font-extrabold text-duo-red">{hearts}</span>
+          </button>
+          {showHeartPopup && <HeartPopup onClose={() => setShowHeartPopup(false)} />}
         </div>
-        <Link to="/shop" className="flex items-center gap-1 px-2.5 py-1 rounded-xl hover:bg-muted transition-colors">
-          <Diamond className="w-4 h-4 text-duo-blue fill-duo-blue" />
-          <span className="text-sm font-extrabold text-duo-blue">{gems}</span>
-        </Link>
+
+        <div className="relative">
+          <button ref={gemRef} onClick={() => { setShowGemPopup(!showGemPopup); setShowHeartPopup(false); }}
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl hover:bg-muted transition-colors">
+            <Diamond className="w-4 h-4 text-duo-blue fill-duo-blue" />
+            <span className="text-sm font-extrabold text-duo-blue">{gems}</span>
+          </button>
+          {showGemPopup && <GemPopup onClose={() => setShowGemPopup(false)} />}
+        </div>
       </div>
     </div>
   );
@@ -65,7 +158,7 @@ const bottomNavItems = [
   { to: "/learning-path", label: "Learn", icon: BookOpen },
   { to: "/games", label: "Games", icon: Gamepad2 },
   { to: "/quests", label: "Quests", icon: Target },
-  { to: "/shop", label: "Shop", icon: ShoppingBag },
+  { to: "/friends", label: "Friends", icon: Users },
   { to: "/profile", label: "Profile", icon: User },
 ];
 
@@ -86,6 +179,7 @@ const sideNavItems: NavItem[] = [
   ]},
   { to: "/quests", label: "Quests", icon: Target },
   { to: "/money-coach", label: "Coach", icon: Bot },
+  { to: "/friends", label: "Friends", icon: Users },
   { to: "/shop", label: "Shop", icon: ShoppingBag },
   { to: "/profile", label: "Profile", icon: User, sub: [
     { to: "/awards", label: "Awards" },
@@ -115,11 +209,11 @@ const AppLayoutInner = () => {
   return (
     <GameEconomyProvider>
       <div className="flex min-h-screen bg-background">
-        {/* Persistent top bar — always visible */}
+        {/* Persistent top bar */}
         <TopBar />
 
         {/* Desktop Sidebar */}
-        <aside className="hidden md:flex w-[64px] hover:w-[200px] group/sidebar flex-col border-r border-border bg-background py-3 px-2 fixed left-0 top-0 bottom-0 z-40 transition-all duration-200 overflow-hidden">
+        <aside className="hidden md:flex w-[64px] hover:w-[200px] group/sidebar flex-col border-r border-border bg-background py-3 px-2 fixed left-0 top-14 bottom-0 z-40 transition-all duration-200 overflow-hidden">
           <Link to="/learning-path" className="flex items-center gap-2 px-1.5 mb-4">
             <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shrink-0">
               <TrendingUp className="w-4 h-4 text-primary-foreground" />
