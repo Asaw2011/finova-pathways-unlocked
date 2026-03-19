@@ -79,15 +79,10 @@ const bottomNavItems = [
 const sideNavItems = [
   { to: "/dashboard", label: "Home", icon: Home },
   { to: "/learning-path", label: "Learn", icon: BookOpen },
-  { to: "/courses", label: "Courses", icon: Map },
   { to: "/money-coach", label: "Coach", icon: Bot },
   { to: "/games", label: "Games", icon: Gamepad2 },
-  { to: "/quests", label: "Quests", icon: Target },
   { to: "/rankings", label: "League", icon: Trophy },
-  { to: "/mistakes", label: "Review", icon: AlertTriangle },
-  { to: "/awards", label: "Awards", icon: Award },
   { to: "/paper-trading", label: "Trade", icon: BarChart3 },
-  { to: "/shop", label: "Shop", icon: ShoppingBag },
   { to: "/profile", label: "Profile", icon: User },
 ];
 
