@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Award, Flame, Zap, ChevronRight, Trophy, Target, Lock, CheckCircle2, Map, BookOpen, Bot, Heart, Diamond, ShoppingBag, AlertTriangle, Crown, MessageSquare, Shield, Play } from "lucide-react";
+import { Award, Flame, Zap, ChevronRight, Trophy, Target, Lock, CheckCircle2, Map, BookOpen, Bot, Heart, Diamond, ShoppingBag, AlertTriangle, Crown, MessageSquare, Shield, Play, Banknote, Landmark, CreditCard, TrendingUp, PiggyBank, Swords, GraduationCap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -13,7 +13,7 @@ import { usePremiumAccess } from "@/hooks/usePremiumAccess";
 import FinancialAssessment from "@/components/onboarding/FinancialAssessment";
 import OnboardingModal from "@/components/OnboardingModal";
 
-const moduleEmojis = ["💵", "🏦", "💳", "📈", "💰", "🛡️", "🏆"];
+const moduleIcons = [Banknote, Landmark, CreditCard, TrendingUp, PiggyBank, Swords, GraduationCap];
 
 const motivationalQuotes = [
   { text: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb" },
@@ -115,7 +115,7 @@ const Dashboard = () => {
 
   // Streak days of week
   const daysOfWeek = ["M", "T", "W", "T", "F", "S", "S"];
-  const todayDayIdx = (new Date().getDay() + 6) % 7; // Monday = 0
+  const todayDayIdx = (new Date().getDay() + 6) % 7;
 
   if (needsAssessment) {
     return <FinancialAssessment isPlusUser={isPlusUser} onComplete={() => { setAssessmentDone(true); queryClient.invalidateQueries({ queryKey: ["financial-profile"] }); }} />;
@@ -125,10 +125,10 @@ const Dashboard = () => {
     <div className="space-y-5">
       <OnboardingModal open={showOnboarding} onClose={() => setShowOnboarding(false)} />
 
-      {/* Streak Card — compact inline */}
+      {/* Streak Card */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl px-4 py-3 flex items-center gap-3 bg-gradient-to-r from-duo-orange to-[hsl(25,100%,55%)] text-primary-foreground">
-        <span className="text-2xl">🔥</span>
+        className="rounded-2xl px-4 py-3 flex items-center gap-3 bg-gradient-to-r from-duo-orange to-duo-red text-primary-foreground">
+        <Flame className="w-7 h-7 fill-primary-foreground" />
         <div className="flex-1 min-w-0">
           <p className="text-base font-black font-display leading-tight">{currentStreak} Day Streak</p>
           <p className="text-[11px] font-semibold opacity-75">{currentStreak > 0 ? "Keep it going!" : "Start today!"}</p>
@@ -160,16 +160,18 @@ const Dashboard = () => {
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
         className={cn("rounded-2xl p-4 border-2", goalPercent >= 100 ? "bg-primary/5 border-primary/30" : "bg-card border-border")}>
         <div className="flex items-center justify-between mb-2">
-          <p className="text-sm font-bold flex items-center gap-1.5">🏆 Today's Goal</p>
+          <p className="text-sm font-bold flex items-center gap-1.5">
+            <Trophy className="w-4 h-4 text-duo-gold" /> Today's Goal
+          </p>
           <span className={cn("text-sm font-black", goalPercent >= 100 ? "text-primary" : "text-duo-gold")}>{todayXP}/{dailyGoal} XP</span>
         </div>
         <div className="h-3 rounded-full bg-muted overflow-hidden">
           <motion.div className="h-full rounded-full bg-primary" animate={{ width: `${goalPercent}%` }} transition={{ duration: 0.8 }} />
         </div>
-        {goalPercent >= 100 && <p className="text-xs font-bold text-primary mt-1.5">🎉 Daily goal achieved!</p>}
+        {goalPercent >= 100 && <p className="text-xs font-bold text-primary mt-1.5 flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> Daily goal achieved!</p>}
       </motion.div>
 
-      {/* Continue Learning - BIG Duolingo button */}
+      {/* Continue Learning */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
         <Link to="/learning-path"
           className="block rounded-2xl p-5 bg-primary text-primary-foreground duo-btn active:translate-y-[2px] transition-transform">
@@ -179,7 +181,7 @@ const Dashboard = () => {
                 <Play className="w-6 h-6 fill-primary-foreground" />
               </div>
               <div>
-                <p className="text-xs font-bold opacity-70">{allComplete ? "🎉 All Complete!" : "Continue"}</p>
+                <p className="text-xs font-bold opacity-70">{allComplete ? "All Complete!" : "Continue"}</p>
                 <p className="text-lg font-black font-display">
                   {allComplete ? "View Awards" : `${nextLesson?.module.title}`}
                 </p>
@@ -212,6 +214,7 @@ const Dashboard = () => {
             const isComplete = completed === mod.lessons.length && completedQuizzes.has(mod.id);
             const isUnlocked = mi === 0 || (modules[mi - 1].lessons.every(l => completedLessons.has(l.id)) && completedQuizzes.has(modules[mi - 1].id));
             const isCurrent = isUnlocked && !isComplete;
+            const ModIcon = moduleIcons[mi] ?? BookOpen;
 
             return (
               <Link key={mod.id} to="/learning-path"
@@ -220,10 +223,10 @@ const Dashboard = () => {
                   !isUnlocked && "opacity-40"
                 )}>
                 <div className={cn(
-                  "w-11 h-11 rounded-full flex items-center justify-center text-xl shrink-0",
+                  "w-11 h-11 rounded-full flex items-center justify-center shrink-0",
                   isComplete ? "bg-primary text-primary-foreground" : isCurrent ? "bg-primary/10 ring-2 ring-primary/30" : "bg-muted"
                 )}>
-                  {isComplete ? <CheckCircle2 className="w-5 h-5" /> : moduleEmojis[mi]}
+                  {isComplete ? <CheckCircle2 className="w-5 h-5" /> : <ModIcon className="w-5 h-5" />}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className={cn("text-sm font-bold truncate", isCurrent && "text-primary")}>{mod.title}</p>
@@ -240,15 +243,15 @@ const Dashboard = () => {
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
         className="grid grid-cols-4 gap-2">
         {[
-          { to: "/quests", icon: "⚡", title: "Quests" },
-          { to: "/rankings", icon: "🏆", title: "League" },
-          { to: "/games", icon: "🎮", title: "Games" },
-          { to: "/shop", icon: "🛍️", title: "Shop" },
-        ].map(({ to, icon, title }) => (
+          { to: "/quests", icon: Target, title: "Quests", color: "text-duo-orange" },
+          { to: "/rankings", icon: Trophy, title: "League", color: "text-duo-gold" },
+          { to: "/games", icon: Zap, title: "Games", color: "text-duo-blue" },
+          { to: "/shop", icon: ShoppingBag, title: "Shop", color: "text-duo-purple" },
+        ].map(({ to, icon: Icon, title, color }) => (
           <Link key={to} to={to}
-            className="rounded-xl border border-border p-2.5 text-center hover:bg-muted transition-all">
-            <span className="text-lg block">{icon}</span>
-            <p className="text-[10px] font-bold mt-0.5">{title}</p>
+            className="rounded-xl border border-border p-2.5 text-center hover:bg-muted transition-all group">
+            <Icon className={cn("w-5 h-5 mx-auto", color)} />
+            <p className="text-[10px] font-bold mt-1">{title}</p>
           </Link>
         ))}
       </motion.div>
@@ -256,8 +259,13 @@ const Dashboard = () => {
       {/* Motivational Quote */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
         className="bg-card rounded-2xl border border-border p-4">
-        <p className="text-sm italic text-muted-foreground">💬 "{dailyQuote.text}"</p>
-        <p className="text-xs font-bold text-muted-foreground mt-1">— {dailyQuote.author}</p>
+        <div className="flex gap-3 items-start">
+          <MessageSquare className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm italic text-muted-foreground">"{dailyQuote.text}"</p>
+            <p className="text-xs font-bold text-muted-foreground mt-1">— {dailyQuote.author}</p>
+          </div>
+        </div>
       </motion.div>
     </div>
   );

@@ -33,9 +33,9 @@ const Shop = () => {
   };
 
   const gemPacks = [
-    { amount: 100, price: "$0.99", label: "Starter Pack", icon: "💎" },
-    { amount: 500, price: "$3.99", label: "Popular Pack", icon: "💎💎", best: false },
-    { amount: 1200, price: "$7.99", label: "Best Value", icon: "💎💎💎", best: true },
+    { amount: 100, price: "$0.99", label: "Starter Pack", count: 1, best: false },
+    { amount: 500, price: "$3.99", label: "Popular Pack", count: 2, best: false },
+    { amount: 1200, price: "$7.99", label: "Best Value", count: 3, best: true },
   ];
 
   return (
@@ -180,7 +180,11 @@ const Shop = () => {
               )}
             >
               <div className="flex items-center gap-3">
-                <span className="text-2xl">{pack.icon}</span>
+                <div className="flex gap-0.5">
+                  {Array.from({ length: pack.count }).map((_, i) => (
+                    <Diamond key={i} className="w-5 h-5 text-cyan-500 fill-cyan-500" />
+                  ))}
+                </div>
                 <div>
                   <p className="font-bold">{pack.label}</p>
                   <p className="text-sm text-cyan-600 font-semibold flex items-center gap-1">

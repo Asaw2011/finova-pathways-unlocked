@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Play, Gamepad2, BookOpen, Bookmark, Heart, X, ArrowLeft, ChevronRight } from "lucide-react";
+import { Play, Gamepad2, BookOpen, Bookmark, Heart, X, ArrowLeft, ChevronRight, TrendingUp, Wallet, Brain, Banknote, RefreshCw, CreditCard, Shield, Clock, BarChart3, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -34,14 +34,14 @@ const videos = [
 ];
 
 const gamesList = [
-  { title: "Sim Trading", desc: "Buy & sell stocks in a simulated market", difficulty: "Intermediate", emoji: "📈" },
-  { title: "Budget Challenge", desc: "Build a balanced budget under constraints", difficulty: "Beginner", emoji: "💰" },
-  { title: "Finance Quiz", desc: "Test your financial knowledge", difficulty: "Beginner", emoji: "🧠" },
-  { title: "Paycheck Breakdown", desc: "Estimate your take-home pay after taxes", difficulty: "Beginner", emoji: "💵" },
-  { title: "Subscription Trap", desc: "Manage subscriptions within a budget", difficulty: "Beginner", emoji: "🔄" },
-  { title: "Credit Score Challenge", desc: "Make choices that affect your credit score", difficulty: "Intermediate", emoji: "💳" },
-  { title: "Emergency Fund Builder", desc: "Handle unexpected expenses wisely", difficulty: "Beginner", emoji: "🛡️" },
-  { title: "Investing Time Machine", desc: "See how starting age affects wealth", difficulty: "Beginner", emoji: "⏰" },
+  { title: "Sim Trading", desc: "Buy & sell stocks in a simulated market", difficulty: "Intermediate", icon: TrendingUp },
+  { title: "Budget Challenge", desc: "Build a balanced budget under constraints", difficulty: "Beginner", icon: Wallet },
+  { title: "Finance Quiz", desc: "Test your financial knowledge", difficulty: "Beginner", icon: Brain },
+  { title: "Paycheck Breakdown", desc: "Estimate your take-home pay after taxes", difficulty: "Beginner", icon: Banknote },
+  { title: "Subscription Trap", desc: "Manage subscriptions within a budget", difficulty: "Beginner", icon: RefreshCw },
+  { title: "Credit Score Challenge", desc: "Make choices that affect your credit score", difficulty: "Intermediate", icon: CreditCard },
+  { title: "Emergency Fund Builder", desc: "Handle unexpected expenses wisely", difficulty: "Beginner", icon: Shield },
+  { title: "Investing Time Machine", desc: "See how starting age affects wealth", difficulty: "Beginner", icon: Clock },
 ];
 
 const Library = () => {
@@ -154,7 +154,7 @@ const Library = () => {
                 to="/games"
                 className="bg-card rounded-2xl border border-border p-5 hover:shadow-md transition-all flex items-center gap-4 group"
               >
-                <div className="text-3xl">{game.emoji}</div>
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">{(() => { const GIcon = game.icon; return <GIcon className="w-5 h-5 text-primary" />; })()}</div>
                 <div className="flex-1">
                   <h3 className="font-display font-extrabold text-sm">{game.title}</h3>
                   <p className="text-xs text-muted-foreground">{game.desc}</p>
@@ -173,17 +173,17 @@ const Library = () => {
           <p className="text-sm text-muted-foreground">Structured courses with modules, quizzes, and certificates</p>
           <div className="grid sm:grid-cols-2 gap-4">
             {[
-              { title: "Budgeting Basics", desc: "Create and sustain a budget that works", emoji: "📊", modules: 6 },
-              { title: "Investing Basics", desc: "Stocks, bonds, ETFs, and long-term thinking", emoji: "📈", modules: 6 },
-              { title: "Credit & Borrowing", desc: "Credit scores, cards, and responsible borrowing", emoji: "💳", modules: 4 },
-              { title: "Entrepreneurship & Side-Hustles", desc: "From idea to first sale", emoji: "💡", modules: 4 },
+              { title: "Budgeting Basics", desc: "Create and sustain a budget that works", icon: BarChart3, modules: 6 },
+              { title: "Investing Basics", desc: "Stocks, bonds, ETFs, and long-term thinking", icon: TrendingUp, modules: 6 },
+              { title: "Credit & Borrowing", desc: "Credit scores, cards, and responsible borrowing", icon: CreditCard, modules: 4 },
+              { title: "Entrepreneurship & Side-Hustles", desc: "From idea to first sale", icon: Lightbulb, modules: 4 },
             ].map(course => (
               <Link
                 key={course.title}
                 to="/courses"
                 className="bg-card rounded-2xl border border-border p-5 hover:shadow-md transition-all group"
               >
-                <div className="text-3xl mb-3">{course.emoji}</div>
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-3">{(() => { const CIcon = course.icon; return <CIcon className="w-5 h-5 text-primary" />; })()}</div>
                 <h3 className="font-display font-extrabold">{course.title}</h3>
                 <p className="text-sm text-muted-foreground mt-1">{course.desc}</p>
                 <div className="flex items-center justify-between mt-3">

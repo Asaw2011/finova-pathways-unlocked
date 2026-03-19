@@ -7,13 +7,13 @@ import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
 
 const TIERS = [
-  { name: "Bronze", xp: 0, color: "bg-amber-700", textColor: "text-amber-700", bgLight: "bg-amber-100", icon: Shield, emoji: "🥉" },
-  { name: "Silver", xp: 500, color: "bg-gray-400", textColor: "text-gray-500", bgLight: "bg-gray-100", icon: Shield, emoji: "🥈" },
-  { name: "Gold", xp: 1500, color: "bg-yellow-500", textColor: "text-yellow-600", bgLight: "bg-yellow-100", icon: Star, emoji: "🥇" },
-  { name: "Diamond", xp: 4000, color: "bg-cyan-500", textColor: "text-cyan-600", bgLight: "bg-cyan-100", icon: Zap, emoji: "💎" },
-  { name: "Elite", xp: 8000, color: "bg-purple-600", textColor: "text-purple-600", bgLight: "bg-purple-100", icon: Flame, emoji: "🔥" },
-  { name: "Titan", xp: 15000, color: "bg-red-600", textColor: "text-red-600", bgLight: "bg-red-100", icon: Trophy, emoji: "⚡" },
-  { name: "Champion", xp: 30000, color: "bg-gradient-to-r from-amber-500 to-red-600", textColor: "text-amber-600", bgLight: "bg-amber-50", icon: Crown, emoji: "👑" },
+  { name: "Bronze", xp: 0, color: "bg-amber-700", textColor: "text-amber-700", bgLight: "bg-amber-100", icon: Shield },
+  { name: "Silver", xp: 500, color: "bg-gray-400", textColor: "text-gray-500", bgLight: "bg-gray-100", icon: Shield },
+  { name: "Gold", xp: 1500, color: "bg-yellow-500", textColor: "text-yellow-600", bgLight: "bg-yellow-100", icon: Star },
+  { name: "Diamond", xp: 4000, color: "bg-cyan-500", textColor: "text-cyan-600", bgLight: "bg-cyan-100", icon: Zap },
+  { name: "Elite", xp: 8000, color: "bg-purple-600", textColor: "text-purple-600", bgLight: "bg-purple-100", icon: Flame },
+  { name: "Titan", xp: 15000, color: "bg-red-600", textColor: "text-red-600", bgLight: "bg-red-100", icon: Trophy },
+  { name: "Champion", xp: 30000, color: "bg-gradient-to-r from-amber-500 to-red-600", textColor: "text-amber-600", bgLight: "bg-amber-50", icon: Crown },
 ];
 
 const getTier = (xp: number) => {
@@ -131,7 +131,7 @@ const Rankings = () => {
           <div>
             <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide">{monthName}</p>
             <div className="flex items-center gap-3 mt-1">
-              <span className="text-3xl">{currentTier.emoji}</span>
+              {(() => { const TierIcon = currentTier.icon; return <TierIcon className={cn("w-8 h-8", currentTier.textColor)} />; })()}
               <div>
                 <h2 className={cn("text-2xl font-extrabold font-display", currentTier.textColor)}>{currentTier.name}</h2>
                 <p className="text-sm text-muted-foreground font-semibold">{monthlyXP.toLocaleString()} XP this month</p>
@@ -180,7 +180,7 @@ const Rankings = () => {
                 !isReached ? "bg-muted/30 border-border opacity-40" : ""
               )} style={isCurrentTier ? { borderColor: "currentColor" } : {}}>
                 <div className="flex items-center gap-3">
-                  <span className="text-xl">{tier.emoji}</span>
+                  {(() => { const TIcon = tier.icon; return <TIcon className={cn("w-5 h-5", isReached ? tier.textColor : "text-muted-foreground")} />; })()}
                   <div>
                     <p className={cn("font-extrabold font-display text-sm", isReached ? tier.textColor : "text-muted-foreground")}>{tier.name}</p>
                     <p className="text-xs text-muted-foreground">{tier.xp.toLocaleString()} XP required</p>
@@ -223,7 +223,7 @@ const Rankings = () => {
                   )}>
                     {i + 1}
                   </span>
-                  <span className="text-lg">{entryTier.emoji}</span>
+                  {(() => { const EIcon = entryTier.icon; return <EIcon className={cn("w-5 h-5", entryTier.textColor)} />; })()}
                   <div className="flex-1 min-w-0">
                     <p className={cn("text-sm font-semibold truncate", isMe && "text-primary")}>
                       {isMe ? "You" : getProfileName(entry.user_id)}

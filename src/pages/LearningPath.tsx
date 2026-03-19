@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Flame, Zap, Award, Trophy, Lock, CheckCircle2, ChevronRight, Target, Heart, Diamond } from "lucide-react";
+import { Flame, Zap, Award, Trophy, Lock, CheckCircle2, ChevronRight, Target, Heart, Diamond, Banknote, Landmark, CreditCard, TrendingUp, PiggyBank, Shield, GraduationCap, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -12,7 +12,7 @@ import DailyChallenge from "@/components/learning-path/DailyChallenge";
 import { useGameEconomy } from "@/contexts/GameEconomyContext";
 import { Link } from "react-router-dom";
 
-const moduleEmojis = ["💵", "🏦", "💳", "📈", "💰", "🛡️", "🏆"];
+const moduleIcons = [Banknote, Landmark, CreditCard, TrendingUp, PiggyBank, Shield, GraduationCap];
 const moduleColors = [
   { bg: "bg-primary", text: "text-primary", light: "bg-primary/10", border: "border-primary/30", hex: "hsl(101, 95%, 40%)" },
   { bg: "bg-duo-blue", text: "text-duo-blue", light: "bg-duo-blue/10", border: "border-duo-blue/30", hex: "hsl(199, 92%, 52%)" },
@@ -286,13 +286,13 @@ const LearningPath = () => {
 
   // Goal milestones between modules
   const goalMilestones = [
-    { after: 0, emoji: "🎯", label: "Goal: Understand Your Money", reward: "Money Master Badge" },
-    { after: 1, emoji: "🏆", label: "Goal: Bank Like a Pro", reward: "Savings Pro Badge" },
-    { after: 2, emoji: "💪", label: "Goal: Budget With Confidence", reward: "Budget Boss Badge" },
-    { after: 3, emoji: "⚡", label: "Goal: Master Your Credit", reward: "Credit Pro Badge" },
-    { after: 4, emoji: "🚀", label: "Goal: Start Investing", reward: "Investor Badge" },
-    { after: 5, emoji: "👑", label: "Goal: Build Real Wealth", reward: "Wealth Builder Badge" },
-    { after: 6, emoji: "🎓", label: "FINAL GOAL: Financial Freedom", reward: "Independence Champion" },
+    { after: 0, icon: Target, label: "Goal: Understand Your Money", reward: "Money Master Badge" },
+    { after: 1, icon: Trophy, label: "Goal: Bank Like a Pro", reward: "Savings Pro Badge" },
+    { after: 2, icon: Zap, label: "Goal: Budget With Confidence", reward: "Budget Boss Badge" },
+    { after: 3, icon: Shield, label: "Goal: Master Your Credit", reward: "Credit Pro Badge" },
+    { after: 4, icon: TrendingUp, label: "Goal: Start Investing", reward: "Investor Badge" },
+    { after: 5, icon: Crown, label: "Goal: Build Real Wealth", reward: "Wealth Builder Badge" },
+    { after: 6, icon: GraduationCap, label: "FINAL GOAL: Financial Freedom", reward: "Independence Champion" },
   ];
 
   const totalModules = modules.length;
@@ -341,7 +341,7 @@ const LearningPath = () => {
           const quizUnlocked = isUnitQuizUnlocked(mi);
           const quizCompleted = completedQuizzes.has(mod.id);
           const colors = moduleColors[mi % moduleColors.length];
-          const emoji = moduleEmojis[mi % moduleEmojis.length];
+          const ModIcon = moduleIcons[mi % moduleIcons.length];
           const currentLessonIdx = modLessons.findIndex(l => !completedLessons.has(l.id));
           const milestone = goalMilestones[mi];
 
@@ -383,13 +383,12 @@ const LearningPath = () => {
                           : "bg-muted/50 border-border opacity-60"
                       )}
                     >
-                      <motion.span
-                        className="text-3xl"
+                      <motion.div
                         animate={isModuleUnlocked && !isModuleComplete ? { scale: [1, 1.15, 1] } : {}}
                         transition={{ repeat: Infinity, duration: 2 }}
                       >
-                        {milestone.emoji}
-                      </motion.span>
+                        {(() => { const MIcon = milestone.icon; return <MIcon className={cn("w-7 h-7", isModuleUnlocked ? colors.text : "text-muted-foreground")} />; })()}
+                      </motion.div>
                       <div className="flex-1 min-w-0">
                         <p className={cn("text-sm font-extrabold", isModuleUnlocked ? colors.text : "text-muted-foreground")}>
                           {milestone.label}
@@ -440,13 +439,12 @@ const LearningPath = () => {
                     colors.light, colors.border
                   )}
                 >
-                  <motion.span
-                    className="text-3xl"
+                  <motion.div
                     animate={!isModuleComplete ? { scale: [1, 1.15, 1] } : {}}
                     transition={{ repeat: Infinity, duration: 2 }}
                   >
-                    {milestone.emoji}
-                  </motion.span>
+                    {(() => { const MIcon = milestone.icon; return <MIcon className={cn("w-7 h-7", colors.text)} />; })()}
+                  </motion.div>
                   <div className="flex-1 min-w-0">
                     <p className={cn("text-sm font-extrabold", colors.text)}>{milestone.label}</p>
                     <p className="text-xs text-muted-foreground font-semibold">Reward: {milestone.reward}</p>
@@ -462,7 +460,7 @@ const LearningPath = () => {
               {/* Module header */}
               <div className={cn("rounded-2xl p-4 mb-4 text-center border-2", isModuleUnlocked ? colors.border : "border-border opacity-50")}>
                 <div className="flex items-center justify-center gap-2 mb-1">
-                  <span className="text-2xl">{emoji}</span>
+                  <ModIcon className={cn("w-6 h-6", isModuleUnlocked ? colors.text : "text-muted-foreground")} />
                   <h3 className={cn("font-black font-display text-lg", isModuleUnlocked ? colors.text : "text-muted-foreground")}>{mod.title}</h3>
                 </div>
                 <p className="text-xs text-muted-foreground font-semibold">{completedCount}/{modLessons.length} lessons{quizCompleted ? " · ✓ Certified" : ""}</p>
@@ -543,7 +541,7 @@ const LearningPath = () => {
                         {completed ? (
                           <CheckCircle2 className="w-7 h-7" />
                         ) : isCurrent ? (
-                          <span className="text-2xl">{emoji}</span>
+                          <ModIcon className="w-6 h-6" />
                         ) : (
                           <Lock className="w-5 h-5" />
                         )}

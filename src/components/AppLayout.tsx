@@ -23,6 +23,7 @@ import {
   Search,
   DollarSign,
   ChevronDown,
+  Flame,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -51,7 +52,7 @@ const TopBar = () => {
       </Link>
 
       <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-duo-orange/10">
-        <span className="text-base">🔥</span>
+        <Flame className="w-4 h-4 text-duo-orange" />
         <span className="text-sm font-extrabold text-duo-orange">{streak?.current_streak ?? 0}</span>
       </div>
 
