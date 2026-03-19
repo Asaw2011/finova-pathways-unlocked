@@ -436,6 +436,9 @@ const AppLayoutInner = () => {
             <RightSidebar />
           </div>
         </main>
+
+        {/* Floating Money Coach */}
+        <MoneyCoachWidget />
       </div>
     </GameEconomyProvider>
   );
