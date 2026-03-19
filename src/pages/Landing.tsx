@@ -80,7 +80,7 @@ const Landing = () => {
 
       {/* Feature sections */}
       {featureSections.map(({ headline, body, image, alt }, i) => (
-        <section key={headline} className={`px-6 py-16 md:py-24 ${i % 2 === 0 ? "bg-background" : "bg-card"}`}>
+        <section key={headline} className={`px-6 py-16 md:py-24 ${i % 2 === 0 ? "bg-background texture-dots" : "bg-card texture-grid"}`}>
           <div className={`max-w-5xl mx-auto flex flex-col items-center gap-8 md:gap-16 ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}>
             <div className="flex-1 text-center md:text-left">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold font-display lowercase gradient-text mb-4">{headline}</h2>
