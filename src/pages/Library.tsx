@@ -34,14 +34,14 @@ const videos = [
 ];
 
 const gamesList = [
-  { title: "Sim Trading", desc: "Buy & sell stocks in a simulated market", difficulty: "Intermediate", emoji: "📈" },
-  { title: "Budget Challenge", desc: "Build a balanced budget under constraints", difficulty: "Beginner", emoji: "💰" },
-  { title: "Finance Quiz", desc: "Test your financial knowledge", difficulty: "Beginner", emoji: "🧠" },
-  { title: "Paycheck Breakdown", desc: "Estimate your take-home pay after taxes", difficulty: "Beginner", emoji: "💵" },
-  { title: "Subscription Trap", desc: "Manage subscriptions within a budget", difficulty: "Beginner", emoji: "🔄" },
-  { title: "Credit Score Challenge", desc: "Make choices that affect your credit score", difficulty: "Intermediate", emoji: "💳" },
-  { title: "Emergency Fund Builder", desc: "Handle unexpected expenses wisely", difficulty: "Beginner", emoji: "🛡️" },
-  { title: "Investing Time Machine", desc: "See how starting age affects wealth", difficulty: "Beginner", emoji: "⏰" },
+  { title: "Sim Trading", desc: "Buy & sell stocks in a simulated market", difficulty: "Intermediate", icon: TrendingUp },
+  { title: "Budget Challenge", desc: "Build a balanced budget under constraints", difficulty: "Beginner", icon: Wallet },
+  { title: "Finance Quiz", desc: "Test your financial knowledge", difficulty: "Beginner", icon: Brain },
+  { title: "Paycheck Breakdown", desc: "Estimate your take-home pay after taxes", difficulty: "Beginner", icon: Banknote },
+  { title: "Subscription Trap", desc: "Manage subscriptions within a budget", difficulty: "Beginner", icon: RefreshCw },
+  { title: "Credit Score Challenge", desc: "Make choices that affect your credit score", difficulty: "Intermediate", icon: CreditCard },
+  { title: "Emergency Fund Builder", desc: "Handle unexpected expenses wisely", difficulty: "Beginner", icon: Shield },
+  { title: "Investing Time Machine", desc: "See how starting age affects wealth", difficulty: "Beginner", icon: Clock },
 ];
 
 const Library = () => {
