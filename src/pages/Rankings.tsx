@@ -131,7 +131,7 @@ const Rankings = () => {
           <div>
             <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide">{monthName}</p>
             <div className="flex items-center gap-3 mt-1">
-              <span className="text-3xl">{currentTier.emoji}</span>
+              {(() => { const TierIcon = currentTier.icon; return <TierIcon className={cn("w-8 h-8", currentTier.textColor)} />; })()}
               <div>
                 <h2 className={cn("text-2xl font-extrabold font-display", currentTier.textColor)}>{currentTier.name}</h2>
                 <p className="text-sm text-muted-foreground font-semibold">{monthlyXP.toLocaleString()} XP this month</p>
