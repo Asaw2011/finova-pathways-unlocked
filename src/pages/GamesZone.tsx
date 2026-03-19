@@ -168,10 +168,18 @@ const budgetScenarios = [
 ];
 
 const BudgetGame = ({ earnGems, onComplete, personalBest, gemsMultiplier = 1 }: { earnGems?: (n: number) => void; onComplete?: (score: number) => void; personalBest?: number | null; gemsMultiplier?: number }) => {
-  const [scenarioIndex, setScenarioIndex] = useState(0);
+  const saved = loadGameState("budget");
+  const [scenarioIndex, setScenarioIndex] = useState(saved?.scenarioIndex ?? 0);
   const scenario = budgetScenarios[scenarioIndex];
   const [selected, setSelected] = useState<Set<number>>(new Set(scenario.expenses.map((e, i) => e.required ? i : -1).filter(i => i >= 0)));
   const [submitted, setSubmitted] = useState(false);
+
+  // Auto-save scenario progress
+  useEffect(() => {
+    if (scenarioIndex > 0) {
+      saveGameState("budget", { scenarioIndex });
+    }
+  }, [scenarioIndex]);
 
   useEffect(() => {
     setSelected(new Set(budgetScenarios[scenarioIndex].expenses.map((e, i) => e.required ? i : -1).filter(i => i >= 0)));
