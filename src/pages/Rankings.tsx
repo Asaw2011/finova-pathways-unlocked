@@ -180,7 +180,7 @@ const Rankings = () => {
                 !isReached ? "bg-muted/30 border-border opacity-40" : ""
               )} style={isCurrentTier ? { borderColor: "currentColor" } : {}}>
                 <div className="flex items-center gap-3">
-                  <span className="text-xl">{tier.emoji}</span>
+                  {(() => { const TIcon = tier.icon; return <TIcon className={cn("w-5 h-5", isReached ? tier.textColor : "text-muted-foreground")} />; })()}
                   <div>
                     <p className={cn("font-extrabold font-display text-sm", isReached ? tier.textColor : "text-muted-foreground")}>{tier.name}</p>
                     <p className="text-xs text-muted-foreground">{tier.xp.toLocaleString()} XP required</p>
