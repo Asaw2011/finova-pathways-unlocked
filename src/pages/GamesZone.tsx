@@ -312,125 +312,283 @@ function clearGameState(gameId: string) {
   } catch { /* ignore */ }
 }
 
+// Board game events that happen on certain spaces
+const boardEvents = [
+  { space: 3, type: "bonus", text: "Found a savings tip! +$200 bonus", effect: 200 },
+  { space: 5, type: "expense", text: "Unexpected car repair! -$150", effect: -150 },
+  { space: 8, type: "bonus", text: "Tax refund arrived! +$300", effect: 300 },
+  { space: 10, type: "expense", text: "Medical bill! -$200", effect: -200 },
+  { space: 13, type: "bonus", text: "Side hustle income! +$250", effect: 250 },
+];
+
+const BOARD_SIZE = 15;
+const STARTING_MONEY = 1000;
+const STARTING_HEARTS = 3;
+
 const QuizGame = ({ earnGems, onComplete, personalBest, gemsMultiplier = 1, completedModules }: { earnGems?: (n: number) => Promise<void>; onComplete?: (score: number) => void; personalBest?: number | null; gemsMultiplier?: number; completedModules?: string[] }) => {
-  // Split questions into review (from completed lessons) and challenge (from uncompleted)
   const [questions] = useState(() => {
     const completed = completedModules ?? [];
     const reviewQs = quizQuestions.filter(q => completed.includes(q.topic));
     const challengeQs = quizQuestions.filter(q => !completed.includes(q.topic));
-
-    // Pick ~14 review + ~6 challenge (or fill from whichever pool has more)
     const shuffled = (arr: typeof quizQuestions) => [...arr].sort(() => Math.random() - 0.5);
     const reviewPick = shuffled(reviewQs).slice(0, 14);
     const challengePick = shuffled(challengeQs).slice(0, 6);
-
-    // If not enough of either, fill from the other
     let combined = [...reviewPick, ...challengePick];
     if (combined.length < 20) {
       const remaining = shuffled(quizQuestions.filter(q => !combined.includes(q))).slice(0, 20 - combined.length);
       combined = [...combined, ...remaining];
     }
-
-    // Tag each as review or challenge
-    return shuffled(combined).map(q => ({
-      ...q,
-      isReview: completed.includes(q.topic),
-    }));
+    return shuffled(combined).map(q => ({ ...q, isReview: completed.includes(q.topic) }));
   });
 
   const saved = loadGameState("quiz");
-  const [current, setCurrent] = useState(saved?.current ?? 0);
-  const [score, setScore] = useState(saved?.score ?? 0);
+  const [position, setPosition] = useState(saved?.position ?? 0);
+  const [hearts, setHearts] = useState(saved?.hearts ?? STARTING_HEARTS);
+  const [money, setMoney] = useState(saved?.money ?? STARTING_MONEY);
+  const [questionIdx, setQuestionIdx] = useState(saved?.questionIdx ?? 0);
   const [selected, setSelected] = useState<number | null>(null);
-  const [finished, setFinished] = useState(saved?.finished ?? false);
-  const [quizGemsClaimed, setQuizGemsClaimed] = useState(false);
+  const [phase, setPhase] = useState<"roll" | "question" | "event" | "result">(saved?.phase === "result" ? "result" : "roll");
+  const [lastResult, setLastResult] = useState<"correct" | "wrong" | null>(null);
+  const [activeEvent, setActiveEvent] = useState<typeof boardEvents[0] | null>(null);
+  const [gameOver, setGameOver] = useState(saved?.gameOver ?? false);
+  const [won, setWon] = useState(saved?.won ?? false);
+  const [gemsClaimed, setGemsClaimed] = useState(false);
+  const [correctCount, setCorrectCount] = useState(saved?.correctCount ?? 0);
 
-  // Auto-save on state change
   useEffect(() => {
-    if (!finished && current > 0) {
-      saveGameState("quiz", { current, score, finished });
+    if (!gameOver) {
+      saveGameState("quiz", { position, hearts, money, questionIdx, phase: phase === "result" ? "result" : "roll", gameOver, won, correctCount });
     }
-  }, [current, score, finished]);
+  }, [position, hearts, money, questionIdx, phase, gameOver, won, correctCount]);
 
-  const quizGems = score >= 18 ? 30 : score >= 14 ? 20 : score >= 10 ? 12 : score >= 6 ? 6 : 2;
-  const totalScore = Math.round((score / questions.length) * 100);
+  const totalScore = gameOver ? Math.round((correctCount / Math.max(questionIdx, 1)) * 100) : 0;
+  const gems = getGemsFromScore(totalScore);
+
+  const handleRoll = () => {
+    if (questionIdx >= questions.length) {
+      // Ran out of questions — evaluate
+      const finalWon = position >= BOARD_SIZE;
+      setWon(finalWon);
+      setGameOver(true);
+      clearGameState("quiz");
+      return;
+    }
+    setPhase("question");
+    setSelected(null);
+    setLastResult(null);
+  };
 
   const handleAnswer = (i: number) => {
     if (selected !== null) return;
     setSelected(i);
-    if (i === questions[current].answer) setScore((s) => s + 1);
-    setTimeout(() => {
-      if (current + 1 >= questions.length) {
-        setFinished(true);
-        clearGameState("quiz");
-      }
-      else { setCurrent((c) => c + 1); setSelected(null); }
-    }, 1000);
+    const correct = i === questions[questionIdx].answer;
+
+    if (correct) {
+      setLastResult("correct");
+      setCorrectCount(c => c + 1);
+      const advance = questions[questionIdx].isReview ? 1 : 2; // Challenge questions move you further
+      const newPos = Math.min(position + advance, BOARD_SIZE);
+      setMoney(m => m + 100);
+      setTimeout(() => {
+        setPosition(newPos);
+        // Check for board event
+        const event = boardEvents.find(e => e.space === newPos);
+        if (event) {
+          setActiveEvent(event);
+          setMoney(m => Math.max(0, m + event.effect));
+          setPhase("event");
+        } else if (newPos >= BOARD_SIZE) {
+          setWon(true);
+          setGameOver(true);
+          clearGameState("quiz");
+        } else {
+          setQuestionIdx(q => q + 1);
+          setPhase("roll");
+        }
+      }, 800);
+    } else {
+      setLastResult("wrong");
+      const newHearts = hearts - 1;
+      setHearts(newHearts);
+      setTimeout(() => {
+        if (newHearts <= 0) {
+          setWon(false);
+          setGameOver(true);
+          clearGameState("quiz");
+        } else {
+          setQuestionIdx(q => q + 1);
+          setPhase("roll");
+        }
+      }, 800);
+    }
   };
 
-  if (finished) {
-    const pct = Math.round((score / questions.length) * 100);
-    const grade = getGrade(pct);
+  const dismissEvent = () => {
+    setActiveEvent(null);
+    if (position >= BOARD_SIZE) {
+      setWon(true);
+      setGameOver(true);
+      clearGameState("quiz");
+    } else {
+      setQuestionIdx(q => q + 1);
+      setPhase("roll");
+    }
+  };
 
+  const restart = () => {
+    setPosition(0); setHearts(STARTING_HEARTS); setMoney(STARTING_MONEY);
+    setQuestionIdx(0); setSelected(null); setPhase("roll");
+    setLastResult(null); setActiveEvent(null); setGameOver(false);
+    setWon(false); setGemsClaimed(false); setCorrectCount(0);
+    clearGameState("quiz");
+  };
+
+  // ---- GAME OVER SCREEN ----
+  if (gameOver) {
+    const grade = getGrade(totalScore);
     return (
-      <div className="text-center py-8 space-y-3">
-        <Trophy className="w-12 h-12 text-duo-gold mx-auto mb-4" />
+      <div className="text-center py-6 space-y-3">
+        {won ? (
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-5xl mb-2">🏔️</motion.div>
+        ) : (
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-5xl mb-2">💔</motion.div>
+        )}
         {personalBest !== null && personalBest !== undefined && totalScore > personalBest && (
-          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="bg-yellow-400 text-yellow-900 rounded-xl p-3 font-extrabold text-center mb-3 text-sm">
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="bg-yellow-400 text-yellow-900 rounded-xl p-3 font-extrabold text-center text-sm">
             NEW PERSONAL BEST! {totalScore} beats your old record of {personalBest}!
           </motion.div>
         )}
-        {personalBest === null && (
-          <div className="bg-emerald-100 text-emerald-800 rounded-xl p-2 text-xs font-bold text-center mb-3">First time playing — score saved!</div>
-        )}
-        <p className="text-4xl font-black font-display mb-1">{grade}</p>
-        <p className="text-xl font-extrabold font-display mb-2">{score}/{questions.length} Correct</p>
-        {earnGems && !quizGemsClaimed ? (
-          <Button onClick={async () => { await earnGems(quizGems * gemsMultiplier); onComplete?.(totalScore); setQuizGemsClaimed(true); toast.success(`+${quizGems * gemsMultiplier} gems!`); }} className="rounded-xl font-bold bg-cyan-500 text-white w-full mb-2">
-            <Diamond className="w-4 h-4 mr-2" /> Claim {quizGems * gemsMultiplier} Gems
+        <p className="text-2xl font-black font-display">{won ? "Summit Reached!" : "Game Over"}</p>
+        <p className="text-muted-foreground text-sm">
+          {won
+            ? `You climbed all ${BOARD_SIZE} spaces and finished with $${money.toLocaleString()}!`
+            : `You made it to space ${position}/${BOARD_SIZE} before running out of hearts.`}
+        </p>
+        <div className="flex justify-center gap-4 text-sm font-bold">
+          <span className="text-primary">{correctCount} correct</span>
+          <span className="text-muted-foreground">{questionIdx - correctCount} wrong</span>
+          <span className="text-amber-600">${money.toLocaleString()} earned</span>
+        </div>
+        <p className="text-3xl font-black font-display">{grade}</p>
+        {earnGems && !gemsClaimed ? (
+          <Button onClick={async () => { await earnGems(gems * gemsMultiplier); onComplete?.(totalScore); setGemsClaimed(true); toast.success(`+${gems * gemsMultiplier} gems!`); }} className="rounded-xl font-bold bg-cyan-500 text-white w-full">
+            <Diamond className="w-4 h-4 mr-2" /> Claim {gems * gemsMultiplier} Gems
             {gemsMultiplier === 2 && <span className="ml-2 text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-bold">2× DAILY</span>}
           </Button>
-        ) : quizGemsClaimed ? (
-          <p className="text-cyan-600 font-bold mb-2 text-center">+{quizGems * gemsMultiplier} gems!</p>
+        ) : gemsClaimed ? (
+          <p className="text-cyan-600 font-bold">+{gems * gemsMultiplier} gems claimed!</p>
         ) : null}
-        <Button className="rounded-xl w-full" variant="outline" onClick={() => { setCurrent(0); setScore(0); setSelected(null); setFinished(false); setQuizGemsClaimed(false); }}><RotateCcw className="w-4 h-4 mr-1" /> Play Again</Button>
+        <Button variant="outline" className="rounded-xl w-full" onClick={restart}><RotateCcw className="w-4 h-4 mr-1" /> Play Again</Button>
       </div>
     );
   }
 
-  const question = questions[current];
+  // ---- BOARD VISUALIZATION ----
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between text-sm text-muted-foreground font-medium">
-        <span className="flex items-center gap-2">
-          Q{current + 1}/{questions.length}
-          <span className={cn(
-            "text-[10px] font-bold px-2 py-0.5 rounded-full",
-            question.isReview
-              ? "bg-emerald-100 text-emerald-700"
-              : "bg-amber-100 text-amber-700"
-          )}>
-            {question.isReview ? "Review" : "Challenge"}
-          </span>
-        </span>
-        <span>Score: {score}</span>
+      {/* Status bar */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1">
+          {Array.from({ length: STARTING_HEARTS }).map((_, i) => (
+            <span key={i} className={cn("text-lg transition-all", i < hearts ? "opacity-100 scale-100" : "opacity-30 scale-75")}>
+              {i < hearts ? "❤️" : "🖤"}
+            </span>
+          ))}
+        </div>
+        <span className="font-display font-extrabold text-primary text-sm">${money.toLocaleString()}</span>
       </div>
-      <div className="h-2 rounded-full bg-muted overflow-hidden">
-        <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${((current + 1) / questions.length) * 100}%` }} />
+
+      {/* Board path */}
+      <div className="bg-muted/30 rounded-2xl p-4 border border-border">
+        <div className="flex flex-wrap gap-1.5 justify-center">
+          {Array.from({ length: BOARD_SIZE + 1 }).map((_, i) => {
+            const isPlayer = i === position;
+            const isPast = i < position;
+            const isEvent = boardEvents.some(e => e.space === i);
+            const isSummit = i === BOARD_SIZE;
+            return (
+              <motion.div
+                key={i}
+                animate={isPlayer ? { scale: [1, 1.15, 1] } : {}}
+                transition={{ repeat: isPlayer ? Infinity : 0, duration: 1.5 }}
+                className={cn(
+                  "w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold border-2 transition-all",
+                  isPlayer && "bg-primary text-primary-foreground border-primary shadow-md",
+                  isPast && !isPlayer && "bg-primary/20 border-primary/30 text-primary/60",
+                  !isPast && !isPlayer && !isSummit && "bg-card border-border text-muted-foreground",
+                  isSummit && !isPlayer && "bg-amber-100 border-amber-400 text-amber-700",
+                  isEvent && !isPast && !isPlayer && "border-amber-300 bg-amber-50"
+                )}
+              >
+                {isPlayer ? "🧑" : isSummit ? "⛰️" : isEvent ? "?" : i}
+              </motion.div>
+            );
+          })}
+        </div>
+        <div className="flex justify-between text-[10px] text-muted-foreground mt-2 px-1">
+          <span>Start</span>
+          <span>Space {position}/{BOARD_SIZE}</span>
+          <span>Summit</span>
+        </div>
       </div>
-      <p className="text-[10px] text-muted-foreground font-medium">Topic: {question.topic}</p>
-      <h3 className="font-display font-bold text-lg">{question.q}</h3>
-      <div className="space-y-2">
-        {question.options.map((opt, i) => (
-          <button key={i} onClick={() => handleAnswer(i)} className={cn(
-            "w-full text-left bg-card rounded-xl border-2 p-3 text-sm font-semibold transition-all",
-            selected === null && "border-border hover:border-primary/30",
-            selected === i && i === question.answer && "border-emerald-500 bg-emerald-50",
-            selected === i && i !== question.answer && "border-red-400 bg-red-50",
-            selected !== null && i === question.answer && selected !== i && "border-emerald-300"
-          )}>{opt}</button>
-        ))}
-      </div>
+
+      {/* Event overlay */}
+      {phase === "event" && activeEvent && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+          className={cn("rounded-xl p-4 text-center border-2", activeEvent.effect > 0 ? "bg-emerald-50 border-emerald-300" : "bg-red-50 border-red-300")}>
+          <p className="text-2xl mb-1">{activeEvent.effect > 0 ? "🎁" : "⚠️"}</p>
+          <p className="font-bold font-display text-sm">{activeEvent.text}</p>
+          <Button size="sm" className="mt-3 rounded-xl" onClick={dismissEvent}>Continue</Button>
+        </motion.div>
+      )}
+
+      {/* Roll / question phase */}
+      {phase === "roll" && (
+        <div className="text-center space-y-3">
+          <p className="text-sm text-muted-foreground font-medium">
+            Answer correctly to advance. Challenge questions move you 2 spaces!
+          </p>
+          <Button onClick={handleRoll} className="rounded-xl font-bold px-8 py-3 text-base">
+            Draw Question
+          </Button>
+        </div>
+      )}
+
+      {phase === "question" && questionIdx < questions.length && (
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
+          <div className="flex items-center justify-between text-xs">
+            <span className={cn(
+              "font-bold px-2 py-0.5 rounded-full",
+              questions[questionIdx].isReview
+                ? "bg-emerald-100 text-emerald-700"
+                : "bg-amber-100 text-amber-700"
+            )}>
+              {questions[questionIdx].isReview ? `Review · ${questions[questionIdx].topic}` : `Challenge · ${questions[questionIdx].topic}`}
+            </span>
+            <span className="text-muted-foreground font-medium">
+              {questions[questionIdx].isReview ? "+1 space" : "+2 spaces"}
+            </span>
+          </div>
+          <h3 className="font-display font-bold">{questions[questionIdx].q}</h3>
+          <div className="space-y-2">
+            {questions[questionIdx].options.map((opt, i) => (
+              <button key={i} onClick={() => handleAnswer(i)} className={cn(
+                "w-full text-left bg-card rounded-xl border-2 p-3 text-sm font-semibold transition-all",
+                selected === null && "border-border hover:border-primary/30",
+                selected === i && i === questions[questionIdx].answer && "border-emerald-500 bg-emerald-50",
+                selected === i && i !== questions[questionIdx].answer && "border-red-400 bg-red-50",
+                selected !== null && i === questions[questionIdx].answer && selected !== i && "border-emerald-300"
+              )}>{opt}</button>
+            ))}
+          </div>
+          {lastResult && (
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+              className={cn("text-center font-bold text-sm", lastResult === "correct" ? "text-emerald-600" : "text-red-500")}>
+              {lastResult === "correct" ? `Correct! +$100, advancing ${questions[questionIdx].isReview ? "1" : "2"} spaces` : "Wrong! Lost a heart"}
+            </motion.p>
+          )}
+        </motion.div>
+      )}
     </div>
   );
 };
@@ -450,7 +608,7 @@ const gameColors = [
 const games = [
   { id: "trading", title: "Sim Trading", desc: "Buy & sell real stocks in a simulated market. Build a portfolio and maximize returns.", icon: TrendingUp, component: SimTrading, learn: "How the stock market works", difficulty: "Intermediate", rounds: "Ongoing", maxGems: 30 },
   { id: "budget", title: "Budget Challenge", desc: "5 different life scenarios — stay under budget each round. Can you beat all 5?", icon: Wallet, component: BudgetGame, learn: "How to allocate income wisely", difficulty: "Beginner", rounds: "5 rounds", maxGems: 30 },
-  { id: "quiz", title: "Finance Quiz", desc: "20 questions across all financial topics. Race against yourself to beat your score.", icon: Brain, component: QuizGame, learn: "Core financial concepts", difficulty: "Beginner", rounds: "20 questions", maxGems: 30 },
+  { id: "quiz", title: "Money Mountain", desc: "Climb 15 spaces to the summit! Answer finance questions to advance — wrong answers cost hearts.", icon: Brain, component: QuizGame, learn: "Core financial concepts", difficulty: "Beginner", rounds: "15 spaces", maxGems: 30 },
   { id: "paycheck", title: "Paycheck Breakdown", desc: "5 job scenarios — guess take-home pay before the timer runs out.", icon: Banknote, component: PaycheckBreakdown, learn: "How taxes reduce your paycheck", difficulty: "Beginner", rounds: "5 rounds", maxGems: 30 },
   { id: "subscription", title: "Subscription Trap", desc: "5 budgets, 30 subscriptions. Cut the right ones and stay under budget.", icon: DollarSign, component: SubscriptionTrap, learn: "How small costs add up", difficulty: "Beginner", rounds: "5 rounds", maxGems: 30 },
   { id: "credit", title: "Credit Life Sim", desc: "12 months of real credit decisions. Start at 580 — can you reach 750+?", icon: CreditCard, component: CreditScoreChallenge, learn: "How credit scores work", difficulty: "Intermediate", rounds: "12 months", maxGems: 30 },
