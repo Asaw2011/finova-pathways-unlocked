@@ -383,13 +383,12 @@ const LearningPath = () => {
                           : "bg-muted/50 border-border opacity-60"
                       )}
                     >
-                      <motion.span
-                        className="text-3xl"
+                      <motion.div
                         animate={isModuleUnlocked && !isModuleComplete ? { scale: [1, 1.15, 1] } : {}}
                         transition={{ repeat: Infinity, duration: 2 }}
                       >
-                        {milestone.emoji}
-                      </motion.span>
+                        {(() => { const MIcon = milestone.icon; return <MIcon className={cn("w-7 h-7", isModuleUnlocked ? colors.text : "text-muted-foreground")} />; })()}
+                      </motion.div>
                       <div className="flex-1 min-w-0">
                         <p className={cn("text-sm font-extrabold", isModuleUnlocked ? colors.text : "text-muted-foreground")}>
                           {milestone.label}
