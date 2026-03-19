@@ -343,7 +343,7 @@ const LearningPath = () => {
           const colors = moduleColors[mi % moduleColors.length];
           const ModIcon = moduleIcons[mi % moduleIcons.length];
           const currentLessonIdx = modLessons.findIndex(l => !completedLessons.has(l.id));
-          const milestone = goalMilestones[mi];
+          
 
           return (
             <motion.div key={mod.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
