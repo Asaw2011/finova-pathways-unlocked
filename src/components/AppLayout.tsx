@@ -369,7 +369,7 @@ const AppLayoutInner = () => {
                     <span className="whitespace-nowrap flex-1">{label}</span>
                     {sub && (
                       <ChevronDown className={cn(
-                        "w-3.5 h-3.5 shrink-0 opacity-0 group-hover/sidebar:opacity-100 transition-all duration-200",
+                        "w-3.5 h-3.5 shrink-0 transition-all duration-200",
                         expanded ? "rotate-180 text-primary" : "text-muted-foreground"
                       )} />
                     )}
