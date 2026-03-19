@@ -223,7 +223,7 @@ const Rankings = () => {
                   )}>
                     {i + 1}
                   </span>
-                  <span className="text-lg">{entryTier.emoji}</span>
+                  {(() => { const EIcon = entryTier.icon; return <EIcon className={cn("w-5 h-5", entryTier.textColor)} />; })()}
                   <div className="flex-1 min-w-0">
                     <p className={cn("text-sm font-semibold truncate", isMe && "text-primary")}>
                       {isMe ? "You" : getProfileName(entry.user_id)}
