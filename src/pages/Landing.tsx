@@ -61,7 +61,7 @@ const Landing = () => {
       </section>
 
       {/* Social Proof */}
-      <section className="px-6 py-10 bg-card border-y border-border/40">
+      <section className="px-6 py-10 bg-card border-y border-border/40 texture-grid">
         <div className="max-w-3xl mx-auto flex justify-center gap-12 md:gap-20 text-center">
           <div>
             <p className="text-3xl font-extrabold font-display text-primary">7</p>
