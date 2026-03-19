@@ -12,7 +12,7 @@ import DailyChallenge from "@/components/learning-path/DailyChallenge";
 import { useGameEconomy } from "@/contexts/GameEconomyContext";
 import { Link } from "react-router-dom";
 
-const moduleEmojis = ["💵", "🏦", "💳", "📈", "💰", "🛡️", "🏆"];
+const moduleIcons = [Banknote, Landmark, CreditCard, TrendingUp, PiggyBank, Shield, GraduationCap];
 const moduleColors = [
   { bg: "bg-primary", text: "text-primary", light: "bg-primary/10", border: "border-primary/30", hex: "hsl(101, 95%, 40%)" },
   { bg: "bg-duo-blue", text: "text-duo-blue", light: "bg-duo-blue/10", border: "border-duo-blue/30", hex: "hsl(199, 92%, 52%)" },
