@@ -387,7 +387,7 @@ const AppLayoutInner = () => {
                             "w-1.5 h-1.5 rounded-full shrink-0",
                             location.pathname === s.to ? "bg-primary" : "bg-border"
                           )} />
-                          <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200">{s.label}</span>
+                          <span>{s.label}</span>
                         </Link>
                       ))}
                     </div>
