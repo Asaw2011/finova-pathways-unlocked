@@ -497,13 +497,11 @@ const LearningPath = () => {
           transition={{ delay: 0.8 }}
           className="flex flex-col items-center mb-8"
         >
-          {[0, 1, 2].map((i) => (
-            <motion.div key={i} initial={{ scaleY: 0 }} animate={{ scaleY: 1 }}
-              transition={{ delay: 0.9 + i * 0.08, duration: 0.2 }}
-              className={cn("w-2 h-4 rounded-full my-0.5", completedModules === totalModules ? "bg-duo-gold" : "bg-border")}
-              style={{ transformOrigin: "top" }}
-            />
-          ))}
+          <StepConnector
+            type={completedModules === totalModules ? "completed" : "locked"}
+            stepNumber={totalModules + 1}
+            delay={0.9}
+          />
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
