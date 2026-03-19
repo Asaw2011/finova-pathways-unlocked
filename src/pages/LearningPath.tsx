@@ -354,22 +354,12 @@ const LearningPath = () => {
               {/* Step connector between modules */}
               {mi > 0 && (
                 <div className="flex flex-col items-center mb-4">
-                  {[0, 1, 2, 3, 4].map((stepIdx) => {
+                  {(() => {
                     const prevDone = modules[mi - 1].lessons.every(l => completedLessons.has(l.id)) && completedQuizzes.has(modules[mi - 1].id);
-                    return (
-                      <motion.div
-                        key={stepIdx}
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        transition={{ delay: mi * 0.08 + stepIdx * 0.06, duration: 0.2 }}
-                        className={cn(
-                          "w-2 h-4 rounded-full my-0.5 transition-colors duration-500",
-                          prevDone ? colors.bg : "bg-border"
-                        )}
-                        style={{ transformOrigin: "top" }}
-                      />
-                    );
-                  })}
+                    const currUnlocked = isModuleUnlocked;
+                    const type = prevDone && currUnlocked ? "completed" : prevDone ? "active" : "locked";
+                    return <StepConnector type={type as any} stepNumber={mi + 1} delay={mi * 0.08} />;
+                  })()}
                 </div>
               )}
 
