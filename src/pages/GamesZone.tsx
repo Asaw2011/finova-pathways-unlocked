@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Gamepad2, TrendingUp, Wallet, Brain, Trophy, ArrowRight, ArrowLeft, RotateCcw, CreditCard, Banknote, Clock, AlertTriangle, DollarSign, Diamond, CheckCircle2 } from "lucide-react";
+import { Gamepad2, TrendingUp, Wallet, Brain, Trophy, ArrowRight, ArrowLeft, RotateCcw, CreditCard, Banknote, Clock, AlertTriangle, DollarSign, Diamond, CheckCircle2, Palmtree, ScrollText, Mountain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -8,11 +8,16 @@ import { useGameEconomy } from "@/contexts/GameEconomyContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import PaycheckBreakdown from "@/components/games/PaycheckBreakdown";
-import SubscriptionTrap from "@/components/games/SubscriptionTrap";
-import CreditScoreChallenge from "@/components/games/CreditScoreChallenge";
-import EmergencyFundBuilder from "@/components/games/EmergencyFundBuilder";
-import InvestingTimeMachine from "@/components/games/InvestingTimeMachine";
+
+// New game components
+import SimTradingGame from "@/components/games/SimTradingGame";
+import BudgetLifeSim from "@/components/games/BudgetLifeSim";
+import MoneyMountainGame from "@/components/games/MoneyMountainGame";
+import PaycheckLifeSim from "@/components/games/PaycheckLifeSim";
+import SubscriptionDetective from "@/components/games/SubscriptionDetective";
+import CreditLifeSim from "@/components/games/CreditLifeSim";
+import InvestingIsland from "@/components/games/InvestingIsland";
+import TaxQuest from "@/components/games/TaxQuest";
 
 // ---- SHARED SCORING INFRASTRUCTURE ----
 export const getGrade = (score: number): "S" | "A" | "B" | "C" | "F" => {
@@ -38,562 +43,7 @@ const awardGameXP = async (userId: string, gameId: string, score: number) => {
   await supabase.from("games_played").insert({ user_id: userId, game_id: gameId, score });
 };
 
-// ---- SIM TRADING GAME ----
-const stocks = [
-  { symbol: "AAPL", name: "Apple Inc.", price: 178.50 },
-  { symbol: "GOOGL", name: "Alphabet Inc.", price: 141.20 },
-  { symbol: "TSLA", name: "Tesla Inc.", price: 245.80 },
-  { symbol: "AMZN", name: "Amazon.com", price: 185.60 },
-  { symbol: "MSFT", name: "Microsoft", price: 415.30 },
-];
-
-const SimTrading = ({ earnGems, onComplete, personalBest, gemsMultiplier = 1 }: { earnGems?: (n: number) => void; onComplete?: (score: number) => void; personalBest?: number | null; gemsMultiplier?: number }) => {
-  const initialBalance = 10000;
-  const saved = loadGameState("trading");
-  const [balance, setBalance] = useState(saved?.balance ?? initialBalance);
-  const [portfolio, setPortfolio] = useState<Record<string, { shares: number; avgPrice: number }>>(saved?.portfolio ?? {});
-  const [prices, setPrices] = useState(saved?.prices ?? stocks.map((s) => s.price));
-  const [tradeHistory, setTradeHistory] = useState<{ action: string; symbol: string; price: number; pnl?: number }[]>(saved?.tradeHistory ?? []);
-  const [dayCount, setDayCount] = useState(saved?.dayCount ?? 0);
-
-  // Auto-save on meaningful state changes
-  useEffect(() => {
-    if (dayCount > 0 || tradeHistory.length > 0) {
-      saveGameState("trading", { balance, portfolio, prices, tradeHistory, dayCount });
-    }
-  }, [balance, portfolio, prices, tradeHistory, dayCount]);
-
-  const simulateMarket = () => {
-    setDayCount(d => d + 1);
-    setPrices((prev) => prev.map((p) => {
-      const change = (Math.random() - 0.48) * p * 0.05;
-      return Math.round((p + change) * 100) / 100;
-    }));
-  };
-
-  const buy = (index: number) => {
-    const stock = stocks[index]; const price = prices[index];
-    if (balance < price) { toast.error("Not enough balance!"); return; }
-    setBalance((b) => Math.round((b - price) * 100) / 100);
-    setPortfolio((prev) => {
-      const existing = prev[stock.symbol] || { shares: 0, avgPrice: 0 };
-      const totalCost = existing.avgPrice * existing.shares + price;
-      const newShares = existing.shares + 1;
-      return { ...prev, [stock.symbol]: { shares: newShares, avgPrice: totalCost / newShares } };
-    });
-    toast.success(`Bought 1 share of ${stock.symbol}`);
-    setTradeHistory(prev => [...prev, { action: "BUY", symbol: stock.symbol, price }]);
-  };
-
-  const sell = (index: number) => {
-    const stock = stocks[index]; const price = prices[index];
-    if (!portfolio[stock.symbol] || portfolio[stock.symbol].shares === 0) { toast.error("No shares to sell!"); return; }
-    const pnl = price - portfolio[stock.symbol].avgPrice;
-    setBalance((b) => Math.round((b + price) * 100) / 100);
-    setPortfolio((prev) => {
-      const existing = prev[stock.symbol];
-      const newShares = existing.shares - 1;
-      return { ...prev, [stock.symbol]: { shares: newShares, avgPrice: newShares > 0 ? existing.avgPrice : 0 } };
-    });
-    toast.success(`Sold 1 share of ${stock.symbol}`);
-    setTradeHistory(prev => [...prev, { action: "SELL", symbol: stock.symbol, price, pnl: Math.round(pnl * 100) / 100 }]);
-  };
-
-  const portfolioValue = stocks.reduce((sum, s, i) => sum + (portfolio[s.symbol]?.shares ?? 0) * prices[i], 0);
-  const totalValue = balance + portfolioValue;
-  const totalReturn = ((totalValue - initialBalance) / initialBalance) * 100;
-
-  return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-3">
-        <div><p className="text-xs text-muted-foreground font-medium">Cash</p><p className="text-xl font-extrabold font-display">${balance.toLocaleString()}</p></div>
-        <div><p className="text-xs text-muted-foreground font-medium">Portfolio</p><p className="text-xl font-extrabold font-display text-primary">${Math.round(portfolioValue).toLocaleString()}</p></div>
-        <div><p className="text-xs text-muted-foreground font-medium">Total Return</p><p className={cn("text-xl font-extrabold font-display", totalReturn >= 0 ? "text-emerald-600" : "text-destructive")}>{totalReturn >= 0 ? "+" : ""}{totalReturn.toFixed(1)}%</p></div>
-      </div>
-      <div className="flex gap-2 items-center">
-        <Button size="sm" onClick={simulateMarket} className="rounded-xl"><TrendingUp className="w-4 h-4 mr-1" /> Simulate Day</Button>
-        <span className="text-xs text-muted-foreground font-bold">Day {dayCount + 1}</span>
-        <Button size="sm" variant="outline" className="rounded-xl ml-auto" onClick={() => { setBalance(initialBalance); setPortfolio({}); setPrices(stocks.map(s => s.price)); setTradeHistory([]); setDayCount(0); clearGameState("trading"); }}><RotateCcw className="w-4 h-4 mr-1" /> Reset</Button>
-      </div>
-      <div className="space-y-2">
-        {stocks.map((stock, i) => {
-          const change = prices[i] - stock.price;
-          const pct = ((change / stock.price) * 100).toFixed(1);
-          const holding = portfolio[stock.symbol];
-          return (
-            <div key={stock.symbol} className="bg-muted/50 rounded-xl p-3 flex items-center justify-between border border-border">
-              <div><p className="font-display font-bold text-sm">{stock.symbol}</p><p className="text-xs text-muted-foreground">{stock.name}</p></div>
-              <div className="text-right flex items-center gap-4">
-                <div>
-                  <p className="font-display font-bold text-sm">${prices[i].toFixed(2)}</p>
-                  <p className={cn("text-xs font-medium", change >= 0 ? "text-emerald-600" : "text-destructive")}>{change >= 0 ? "+" : ""}{pct}%</p>
-                </div>
-                {holding && holding.shares > 0 && <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-lg font-bold">{holding.shares}</span>}
-                <div className="flex gap-1">
-                  <Button size="sm" variant="outline" onClick={() => buy(i)} className="h-7 px-2 text-xs rounded-lg">Buy</Button>
-                  <Button size="sm" variant="ghost" onClick={() => sell(i)} className="h-7 px-2 text-xs rounded-lg">Sell</Button>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      {tradeHistory.length > 0 && (
-        <div className="glass rounded-xl p-3 space-y-2">
-          <p className="text-xs font-bold text-muted-foreground">Recent Trades</p>
-          {tradeHistory.slice(-5).reverse().map((t, i) => (
-            <div key={i} className="flex items-center justify-between text-xs">
-              <span className={cn("font-bold px-1.5 py-0.5 rounded", t.action === "BUY" ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700")}>{t.action}</span>
-              <span className="text-muted-foreground">{t.symbol} @ ${t.price.toFixed(2)}</span>
-              {t.pnl !== undefined && (
-                <span className={cn("font-bold", t.pnl >= 0 ? "text-emerald-600" : "text-destructive")}>
-                  {t.pnl >= 0 ? "+" : ""}${t.pnl.toFixed(2)}
-                </span>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
-
-// ---- BUDGET CHALLENGE ----
-const budgetScenarios = [
-  { title: "First Job Budget", income: 2000, expenses: [{ name: "Rent", amount: 800, required: true }, { name: "Groceries", amount: 300, required: true }, { name: "Phone Bill", amount: 60, required: true }, { name: "Transportation", amount: 100, required: true }, { name: "Streaming Services", amount: 45, required: false }, { name: "Eating Out", amount: 200, required: false }, { name: "New Sneakers", amount: 150, required: false }, { name: "Savings", amount: 400, required: false }, { name: "Emergency Fund", amount: 200, required: false }] },
-  { title: "College Student Budget", income: 1200, expenses: [{ name: "Tuition (monthly)", amount: 400, required: true }, { name: "Groceries", amount: 200, required: true }, { name: "Transportation", amount: 80, required: true }, { name: "Phone Bill", amount: 45, required: true }, { name: "Textbooks", amount: 100, required: false }, { name: "Eating Out", amount: 150, required: false }, { name: "Entertainment", amount: 80, required: false }, { name: "Savings", amount: 200, required: false }] },
-  { title: "Side Hustle Budget", income: 3500, expenses: [{ name: "Rent", amount: 1100, required: true }, { name: "Car Payment", amount: 350, required: true }, { name: "Insurance", amount: 150, required: true }, { name: "Groceries", amount: 400, required: true }, { name: "Streaming x3", amount: 45, required: false }, { name: "Gym Membership", amount: 50, required: false }, { name: "Dining Out", amount: 300, required: false }, { name: "Clothing", amount: 150, required: false }, { name: "Investments", amount: 500, required: false }, { name: "Emergency Fund", amount: 200, required: false }] },
-  { title: "Minimum Wage Challenge", income: 1400, expenses: [{ name: "Shared Rent", amount: 500, required: true }, { name: "Groceries", amount: 250, required: true }, { name: "Bus Pass", amount: 60, required: true }, { name: "Phone", amount: 40, required: true }, { name: "Utilities share", amount: 80, required: true }, { name: "Eating Out", amount: 120, required: false }, { name: "Savings", amount: 150, required: false }, { name: "Entertainment", amount: 60, required: false }, { name: "Clothing", amount: 80, required: false }] },
-  { title: "Post-Graduation Budget", income: 4200, expenses: [{ name: "Rent", amount: 1400, required: true }, { name: "Student Loan Payment", amount: 350, required: true }, { name: "Groceries", amount: 350, required: true }, { name: "Car & Insurance", amount: 450, required: true }, { name: "Phone", amount: 70, required: true }, { name: "Gym", amount: 50, required: false }, { name: "Dining Out", amount: 250, required: false }, { name: "Streaming", amount: 40, required: false }, { name: "Savings", amount: 500, required: false }, { name: "401k Contribution", amount: 420, required: false }, { name: "Emergency Fund", amount: 200, required: false }] },
-];
-
-const BudgetGame = ({ earnGems, onComplete, personalBest, gemsMultiplier = 1 }: { earnGems?: (n: number) => void; onComplete?: (score: number) => void; personalBest?: number | null; gemsMultiplier?: number }) => {
-  const saved = loadGameState("budget");
-  const [scenarioIndex, setScenarioIndex] = useState(saved?.scenarioIndex ?? 0);
-  const scenario = budgetScenarios[scenarioIndex];
-  const [selected, setSelected] = useState<Set<number>>(new Set(scenario.expenses.map((e, i) => e.required ? i : -1).filter(i => i >= 0)));
-  const [submitted, setSubmitted] = useState(false);
-
-  // Auto-save scenario progress
-  useEffect(() => {
-    if (scenarioIndex > 0) {
-      saveGameState("budget", { scenarioIndex });
-    }
-  }, [scenarioIndex]);
-
-  useEffect(() => {
-    setSelected(new Set(budgetScenarios[scenarioIndex].expenses.map((e, i) => e.required ? i : -1).filter(i => i >= 0)));
-    setSubmitted(false);
-  }, [scenarioIndex]);
-
-  const totalSpent = scenario.expenses.reduce((sum, e, i) => sum + (selected.has(i) ? e.amount : 0), 0);
-  const remaining = scenario.income - totalSpent;
-  const toggle = (i: number) => { if (scenario.expenses[i].required || submitted) return; setSelected((prev) => { const next = new Set(prev); next.has(i) ? next.delete(i) : next.add(i); return next; }); };
-
-  return (
-    <div className="space-y-4">
-      <p className="text-xs font-bold text-muted-foreground mb-1">{scenario.title} — Scenario {scenarioIndex + 1}/5</p>
-      <div className="flex items-center justify-between">
-        <div><p className="text-xs text-muted-foreground font-medium">Monthly Income</p><p className="text-2xl font-extrabold font-display">${scenario.income.toLocaleString()}</p></div>
-        <div className="text-right"><p className="text-xs text-muted-foreground font-medium">Remaining</p><p className={cn("text-2xl font-extrabold font-display", remaining >= 0 ? "text-emerald-600" : "text-destructive")}>${remaining.toLocaleString()}</p></div>
-      </div>
-      <p className="text-sm text-muted-foreground">Select expenses. Required ones can't be removed.</p>
-      <div className="space-y-2">
-        {scenario.expenses.map((expense, i) => (
-          <button key={i} onClick={() => toggle(i)} className={cn("w-full bg-card rounded-xl border p-3 flex items-center justify-between transition-all text-left", selected.has(i) ? "border-primary/30 bg-primary/5" : "border-border opacity-60", (expense.required || submitted) && "cursor-default")}>
-            <div className="flex items-center gap-2">
-              <div className={cn("w-5 h-5 rounded-md border-2 flex items-center justify-center", selected.has(i) ? "bg-primary border-primary text-white" : "border-muted-foreground")}>
-                {selected.has(i) && <span className="text-xs">✓</span>}
-              </div>
-              <span className="text-sm font-semibold">{expense.name}</span>
-              {expense.required && <span className="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-bold">Required</span>}
-            </div>
-            <span className="font-display font-bold text-sm">${expense.amount}</span>
-          </button>
-        ))}
-      </div>
-      {!submitted && remaining >= 0 && remaining < 200 && <p className="text-xs text-amber-600 font-medium">Consider saving more from remaining funds.</p>}
-      {!submitted && remaining < 0 && <p className="text-xs text-destructive font-medium">Over budget! Remove optional expenses.</p>}
-      {!submitted && (
-        <Button onClick={() => setSubmitted(true)} className="w-full rounded-xl font-bold" disabled={remaining < 0}>
-          {remaining >= 0 ? "✓ Lock In Budget" : "Over Budget!"}
-        </Button>
-      )}
-      {submitted && (
-        <div className="rounded-xl border-2 border-emerald-300 bg-emerald-50 p-4 text-center space-y-2">
-          <p className="text-lg font-bold">✅ Budget Locked!</p>
-          <p className="text-sm text-muted-foreground">You kept ${remaining.toLocaleString()} remaining from ${scenario.income.toLocaleString()} income.</p>
-          <Button size="sm" variant="outline" onClick={() => setSubmitted(false)} className="rounded-xl"><RotateCcw className="w-3 h-3 mr-1" /> Try Again</Button>
-          {scenarioIndex < budgetScenarios.length - 1 && (
-            <Button size="sm" onClick={() => setScenarioIndex(i => i + 1)} className="rounded-xl mt-2 w-full font-bold">
-              Next Scenario →
-            </Button>
-          )}
-          {scenarioIndex === budgetScenarios.length - 1 && (
-            <p className="text-xs text-emerald-600 font-bold mt-2 text-center">🎉 You completed all 5 scenarios!</p>
-          )}
-        </div>
-      )}
-    </div>
-  );
-};
-
-// ---- QUIZ GAME WITH LESSON-BASED QUESTIONS ----
-// Each question is tagged with a topic that maps to lesson modules
-const quizQuestions: Array<{ q: string; options: string[]; answer: number; topic: string }> = [
-  // Budgeting Basics
-  { q: "What is the 50/30/20 rule?", options: ["Save 50%, spend 30%, invest 20%", "Needs 50%, wants 30%, savings 20%", "Taxes 50%, rent 30%, food 20%", "Invest 50%, save 30%, spend 20%"], answer: 1, topic: "Budgeting Basics" },
-  { q: "What is a budget's main purpose?", options: ["To restrict spending", "To track and plan where money goes", "To eliminate wants", "To maximize debt"], answer: 1, topic: "Budgeting Basics" },
-  { q: "What is a common budgeting mistake?", options: ["Tracking expenses", "Not accounting for irregular expenses", "Having an emergency fund", "Saving too much"], answer: 1, topic: "Budgeting Basics" },
-
-  // Banking & Credit
-  { q: "What is a credit score range?", options: ["0-500", "100-850", "300-850", "500-1000"], answer: 2, topic: "Banking & Credit Intro" },
-  { q: "A credit score of 750 is considered:", options: ["Poor", "Fair", "Good to Excellent", "Not real"], answer: 2, topic: "Banking & Credit Intro" },
-  { q: "The biggest factor in your credit score is:", options: ["Length of history", "Payment history (35%)", "Credit mix", "New credit"], answer: 1, topic: "Banking & Credit Intro" },
-  { q: "Debit cards pull money from:", options: ["A loan", "Your bank account", "Credit score", "Future earnings"], answer: 1, topic: "Banking & Credit Intro" },
-  { q: "Which account typically earns higher interest?", options: ["Checking account", "High-yield savings account", "Student loan account", "Credit card account"], answer: 1, topic: "Banking & Credit Intro" },
-
-  // Debt
-  { q: "What is APR?", options: ["Annual Profit Rate", "Annual Percentage Rate", "Account Payment Ratio", "Average Premium Rate"], answer: 1, topic: "Debt: The Basics" },
-  { q: "Good debt vs bad debt — which is 'good'?", options: ["Credit card for shopping", "A student loan for education", "Payday loan", "Buy-now-pay-later for clothes"], answer: 1, topic: "Debt: The Basics" },
-  { q: "The minimum payment trap means:", options: ["Paying too much", "Mostly paying interest, barely reducing balance", "Getting a discount", "Paying off debt quickly"], answer: 1, topic: "Debt: The Basics" },
-
-  // Saving
-  { q: "What is an emergency fund?", options: ["Money for vacations", "3-6 months of expenses saved", "A type of investment", "A bank loan"], answer: 1, topic: "Saving: The Basics" },
-  { q: "What is compound interest?", options: ["Interest on original only", "Interest on interest + principal", "A bank fee", "A tax deduction"], answer: 1, topic: "Saving: The Basics" },
-  { q: "'Pay yourself first' means:", options: ["Buy treats first", "Save before spending on wants", "Pay bills first", "Borrow money upfront"], answer: 1, topic: "Saving: The Basics" },
-  { q: "Where should you keep emergency savings?", options: ["Under your mattress", "In stocks", "In a high-yield savings account", "In cryptocurrency"], answer: 2, topic: "Saving: The Basics" },
-
-  // Investing
-  { q: "What is an ETF?", options: ["Electronic Transfer Fund", "Exchange-Traded Fund", "Extra Tax Filing", "Emergency Trust Fund"], answer: 1, topic: "Investing: A First Look" },
-  { q: "What does 'diversification' mean?", options: ["Buying one stock", "Spreading investments across different assets", "Selling everything", "Borrowing to invest"], answer: 1, topic: "Investing: A First Look" },
-  { q: "What is an index fund?", options: ["A list of stocks", "A fund tracking a market index like the S&P 500", "A type of savings account", "A government bond"], answer: 1, topic: "Investing: A First Look" },
-  { q: "Dollar-cost averaging means:", options: ["Always buying at the lowest price", "Investing a fixed amount regularly regardless of price", "Only buying when markets drop", "Splitting investments 50/50"], answer: 1, topic: "Investing: A First Look" },
-  { q: "A Roth IRA is taxed:", options: ["When you withdraw", "When you contribute", "Never", "Twice"], answer: 1, topic: "Investing: A First Look" },
-  { q: "Employer 401k matching is:", options: ["A tax penalty", "Free money you should always take", "A type of loan", "Optional for employers"], answer: 1, topic: "Investing: A First Look" },
-
-  // General / Money Mindset
-  { q: "What is net worth?", options: ["Your salary", "Assets minus liabilities", "Total savings", "Monthly income"], answer: 1, topic: "Your Money Mindset" },
-  { q: "The 24-hour rule helps you avoid:", options: ["Paying bills late", "Impulse purchases", "Low credit scores", "Tax penalties"], answer: 1, topic: "Your Money Mindset" },
-  { q: "Lifestyle inflation means:", options: ["Prices rising over time", "Spending more as you earn more", "Investing your raises", "Reducing expenses"], answer: 1, topic: "Your Money Mindset" },
-  { q: "What is opportunity cost?", options: ["The price of opportunities", "Money spent here can't grow elsewhere", "The cheapest option available", "A type of interest"], answer: 1, topic: "Your Money Mindset" },
-  { q: "FDIC insurance covers deposits up to:", options: ["$100,000", "$250,000", "$500,000", "$1,000,000"], answer: 1, topic: "Your Money Mindset" },
-  { q: "Gross income is:", options: ["After-tax pay", "Before-tax pay", "Investment returns", "Net pay"], answer: 1, topic: "Your Money Mindset" },
-];
-
-// Helper to get saved game state from localStorage
-const GAME_SAVE_KEY = "finova_game_saves";
-
-function loadGameState(gameId: string) {
-  try {
-    const raw = localStorage.getItem(GAME_SAVE_KEY);
-    if (!raw) return null;
-    const saves = JSON.parse(raw);
-    return saves[gameId] ?? null;
-  } catch { return null; }
-}
-
-function saveGameState(gameId: string, state: any) {
-  try {
-    const raw = localStorage.getItem(GAME_SAVE_KEY);
-    const saves = raw ? JSON.parse(raw) : {};
-    saves[gameId] = { ...state, savedAt: new Date().toISOString() };
-    localStorage.setItem(GAME_SAVE_KEY, JSON.stringify(saves));
-  } catch { /* ignore */ }
-}
-
-function clearGameState(gameId: string) {
-  try {
-    const raw = localStorage.getItem(GAME_SAVE_KEY);
-    if (!raw) return;
-    const saves = JSON.parse(raw);
-    delete saves[gameId];
-    localStorage.setItem(GAME_SAVE_KEY, JSON.stringify(saves));
-  } catch { /* ignore */ }
-}
-
-// Board game events that happen on certain spaces
-const boardEvents = [
-  { space: 3, type: "bonus", text: "Found a savings tip! +$200 bonus", effect: 200 },
-  { space: 5, type: "expense", text: "Unexpected car repair! -$150", effect: -150 },
-  { space: 8, type: "bonus", text: "Tax refund arrived! +$300", effect: 300 },
-  { space: 10, type: "expense", text: "Medical bill! -$200", effect: -200 },
-  { space: 13, type: "bonus", text: "Side hustle income! +$250", effect: 250 },
-];
-
-const BOARD_SIZE = 15;
-const STARTING_MONEY = 1000;
-const STARTING_HEARTS = 3;
-
-const QuizGame = ({ earnGems, onComplete, personalBest, gemsMultiplier = 1, completedModules }: { earnGems?: (n: number) => Promise<void>; onComplete?: (score: number) => void; personalBest?: number | null; gemsMultiplier?: number; completedModules?: string[] }) => {
-  const [questions] = useState(() => {
-    const completed = completedModules ?? [];
-    const reviewQs = quizQuestions.filter(q => completed.includes(q.topic));
-    const challengeQs = quizQuestions.filter(q => !completed.includes(q.topic));
-    const shuffled = (arr: typeof quizQuestions) => [...arr].sort(() => Math.random() - 0.5);
-    const reviewPick = shuffled(reviewQs).slice(0, 14);
-    const challengePick = shuffled(challengeQs).slice(0, 6);
-    let combined = [...reviewPick, ...challengePick];
-    if (combined.length < 20) {
-      const remaining = shuffled(quizQuestions.filter(q => !combined.includes(q))).slice(0, 20 - combined.length);
-      combined = [...combined, ...remaining];
-    }
-    return shuffled(combined).map(q => ({ ...q, isReview: completed.includes(q.topic) }));
-  });
-
-  const saved = loadGameState("quiz");
-  const [position, setPosition] = useState(saved?.position ?? 0);
-  const [hearts, setHearts] = useState(saved?.hearts ?? STARTING_HEARTS);
-  const [money, setMoney] = useState(saved?.money ?? STARTING_MONEY);
-  const [questionIdx, setQuestionIdx] = useState(saved?.questionIdx ?? 0);
-  const [selected, setSelected] = useState<number | null>(null);
-  const [phase, setPhase] = useState<"roll" | "question" | "event" | "result">(saved?.phase === "result" ? "result" : "roll");
-  const [lastResult, setLastResult] = useState<"correct" | "wrong" | null>(null);
-  const [activeEvent, setActiveEvent] = useState<typeof boardEvents[0] | null>(null);
-  const [gameOver, setGameOver] = useState(saved?.gameOver ?? false);
-  const [won, setWon] = useState(saved?.won ?? false);
-  const [gemsClaimed, setGemsClaimed] = useState(false);
-  const [correctCount, setCorrectCount] = useState(saved?.correctCount ?? 0);
-
-  useEffect(() => {
-    if (!gameOver) {
-      saveGameState("quiz", { position, hearts, money, questionIdx, phase: phase === "result" ? "result" : "roll", gameOver, won, correctCount });
-    }
-  }, [position, hearts, money, questionIdx, phase, gameOver, won, correctCount]);
-
-  const totalScore = gameOver ? Math.round((correctCount / Math.max(questionIdx, 1)) * 100) : 0;
-  const gems = getGemsFromScore(totalScore);
-
-  const handleRoll = () => {
-    if (questionIdx >= questions.length) {
-      // Ran out of questions — evaluate
-      const finalWon = position >= BOARD_SIZE;
-      setWon(finalWon);
-      setGameOver(true);
-      clearGameState("quiz");
-      return;
-    }
-    setPhase("question");
-    setSelected(null);
-    setLastResult(null);
-  };
-
-  const handleAnswer = (i: number) => {
-    if (selected !== null) return;
-    setSelected(i);
-    const correct = i === questions[questionIdx].answer;
-
-    if (correct) {
-      setLastResult("correct");
-      setCorrectCount(c => c + 1);
-      const advance = questions[questionIdx].isReview ? 1 : 2; // Challenge questions move you further
-      const newPos = Math.min(position + advance, BOARD_SIZE);
-      setMoney(m => m + 100);
-      setTimeout(() => {
-        setPosition(newPos);
-        // Check for board event
-        const event = boardEvents.find(e => e.space === newPos);
-        if (event) {
-          setActiveEvent(event);
-          setMoney(m => Math.max(0, m + event.effect));
-          setPhase("event");
-        } else if (newPos >= BOARD_SIZE) {
-          setWon(true);
-          setGameOver(true);
-          clearGameState("quiz");
-        } else {
-          setQuestionIdx(q => q + 1);
-          setPhase("roll");
-        }
-      }, 800);
-    } else {
-      setLastResult("wrong");
-      const newHearts = hearts - 1;
-      setHearts(newHearts);
-      setTimeout(() => {
-        if (newHearts <= 0) {
-          setWon(false);
-          setGameOver(true);
-          clearGameState("quiz");
-        } else {
-          setQuestionIdx(q => q + 1);
-          setPhase("roll");
-        }
-      }, 800);
-    }
-  };
-
-  const dismissEvent = () => {
-    setActiveEvent(null);
-    if (position >= BOARD_SIZE) {
-      setWon(true);
-      setGameOver(true);
-      clearGameState("quiz");
-    } else {
-      setQuestionIdx(q => q + 1);
-      setPhase("roll");
-    }
-  };
-
-  const restart = () => {
-    setPosition(0); setHearts(STARTING_HEARTS); setMoney(STARTING_MONEY);
-    setQuestionIdx(0); setSelected(null); setPhase("roll");
-    setLastResult(null); setActiveEvent(null); setGameOver(false);
-    setWon(false); setGemsClaimed(false); setCorrectCount(0);
-    clearGameState("quiz");
-  };
-
-  // ---- GAME OVER SCREEN ----
-  if (gameOver) {
-    const grade = getGrade(totalScore);
-    return (
-      <div className="text-center py-6 space-y-3">
-        {won ? (
-          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-5xl mb-2">🏔️</motion.div>
-        ) : (
-          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-5xl mb-2">💔</motion.div>
-        )}
-        {personalBest !== null && personalBest !== undefined && totalScore > personalBest && (
-          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="bg-yellow-400 text-yellow-900 rounded-xl p-3 font-extrabold text-center text-sm">
-            NEW PERSONAL BEST! {totalScore} beats your old record of {personalBest}!
-          </motion.div>
-        )}
-        <p className="text-2xl font-black font-display">{won ? "Summit Reached!" : "Game Over"}</p>
-        <p className="text-muted-foreground text-sm">
-          {won
-            ? `You climbed all ${BOARD_SIZE} spaces and finished with $${money.toLocaleString()}!`
-            : `You made it to space ${position}/${BOARD_SIZE} before running out of hearts.`}
-        </p>
-        <div className="flex justify-center gap-4 text-sm font-bold">
-          <span className="text-primary">{correctCount} correct</span>
-          <span className="text-muted-foreground">{questionIdx - correctCount} wrong</span>
-          <span className="text-amber-600">${money.toLocaleString()} earned</span>
-        </div>
-        <p className="text-3xl font-black font-display">{grade}</p>
-        {earnGems && !gemsClaimed ? (
-          <Button onClick={async () => { await earnGems(gems * gemsMultiplier); onComplete?.(totalScore); setGemsClaimed(true); toast.success(`+${gems * gemsMultiplier} gems!`); }} className="rounded-xl font-bold bg-cyan-500 text-white w-full">
-            <Diamond className="w-4 h-4 mr-2" /> Claim {gems * gemsMultiplier} Gems
-            {gemsMultiplier === 2 && <span className="ml-2 text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-bold">2× DAILY</span>}
-          </Button>
-        ) : gemsClaimed ? (
-          <p className="text-cyan-600 font-bold">+{gems * gemsMultiplier} gems claimed!</p>
-        ) : null}
-        <Button variant="outline" className="rounded-xl w-full" onClick={restart}><RotateCcw className="w-4 h-4 mr-1" /> Play Again</Button>
-      </div>
-    );
-  }
-
-  // ---- BOARD VISUALIZATION ----
-  return (
-    <div className="space-y-4">
-      {/* Status bar */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1">
-          {Array.from({ length: STARTING_HEARTS }).map((_, i) => (
-            <span key={i} className={cn("text-lg transition-all", i < hearts ? "opacity-100 scale-100" : "opacity-30 scale-75")}>
-              {i < hearts ? "❤️" : "🖤"}
-            </span>
-          ))}
-        </div>
-        <span className="font-display font-extrabold text-primary text-sm">${money.toLocaleString()}</span>
-      </div>
-
-      {/* Board path */}
-      <div className="bg-muted/30 rounded-2xl p-4 border border-border">
-        <div className="flex flex-wrap gap-1.5 justify-center">
-          {Array.from({ length: BOARD_SIZE + 1 }).map((_, i) => {
-            const isPlayer = i === position;
-            const isPast = i < position;
-            const isEvent = boardEvents.some(e => e.space === i);
-            const isSummit = i === BOARD_SIZE;
-            return (
-              <motion.div
-                key={i}
-                animate={isPlayer ? { scale: [1, 1.15, 1] } : {}}
-                transition={{ repeat: isPlayer ? Infinity : 0, duration: 1.5 }}
-                className={cn(
-                  "w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold border-2 transition-all",
-                  isPlayer && "bg-primary text-primary-foreground border-primary shadow-md",
-                  isPast && !isPlayer && "bg-primary/20 border-primary/30 text-primary/60",
-                  !isPast && !isPlayer && !isSummit && "bg-card border-border text-muted-foreground",
-                  isSummit && !isPlayer && "bg-amber-100 border-amber-400 text-amber-700",
-                  isEvent && !isPast && !isPlayer && "border-amber-300 bg-amber-50"
-                )}
-              >
-                {isPlayer ? "🧑" : isSummit ? "⛰️" : isEvent ? "?" : i}
-              </motion.div>
-            );
-          })}
-        </div>
-        <div className="flex justify-between text-[10px] text-muted-foreground mt-2 px-1">
-          <span>Start</span>
-          <span>Space {position}/{BOARD_SIZE}</span>
-          <span>Summit</span>
-        </div>
-      </div>
-
-      {/* Event overlay */}
-      {phase === "event" && activeEvent && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-          className={cn("rounded-xl p-4 text-center border-2", activeEvent.effect > 0 ? "bg-emerald-50 border-emerald-300" : "bg-red-50 border-red-300")}>
-          <p className="text-2xl mb-1">{activeEvent.effect > 0 ? "🎁" : "⚠️"}</p>
-          <p className="font-bold font-display text-sm">{activeEvent.text}</p>
-          <Button size="sm" className="mt-3 rounded-xl" onClick={dismissEvent}>Continue</Button>
-        </motion.div>
-      )}
-
-      {/* Roll / question phase */}
-      {phase === "roll" && (
-        <div className="text-center space-y-3">
-          <p className="text-sm text-muted-foreground font-medium">
-            Answer correctly to advance. Challenge questions move you 2 spaces!
-          </p>
-          <Button onClick={handleRoll} className="rounded-xl font-bold px-8 py-3 text-base">
-            Draw Question
-          </Button>
-        </div>
-      )}
-
-      {phase === "question" && questionIdx < questions.length && (
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-          <div className="flex items-center justify-between text-xs">
-            <span className={cn(
-              "font-bold px-2 py-0.5 rounded-full",
-              questions[questionIdx].isReview
-                ? "bg-emerald-100 text-emerald-700"
-                : "bg-amber-100 text-amber-700"
-            )}>
-              {questions[questionIdx].isReview ? `Review · ${questions[questionIdx].topic}` : `Challenge · ${questions[questionIdx].topic}`}
-            </span>
-            <span className="text-muted-foreground font-medium">
-              {questions[questionIdx].isReview ? "+1 space" : "+2 spaces"}
-            </span>
-          </div>
-          <h3 className="font-display font-bold">{questions[questionIdx].q}</h3>
-          <div className="space-y-2">
-            {questions[questionIdx].options.map((opt, i) => (
-              <button key={i} onClick={() => handleAnswer(i)} className={cn(
-                "w-full text-left bg-card rounded-xl border-2 p-3 text-sm font-semibold transition-all",
-                selected === null && "border-border hover:border-primary/30",
-                selected === i && i === questions[questionIdx].answer && "border-emerald-500 bg-emerald-50",
-                selected === i && i !== questions[questionIdx].answer && "border-red-400 bg-red-50",
-                selected !== null && i === questions[questionIdx].answer && selected !== i && "border-emerald-300"
-              )}>{opt}</button>
-            ))}
-          </div>
-          {lastResult && (
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-              className={cn("text-center font-bold text-sm", lastResult === "correct" ? "text-emerald-600" : "text-red-500")}>
-              {lastResult === "correct" ? `Correct! +$100, advancing ${questions[questionIdx].isReview ? "1" : "2"} spaces` : "Wrong! Lost a heart"}
-            </motion.p>
-          )}
-        </motion.div>
-      )}
-    </div>
-  );
-};
-
-// ---- MAIN GAMES PAGE ----
+// ---- GAME COLORS ----
 const gameColors = [
   "bg-blue-50 border-blue-200 text-blue-600",
   "bg-emerald-50 border-emerald-200 text-emerald-600",
@@ -606,14 +56,14 @@ const gameColors = [
 ];
 
 const games = [
-  { id: "trading", title: "Sim Trading", desc: "Buy & sell real stocks in a simulated market. Build a portfolio and maximize returns.", icon: TrendingUp, component: SimTrading, learn: "How the stock market works", difficulty: "Intermediate", rounds: "Ongoing", maxGems: 30 },
-  { id: "budget", title: "Budget Challenge", desc: "5 different life scenarios — stay under budget each round. Can you beat all 5?", icon: Wallet, component: BudgetGame, learn: "How to allocate income wisely", difficulty: "Beginner", rounds: "5 rounds", maxGems: 30 },
-  { id: "quiz", title: "Money Mountain", desc: "Climb 15 spaces to the summit! Answer finance questions to advance — wrong answers cost hearts.", icon: Brain, component: QuizGame, learn: "Core financial concepts", difficulty: "Beginner", rounds: "15 spaces", maxGems: 30 },
-  { id: "paycheck", title: "Paycheck Breakdown", desc: "5 job scenarios — guess take-home pay before the timer runs out.", icon: Banknote, component: PaycheckBreakdown, learn: "How taxes reduce your paycheck", difficulty: "Beginner", rounds: "5 rounds", maxGems: 30 },
-  { id: "subscription", title: "Subscription Trap", desc: "5 budgets, 30 subscriptions. Cut the right ones and stay under budget.", icon: DollarSign, component: SubscriptionTrap, learn: "How small costs add up", difficulty: "Beginner", rounds: "5 rounds", maxGems: 30 },
-  { id: "credit", title: "Credit Life Sim", desc: "12 months of real credit decisions. Start at 580 — can you reach 750+?", icon: CreditCard, component: CreditScoreChallenge, learn: "How credit scores work", difficulty: "Intermediate", rounds: "12 months", maxGems: 30 },
-  { id: "emergency", title: "Survive the Year", desc: "Build your emergency fund month by month. 4 real emergencies will test you.", icon: AlertTriangle, component: EmergencyFundBuilder, learn: "Why emergency funds matter", difficulty: "Beginner", rounds: "8 months", maxGems: 30 },
-  { id: "timemachine", title: "Market Simulator", desc: "10 years of real market events. Hold, rebalance, or panic — your choices change everything.", icon: Clock, component: InvestingTimeMachine, learn: "The power of compound interest", difficulty: "Intermediate", rounds: "10 years", maxGems: 30 },
+  { id: "trading", title: "Sim Trading", desc: "12 companies, 8 years of market events. Buy, sell, and survive crashes to build wealth.", icon: TrendingUp, component: SimTradingGame, learn: "Stock market investing", difficulty: "Intermediate", rounds: "8 rounds", maxGems: 30 },
+  { id: "budget", title: "Life Simulator", desc: "Live ages 22-40 making real financial decisions. Rent vs buy, career, investments, family.", icon: Wallet, component: BudgetLifeSim, learn: "Life financial planning", difficulty: "Beginner", rounds: "10 spaces", maxGems: 30 },
+  { id: "mountain", title: "Money Mountain", desc: "Race AI opponents up the mountain. Smart financial choices advance you faster.", icon: Mountain, component: MoneyMountainGame, learn: "Financial decision-making", difficulty: "Beginner", rounds: "30 spaces", maxGems: 30 },
+  { id: "paycheck", title: "Paycheck Life", desc: "Watch deductions eat your paycheck, then budget what's left. Wants vs needs tension.", icon: Banknote, component: PaycheckLifeSim, learn: "Tax deductions & budgeting", difficulty: "Beginner", rounds: "3 scenarios", maxGems: 30 },
+  { id: "subscription", title: "Subscription Detective", desc: "Hunt hidden subscriptions, eliminate duplicates, negotiate deals. Hit $80/mo target.", icon: DollarSign, component: SubscriptionDetective, learn: "Subscription management", difficulty: "Beginner", rounds: "3 phases", maxGems: 30 },
+  { id: "credit", title: "Credit Life Sim", desc: "12 months of credit decisions. Start at 580 — bills, emergencies, temptations test you.", icon: CreditCard, component: CreditLifeSim, learn: "Credit score management", difficulty: "Intermediate", rounds: "12 months", maxGems: 30 },
+  { id: "island", title: "Investing Island", desc: "Stranded with $10k. Invest in island resources to reach $50k and get rescued.", icon: Palmtree, component: InvestingIsland, learn: "Portfolio diversification", difficulty: "Intermediate", rounds: "10 rounds", maxGems: 30 },
+  { id: "taxquest", title: "Tax Quest", desc: "Journey through the Tax Kingdom collecting deductions and credits. Maximize your refund.", icon: ScrollText, component: TaxQuest, learn: "Tax optimization", difficulty: "Beginner", rounds: "8 locations", maxGems: 30 },
 ];
 
 // ---- DAILY FEATURED GAME ----
@@ -638,7 +88,6 @@ const checkAndAwardGameBadges = async (userId: string, gameId: string, score: nu
   if (!earned.has("Game Master") && uniqueGames >= 8) toAward.push({ name: "Game Master", icon: "🕹️" });
   if (!earned.has("S-Rank") && topScore >= 95) toAward.push({ name: "S-Rank", icon: "⭐" });
   if (!earned.has("Straight A's") && aRankGames >= 5) toAward.push({ name: "Straight A's", icon: "📊" });
-  if (!earned.has("Tax Expert") && gameId === "paycheck" && score >= 95) toAward.push({ name: "Tax Expert", icon: "🧾" });
 
   for (const badge of toAward) {
     await supabase.from("user_badges").insert({ user_id: userId, badge_name: badge.name, badge_icon: badge.icon });
@@ -655,7 +104,6 @@ const GamesZone = () => {
 
   const dailyFeaturedGameId = getDailyFeaturedGame();
 
-  // Personal bests query
   const { data: personalBests } = useQuery({
     queryKey: ["personal-bests", user?.id],
     queryFn: async () => {
@@ -671,36 +119,6 @@ const GamesZone = () => {
     enabled: !!user,
   });
 
-  // Completed modules query - to split quiz into review vs challenge
-  const { data: completedModules } = useQuery({
-    queryKey: ["completed-modules", user?.id],
-    queryFn: async () => {
-      const { data: progress } = await supabase
-        .from("user_progress")
-        .select("lesson_id")
-        .eq("user_id", user!.id)
-        .eq("completed", true);
-      if (!progress || progress.length === 0) return [];
-
-      const lessonIds = progress.map(p => p.lesson_id);
-      const { data: lessons } = await supabase
-        .from("lessons")
-        .select("id, module_id")
-        .in("id", lessonIds);
-      if (!lessons) return [];
-
-      const moduleIds = [...new Set(lessons.map(l => l.module_id))];
-      const { data: modules } = await supabase
-        .from("modules")
-        .select("id, title")
-        .in("id", moduleIds);
-
-      return modules?.map(m => m.title) ?? [];
-    },
-    enabled: !!user,
-  });
-
-  // Daily game played check
   const { data: playedTodayData } = useQuery({
     queryKey: ["played-today", user?.id, dailyFeaturedGameId],
     queryFn: async () => {
@@ -712,7 +130,6 @@ const GamesZone = () => {
   });
   const dailyGameCompleted = playedTodayData ?? false;
 
-  // Game completion handler
   const handleGameComplete = async (score: number) => {
     if (!user || !activeGame) return;
     await awardGameXP(user.id, activeGame, score);
@@ -726,19 +143,18 @@ const GamesZone = () => {
   const gemsMultiplier = isDaily ? 2 : 1;
 
   const filteredGames = difficultyFilter === "All" ? games : games.filter(g => g.difficulty === difficultyFilter);
-  const ActiveComponent = games.find((g) => g.id === activeGame)?.component;
   const activeGameData = games.find((g) => g.id === activeGame);
+  const ActiveComponent = activeGameData?.component;
 
   return (
     <div className="space-y-6">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl md:text-3xl font-extrabold font-display">Game Zone</h1>
-        <p className="text-muted-foreground mt-1">8 interactive games — earn gems, learn by doing</p>
+        <p className="text-muted-foreground mt-1">8 interactive simulations — learn by making decisions, not answering quizzes</p>
       </motion.div>
 
       {!activeGame ? (
         <>
-          {/* LAYER 4 — Game Stats */}
           {personalBests && Object.keys(personalBests).length > 0 && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-card rounded-2xl border border-border p-5 card-shadow">
               <h3 className="font-extrabold font-display flex items-center gap-2 mb-4 text-base">
@@ -776,14 +192,10 @@ const GamesZone = () => {
                     )} />
                   ))}
                 </div>
-                <div className="flex justify-between text-[9px] text-muted-foreground mt-1">
-                  <span>🟡 S rank</span><span>🟢 A</span><span>🔵 B</span><span>🟠 C/F</span><span>⬜ Not played</span>
-                </div>
               </div>
             </motion.div>
           )}
 
-          {/* LAYER 5 — Daily Featured Game */}
           {!dailyGameCompleted && (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
               className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-4 text-white cursor-pointer hover:opacity-95 transition-opacity"
@@ -813,7 +225,6 @@ const GamesZone = () => {
             </div>
           )}
 
-          {/* Difficulty filter */}
           <div className="flex gap-2">
             {(["All", "Beginner", "Intermediate"] as const).map(d => (
               <button key={d} onClick={() => setDifficultyFilter(d)}
@@ -843,7 +254,6 @@ const GamesZone = () => {
                   <span className="text-xs font-bold px-2 py-1 rounded-lg bg-muted text-muted-foreground">{difficulty}</span>
                   <span className="text-xs text-primary font-bold flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">Play <ArrowRight className="w-3 h-3" /></span>
                 </div>
-                {/* Personal best display */}
                 {personalBests?.[id] !== undefined ? (
                   <div className="flex items-center gap-1.5 mt-2">
                     <span className="text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-lg flex items-center gap-1">
@@ -856,7 +266,7 @@ const GamesZone = () => {
                           : personalBests[id] >= 65 ? "bg-blue-100 text-blue-700"
                             : "bg-muted text-muted-foreground"
                     )}>
-                      {personalBests[id] >= 95 ? "S" : personalBests[id] >= 80 ? "A" : personalBests[id] >= 65 ? "B" : personalBests[id] >= 50 ? "C" : "F"}
+                      {getGrade(personalBests[id])}
                     </span>
                   </div>
                 ) : (
@@ -864,7 +274,7 @@ const GamesZone = () => {
                 )}
                 <div className="flex items-center gap-2 mt-2">
                   <span className="text-xs text-muted-foreground">{rounds}</span>
-                  <span className="text-xs font-bold text-duo-blue flex items-center gap-0.5">
+                  <span className="text-xs font-bold text-cyan-600 flex items-center gap-0.5">
                     <Diamond className="w-3 h-3 fill-current" /> Up to {maxGems} gems
                   </span>
                   {id === dailyFeaturedGameId && !dailyGameCompleted && (
@@ -877,11 +287,7 @@ const GamesZone = () => {
         </>
       ) : (
         <div>
-          <button onClick={() => {
-            // Save state hint via localStorage before exiting
-            toast.info("Progress saved!", { duration: 1500 });
-            setActiveGame(null);
-          }} className="text-sm text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1 font-medium">
+          <button onClick={() => { setActiveGame(null); }} className="text-sm text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1 font-medium">
             <ArrowLeft className="w-4 h-4" /> Back to games
           </button>
           <div className="bg-card rounded-2xl border border-border p-6 card-shadow">
@@ -896,9 +302,7 @@ const GamesZone = () => {
                 <Diamond className="w-3 h-3 fill-cyan-500" /> Up to {(activeGameData?.maxGems ?? 30) * gemsMultiplier} gems
               </span>
             </div>
-            {ActiveComponent && activeGame === "quiz"
-              ? <QuizGame earnGems={earnGems} onComplete={handleGameComplete} personalBest={personalBests?.[activeGame ?? ""] ?? null} gemsMultiplier={gemsMultiplier} completedModules={completedModules ?? []} />
-              : ActiveComponent && <ActiveComponent earnGems={earnGems} onComplete={handleGameComplete} personalBest={personalBests?.[activeGame ?? ""] ?? null} gemsMultiplier={gemsMultiplier} />}
+            {ActiveComponent && <ActiveComponent earnGems={earnGems} onComplete={handleGameComplete} personalBest={personalBests?.[activeGame ?? ""] ?? null} gemsMultiplier={gemsMultiplier} />}
           </div>
         </div>
       )}
