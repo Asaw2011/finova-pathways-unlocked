@@ -154,7 +154,7 @@ const Library = () => {
                 to="/games"
                 className="bg-card rounded-2xl border border-border p-5 hover:shadow-md transition-all flex items-center gap-4 group"
               >
-                <div className="text-3xl">{game.emoji}</div>
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">{(() => { const GIcon = game.icon; return <GIcon className="w-5 h-5 text-primary" />; })()}</div>
                 <div className="flex-1">
                   <h3 className="font-display font-extrabold text-sm">{game.title}</h3>
                   <p className="text-xs text-muted-foreground">{game.desc}</p>
