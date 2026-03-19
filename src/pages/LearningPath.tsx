@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import LearningPathModule from "@/components/learning-path/LearningPathModule";
 import UnitQuiz from "@/components/learning-path/UnitQuiz";
-import DailyChallenge from "@/components/learning-path/DailyChallenge";
+
 import { useGameEconomy } from "@/contexts/GameEconomyContext";
 import { Link } from "react-router-dom";
 
@@ -329,7 +329,7 @@ const LearningPath = () => {
         </div>
       </motion.div>
 
-      <DailyChallenge />
+      
 
       {/* Skill Tree with Step Connectors & Goals */}
       <div className="flex flex-col items-center">

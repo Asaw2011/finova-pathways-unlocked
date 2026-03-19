@@ -1,40 +1,10 @@
 import { useState } from "react";
 import { useGameEconomy } from "@/contexts/GameEconomyContext";
-import { Heart, Diamond, Snowflake, Play, Crown, Zap, Shield, BookOpen, Star } from "lucide-react";
+import { Heart, Diamond, Snowflake, Play, Crown, Zap, Shield, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { usePremiumAccess } from "@/hooks/usePremiumAccess";
-
-const XP_LEVELS = [
-  { name: "Penny", min: 0 },
-  { name: "Nickel", min: 100 },
-  { name: "Dime", min: 300 },
-  { name: "Quarter", min: 600 },
-  { name: "Dollar", min: 1000 },
-  { name: "Investor", min: 2000 },
-  { name: "Trader", min: 4000 },
-  { name: "Banker", min: 7000 },
-  { name: "Tycoon", min: 12000 },
-  { name: "Quant", min: 20000 },
-];
-
-const getRank = (xp: number) => {
-  let rank = XP_LEVELS[0];
-  let nextRank = XP_LEVELS[1];
-  for (let i = XP_LEVELS.length - 1; i >= 0; i--) {
-    if (xp >= XP_LEVELS[i].min) {
-      rank = XP_LEVELS[i];
-      nextRank = XP_LEVELS[i + 1] || null;
-      break;
-    }
-  }
-  return { rank, nextRank };
-};
 
 const Shop = () => {
   const {
@@ -42,34 +12,10 @@ const Shop = () => {
     buyHeartWithGems, buyFullRefillWithGems, buyStreakFreeze, watchAdForHeart,
     HEART_COST, REFILL_COST, FREEZE_COST,
   } = useGameEconomy();
-  const { user } = useAuth();
   const { hasAccess: isPro } = usePremiumAccess();
 
   const [watchingAd, setWatchingAd] = useState(false);
   const [adTimer, setAdTimer] = useState(15);
-
-  const { data: totalXp } = useQuery({
-    queryKey: ["total-xp", user?.id],
-    queryFn: async () => {
-      const { data } = await supabase.from("user_xp").select("xp_amount").eq("user_id", user!.id);
-      return data?.reduce((s, r) => s + r.xp_amount, 0) ?? 0;
-    },
-    enabled: !!user,
-  });
-
-  const { data: dailyQuests } = useQuery({
-    queryKey: ["daily-quests-sidebar", user?.id],
-    queryFn: async () => {
-      const today = new Date().toISOString().split("T")[0];
-      const { data } = await supabase.from("quests").select("*").eq("user_id", user!.id).eq("quest_date", today).eq("quest_type", "daily");
-      return data ?? [];
-    },
-    enabled: !!user,
-  });
-
-  const xp = totalXp ?? 0;
-  const { rank, nextRank } = getRank(xp);
-  const progress = nextRank ? ((xp - rank.min) / (nextRank.min - rank.min)) * 100 : 100;
 
   const handleWatchAd = () => {
     if (hearts >= maxHearts) return;
@@ -95,9 +41,7 @@ const Shop = () => {
   ];
 
   return (
-    <div className="flex gap-6">
-      {/* Main shop content */}
-      <div className="flex-1 space-y-6 max-w-lg mx-auto">
+    <div className="space-y-6 max-w-lg mx-auto">
         {/* Header with balances */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="text-2xl font-extrabold font-display flex items-center gap-2">
@@ -319,82 +263,6 @@ const Shop = () => {
             ))}
           </div>
         </motion.div>
-      </div>
-
-      {/* Right Sidebar - desktop only */}
-      <aside className="hidden lg:flex flex-col gap-4 w-72 shrink-0 sticky top-20 self-start">
-        {/* Upgrade to Plus */}
-        {!isPro && (
-          <Link to="#" className="block rounded-2xl border-2 border-amber-400 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 p-4 space-y-2 hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-2">
-              <Crown className="w-5 h-5 text-amber-500" />
-              <span className="font-extrabold text-sm text-amber-700 dark:text-amber-400">Upgrade to Plus</span>
-            </div>
-            <p className="text-xs text-amber-600 dark:text-amber-400">Unlimited hearts, 1,000 gems/mo, 3 streak freezes & more</p>
-            <div className="bg-amber-500 text-white text-xs font-bold text-center py-1.5 rounded-lg">$9.99/month</div>
-          </Link>
-        )}
-
-        {/* Your Rank */}
-        <div className="rounded-2xl border border-border bg-card p-4 space-y-3">
-          <div className="flex items-center gap-2">
-            <Star className="w-5 h-5 text-amber-500" />
-            <span className="font-extrabold text-sm">Your Rank</span>
-          </div>
-          <div className="text-center">
-            <p className="text-2xl font-black text-primary">{rank.name}</p>
-            <p className="text-xs text-muted-foreground mt-1">{xp.toLocaleString()} XP total</p>
-          </div>
-          {nextRank && (
-            <div className="space-y-1">
-              <div className="flex justify-between text-[10px] text-muted-foreground font-semibold">
-                <span>{rank.name}</span>
-                <span>{nextRank.name}</span>
-              </div>
-              <div className="h-2 rounded-full bg-muted overflow-hidden">
-                <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${Math.min(progress, 100)}%` }} />
-              </div>
-              <p className="text-[10px] text-muted-foreground text-center">{nextRank.min - xp} XP to next rank</p>
-            </div>
-          )}
-        </div>
-
-        {/* Daily Quests */}
-        <div className="rounded-2xl border border-border bg-card p-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Zap className="w-5 h-5 text-amber-500" />
-              <span className="font-extrabold text-sm">Daily Quests</span>
-            </div>
-            <Link to="/quests" className="text-[10px] font-bold text-primary hover:underline">View all</Link>
-          </div>
-          {dailyQuests && dailyQuests.length > 0 ? (
-            <div className="space-y-2">
-              {dailyQuests.slice(0, 3).map((q: any) => (
-                <div key={q.id} className={cn(
-                  "flex items-start gap-2 p-2 rounded-lg text-xs",
-                  q.completed ? "bg-primary/5" : "bg-muted"
-                )}>
-                  <div className={cn(
-                    "w-4 h-4 rounded-full border-2 mt-0.5 shrink-0 flex items-center justify-center",
-                    q.completed ? "border-primary bg-primary" : "border-muted-foreground/30"
-                  )}>
-                    {q.completed && <span className="text-primary-foreground text-[8px]">✓</span>}
-                  </div>
-                  <div className="flex-1">
-                    <p className={cn("font-semibold", q.completed && "line-through text-muted-foreground")}>{q.quest_text}</p>
-                    <p className="text-muted-foreground flex items-center gap-0.5 mt-0.5">
-                      <Diamond className="w-2.5 h-2.5 fill-current text-primary" /> +{q.reward_gems}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-xs text-muted-foreground text-center py-2">Visit the Quests page to start today's quests!</p>
-          )}
-        </div>
-      </aside>
     </div>
   );
 };
