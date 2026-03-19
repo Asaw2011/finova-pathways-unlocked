@@ -132,24 +132,39 @@ const AppLayoutInner = () => {
             <span className="text-lg font-black font-display text-foreground opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 whitespace-nowrap">FinOva</span>
           </Link>
 
-          <nav className="flex-1 space-y-0.5">
-            {sideNavItems.map(({ to, label, icon: Icon }) => {
+          <nav className="flex-1 space-y-0.5 overflow-y-auto">
+            {sideNavItems.map(({ to, label, icon: Icon, sub }) => {
               const active = location.pathname === to || (to !== "/dashboard" && location.pathname.startsWith(to));
+              const subActive = sub?.some(s => location.pathname === s.to || location.pathname.startsWith(s.to));
+              const expanded = active || subActive;
               return (
-                <Link
-                  key={to}
-                  to={to}
-                  title={label}
-                  className={cn(
-                    "flex items-center gap-2.5 px-2 py-2 rounded-xl text-sm font-bold transition-all",
-                    active
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:bg-muted"
+                <div key={to}>
+                  <Link
+                    to={to}
+                    title={label}
+                    className={cn(
+                      "flex items-center gap-2.5 px-2 py-2 rounded-xl text-sm font-bold transition-all",
+                      active || subActive
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-muted"
+                    )}
+                  >
+                    <Icon className="w-5 h-5 shrink-0" />
+                    <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 whitespace-nowrap">{label}</span>
+                  </Link>
+                  {sub && expanded && (
+                    <div className="ml-7 space-y-0.5 mt-0.5 opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200">
+                      {sub.map(s => (
+                        <Link key={s.to} to={s.to}
+                          className={cn(
+                            "block px-2 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all",
+                            location.pathname === s.to ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                          )}
+                        >{s.label}</Link>
+                      ))}
+                    </div>
                   )}
-                >
-                  <Icon className="w-5 h-5 shrink-0" />
-                  <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 whitespace-nowrap">{label}</span>
-                </Link>
+                </div>
               );
             })}
           </nav>
