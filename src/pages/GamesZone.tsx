@@ -49,11 +49,19 @@ const stocks = [
 
 const SimTrading = ({ earnGems, onComplete, personalBest, gemsMultiplier = 1 }: { earnGems?: (n: number) => void; onComplete?: (score: number) => void; personalBest?: number | null; gemsMultiplier?: number }) => {
   const initialBalance = 10000;
-  const [balance, setBalance] = useState(initialBalance);
-  const [portfolio, setPortfolio] = useState<Record<string, { shares: number; avgPrice: number }>>({});
-  const [prices, setPrices] = useState(stocks.map((s) => s.price));
-  const [tradeHistory, setTradeHistory] = useState<{ action: string; symbol: string; price: number; pnl?: number }[]>([]);
-  const [dayCount, setDayCount] = useState(0);
+  const saved = loadGameState("trading");
+  const [balance, setBalance] = useState(saved?.balance ?? initialBalance);
+  const [portfolio, setPortfolio] = useState<Record<string, { shares: number; avgPrice: number }>>(saved?.portfolio ?? {});
+  const [prices, setPrices] = useState(saved?.prices ?? stocks.map((s) => s.price));
+  const [tradeHistory, setTradeHistory] = useState<{ action: string; symbol: string; price: number; pnl?: number }[]>(saved?.tradeHistory ?? []);
+  const [dayCount, setDayCount] = useState(saved?.dayCount ?? 0);
+
+  // Auto-save on meaningful state changes
+  useEffect(() => {
+    if (dayCount > 0 || tradeHistory.length > 0) {
+      saveGameState("trading", { balance, portfolio, prices, tradeHistory, dayCount });
+    }
+  }, [balance, portfolio, prices, tradeHistory, dayCount]);
 
   const simulateMarket = () => {
     setDayCount(d => d + 1);
