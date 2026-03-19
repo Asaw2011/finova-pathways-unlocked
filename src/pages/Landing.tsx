@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, ExternalLink, Instagram } from "lucide-react";
+import { ArrowRight, ExternalLink, Instagram, Heart, BookOpen, Zap, Shield, Star, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroIllustration from "@/assets/hero-illustration.png";
 import featureLessons from "@/assets/feature-lessons.png";
@@ -116,18 +116,48 @@ const Landing = () => {
       </section>
 
       {/* Plus banner */}
-      <section className="px-6 py-16 md:py-20 bg-card">
-        <div className="max-w-3xl mx-auto text-center">
-          <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-amber-400 to-amber-500 text-white mb-4">PLUS</span>
-          <h2 className="text-2xl md:text-3xl font-extrabold font-display mb-3">
-            Want the <span className="gradient-gold">full experience</span>?
-          </h2>
-          <p className="text-muted-foreground mb-6">Unlock premium courses, unlimited hearts, and exclusive features.</p>
-          <Link to="/plus">
-            <Button variant="outline" className="font-bold rounded-xl border-amber-400 text-amber-600 hover:bg-amber-50">
-              Learn about FinOva Plus <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </Link>
+      <section className="px-6 py-16 md:py-20 bg-card texture-grid">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-10">
+            <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-amber-400 to-amber-500 text-white mb-4">PLUS</span>
+            <h2 className="text-2xl md:text-3xl font-extrabold font-display mb-2">
+              Upgrade to <span className="gradient-gold">FinOva Plus</span>
+            </h2>
+            <p className="text-muted-foreground mb-2">Everything you need to master money — no limits.</p>
+            <p className="text-4xl md:text-5xl font-extrabold font-display gradient-gold mt-4">
+              $10<span className="text-lg font-semibold text-muted-foreground">/month</span>
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4 max-w-2xl mx-auto mb-8">
+            {[
+              { icon: Heart, label: "Unlimited hearts", desc: "Never stop learning" },
+              { icon: BookOpen, label: "All premium courses", desc: "6 core + AI-generated" },
+              { icon: Zap, label: "1,000 gems/month", desc: "Bonus monthly gems" },
+              { icon: Shield, label: "3 streak freezes/mo", desc: "Protect your progress" },
+              { icon: Star, label: "Exclusive badges", desc: "Stand out on leaderboards" },
+              { icon: Crown, label: "Special Review", desc: "Learn from your mistakes" },
+            ].map(({ icon: Icon, label, desc }) => (
+              <div key={label} className="flex items-start gap-3 p-3 md:p-4 rounded-xl bg-background border border-border/60">
+                <div className="w-9 h-9 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0">
+                  <Icon className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <p className="font-bold font-display text-xs md:text-sm leading-tight">{label}</p>
+                  <p className="text-muted-foreground text-[10px] md:text-xs leading-tight mt-0.5">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Link to="/plus">
+              <Button size="lg" className="font-bold rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-white hover:from-amber-500 hover:to-amber-600 shadow-lg">
+                Get FinOva Plus — $10/mo <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+            <p className="text-xs text-muted-foreground mt-3">Cancel anytime · No commitment</p>
+          </div>
         </div>
       </section>
 
