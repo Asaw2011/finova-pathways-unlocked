@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,69 +6,65 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 222 47% 11%;
+    /* Duolingo-inspired color system */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 24%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card: 0 0% 97%;
+    --card-foreground: 0 0% 24%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 0 0% 24%;
 
-    --primary: 142 60% 45%;
+    --primary: 101 95% 40%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 24%;
 
-    --muted: 210 16% 93%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 0 0% 94%;
+    --muted-foreground: 0 0% 47%;
 
-    --accent: 210 100% 52%;
+    --accent: 199 92% 52%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 100% 64%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 20% 90%;
-    --input: 214 20% 90%;
-    --ring: 142 60% 45%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 101 95% 40%;
 
-    --radius: 1rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 142 60% 45%;
+    --sidebar-foreground: 0 0% 24%;
+    --sidebar-primary: 101 95% 40%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 20% 96%;
-    --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 214 20% 92%;
-    --sidebar-ring: 142 60% 45%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-foreground: 0 0% 24%;
+    --sidebar-border: 0 0% 92%;
+    --sidebar-ring: 101 95% 40%;
 
-    /* Custom tokens */
-    --success: 142 60% 45%;
-    --warning: 38 92% 50%;
-    --info: 210 100% 52%;
-    --gold: 45 93% 47%;
+    /* Duolingo custom tokens */
+    --duo-green: 101 95% 40%;
+    --duo-green-dark: 101 90% 32%;
+    --duo-gold: 45 100% 39%;
+    --duo-red: 0 100% 64%;
+    --duo-blue: 199 92% 52%;
+    --duo-purple: 271 100% 75%;
+    --duo-orange: 33 100% 50%;
 
-    --gradient-primary: linear-gradient(135deg, hsl(142 60% 45%), hsl(172 60% 45%));
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(210 20% 98%));
-    --gradient-gold: linear-gradient(135deg, hsl(38 92% 50%), hsl(45 93% 58%));
+    --success: 101 95% 40%;
+    --warning: 33 100% 50%;
+    --info: 199 92% 52%;
+    --gold: 45 100% 39%;
 
-    --shadow-glow: 0 0 20px hsl(142 60% 45% / 0.15);
-    --shadow-card: 0 2px 12px hsl(222 47% 11% / 0.06);
-    --shadow-card-hover: 0 8px 30px hsl(222 47% 11% / 0.1);
+    --shadow-card: 0 2px 8px hsl(0 0% 0% / 0.06);
+    --shadow-card-hover: 0 4px 16px hsl(0 0% 0% / 0.1);
 
     --font-display: 'Nunito', system-ui, sans-serif;
-    --font-body: 'Inter', system-ui, sans-serif;
-
-    /* Section colors */
-    --section-1: 142 60% 45%;
-    --section-2: 210 100% 52%;
-    --section-3: 280 60% 55%;
-    --section-4: 38 92% 50%;
-    --section-5: 340 65% 55%;
-    --section-6: 172 60% 45%;
+    --font-body: 'Nunito', system-ui, sans-serif;
   }
 }
 
@@ -93,18 +89,18 @@
   }
 
   .glow-primary {
-    box-shadow: var(--shadow-glow);
+    box-shadow: 0 4px 0 hsl(var(--duo-green-dark));
   }
 
   .gradient-text {
-    background: var(--gradient-primary);
+    background: linear-gradient(135deg, hsl(var(--duo-green)), hsl(var(--duo-blue)));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .gradient-gold {
-    background: var(--gradient-gold);
+    background: linear-gradient(135deg, hsl(var(--duo-gold)), hsl(var(--duo-orange)));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -116,5 +112,44 @@
 
   .card-shadow-hover {
     box-shadow: var(--shadow-card-hover);
+  }
+
+  /* Duolingo-style pressed button */
+  .duo-btn {
+    @apply relative font-bold rounded-2xl transition-all active:translate-y-[2px];
+    box-shadow: 0 4px 0 hsl(var(--duo-green-dark));
+  }
+  .duo-btn:active {
+    box-shadow: 0 2px 0 hsl(var(--duo-green-dark));
+  }
+
+  /* Pulse animation for current node */
+  @keyframes duo-pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 hsl(101 95% 40% / 0.4); }
+    50% { transform: scale(1.05); box-shadow: 0 0 0 12px hsl(101 95% 40% / 0); }
+  }
+  .duo-pulse {
+    animation: duo-pulse 2s ease-in-out infinite;
+  }
+
+  /* Step connector */
+  .step-connector {
+    @apply relative;
+  }
+  .step-connector::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 20px;
+    border-radius: 2px;
+  }
+  .step-connector-green::before {
+    background: hsl(var(--duo-green));
+  }
+  .step-connector-gray::before {
+    background: hsl(var(--border));
   }
 }

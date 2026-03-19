@@ -15,7 +15,7 @@ export default {
     extend: {
       fontFamily: {
         display: ["Nunito", "system-ui", "sans-serif"],
-        body: ["Inter", "system-ui", "sans-serif"],
+        body: ["Nunito", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -50,6 +50,15 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        duo: {
+          green: "hsl(var(--duo-green))",
+          "green-dark": "hsl(var(--duo-green-dark))",
+          gold: "hsl(var(--duo-gold))",
+          red: "hsl(var(--duo-red))",
+          blue: "hsl(var(--duo-blue))",
+          purple: "hsl(var(--duo-purple))",
+          orange: "hsl(var(--duo-orange))",
         },
         success: "hsl(var(--success))",
         warning: "hsl(var(--warning))",
@@ -89,12 +98,17 @@ export default {
           to: { opacity: "1", transform: "translateX(0)" },
         },
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 12px hsl(158 64% 52% / 0.2)" },
-          "50%": { boxShadow: "0 0 24px hsl(158 64% 52% / 0.4)" },
+          "0%, 100%": { boxShadow: "0 0 12px hsl(101 95% 40% / 0.2)" },
+          "50%": { boxShadow: "0 0 24px hsl(101 95% 40% / 0.4)" },
         },
         "progress-fill": {
           from: { width: "0%" },
           to: { width: "var(--progress-width)" },
+        },
+        "bounce-in": {
+          "0%": { transform: "scale(0)", opacity: "0" },
+          "50%": { transform: "scale(1.1)" },
+          "100%": { transform: "scale(1)", opacity: "1" },
         },
       },
       animation: {
@@ -104,6 +118,7 @@ export default {
         "slide-in": "slide-in 0.3s ease-out forwards",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
         "progress-fill": "progress-fill 1s ease-out forwards",
+        "bounce-in": "bounce-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards",
       },
     },
   },
