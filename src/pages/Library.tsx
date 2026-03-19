@@ -173,10 +173,10 @@ const Library = () => {
           <p className="text-sm text-muted-foreground">Structured courses with modules, quizzes, and certificates</p>
           <div className="grid sm:grid-cols-2 gap-4">
             {[
-              { title: "Budgeting Basics", desc: "Create and sustain a budget that works", emoji: "📊", modules: 6 },
-              { title: "Investing Basics", desc: "Stocks, bonds, ETFs, and long-term thinking", emoji: "📈", modules: 6 },
-              { title: "Credit & Borrowing", desc: "Credit scores, cards, and responsible borrowing", emoji: "💳", modules: 4 },
-              { title: "Entrepreneurship & Side-Hustles", desc: "From idea to first sale", emoji: "💡", modules: 4 },
+              { title: "Budgeting Basics", desc: "Create and sustain a budget that works", icon: BarChart3, modules: 6 },
+              { title: "Investing Basics", desc: "Stocks, bonds, ETFs, and long-term thinking", icon: TrendingUp, modules: 6 },
+              { title: "Credit & Borrowing", desc: "Credit scores, cards, and responsible borrowing", icon: CreditCard, modules: 4 },
+              { title: "Entrepreneurship & Side-Hustles", desc: "From idea to first sale", icon: Lightbulb, modules: 4 },
             ].map(course => (
               <Link
                 key={course.title}
