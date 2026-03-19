@@ -183,7 +183,7 @@ const Library = () => {
                 to="/courses"
                 className="bg-card rounded-2xl border border-border p-5 hover:shadow-md transition-all group"
               >
-                <div className="text-3xl mb-3">{course.emoji}</div>
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-3">{(() => { const CIcon = course.icon; return <CIcon className="w-5 h-5 text-primary" />; })()}</div>
                 <h3 className="font-display font-extrabold">{course.title}</h3>
                 <p className="text-sm text-muted-foreground mt-1">{course.desc}</p>
                 <div className="flex items-center justify-between mt-3">
