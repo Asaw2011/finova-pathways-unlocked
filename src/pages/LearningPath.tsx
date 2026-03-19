@@ -284,17 +284,54 @@ const LearningPath = () => {
     );
   }
 
+  // Goal milestones between modules
+  const goalMilestones = [
+    { after: 0, emoji: "🎯", label: "Goal: Understand Your Money", reward: "Money Master Badge" },
+    { after: 1, emoji: "🏆", label: "Goal: Bank Like a Pro", reward: "Savings Pro Badge" },
+    { after: 2, emoji: "💪", label: "Goal: Budget With Confidence", reward: "Budget Boss Badge" },
+    { after: 3, emoji: "⚡", label: "Goal: Master Your Credit", reward: "Credit Pro Badge" },
+    { after: 4, emoji: "🚀", label: "Goal: Start Investing", reward: "Investor Badge" },
+    { after: 5, emoji: "👑", label: "Goal: Build Real Wealth", reward: "Wealth Builder Badge" },
+    { after: 6, emoji: "🎓", label: "FINAL GOAL: Financial Freedom", reward: "Independence Champion" },
+  ];
+
+  const totalModules = modules.length;
+  const completedModules = modules.filter((m, i) => m.lessons.every(l => completedLessons.has(l.id)) && completedQuizzes.has(m.id)).length;
+
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Header with overall goal progress */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl font-black font-display">Learning Path</h1>
-        <p className="text-sm text-muted-foreground font-semibold">Master money skills, one step at a time</p>
+        <h1 className="text-2xl font-black font-display">Your Learning Journey</h1>
+        <p className="text-sm text-muted-foreground font-semibold">Complete each goal to unlock the next chapter</p>
+
+        {/* Overall journey progress */}
+        <div className="mt-3 glass rounded-2xl p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-bold">Journey Progress</span>
+            <span className="text-sm font-extrabold text-primary">{completedModules}/{totalModules} Goals</span>
+          </div>
+          <div className="flex gap-1.5">
+            {modules.map((mod, i) => {
+              const done = mod.lessons.every(l => completedLessons.has(l.id)) && completedQuizzes.has(mod.id);
+              return (
+                <motion.div
+                  key={mod.id}
+                  className={cn("h-3 flex-1 rounded-full", done ? moduleColors[i % moduleColors.length].bg : "bg-muted")}
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ delay: i * 0.1, duration: 0.4 }}
+                  style={{ transformOrigin: "left" }}
+                />
+              );
+            })}
+          </div>
+        </div>
       </motion.div>
 
       <DailyChallenge />
 
-      {/* Duolingo-style Skill Tree */}
+      {/* Skill Tree with Step Connectors & Goals */}
       <div className="flex flex-col items-center">
         {modules.map((mod, mi) => {
           const modLessons = mod.lessons;
@@ -305,13 +342,123 @@ const LearningPath = () => {
           const quizCompleted = completedQuizzes.has(mod.id);
           const colors = moduleColors[mi % moduleColors.length];
           const emoji = moduleEmojis[mi % moduleEmojis.length];
-
-          // Find current lesson (first incomplete in this module)
           const currentLessonIdx = modLessons.findIndex(l => !completedLessons.has(l.id));
+          const milestone = goalMilestones[mi];
 
           return (
             <motion.div key={mod.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: mi * 0.08 }} className="w-full max-w-sm">
+
+              {/* Step connector between modules */}
+              {mi > 0 && (
+                <div className="flex flex-col items-center mb-4">
+                  {/* Animated stepping stones */}
+                  {[0, 1, 2].map((stepIdx) => {
+                    const prevDone = modules[mi - 1].lessons.every(l => completedLessons.has(l.id)) && completedQuizzes.has(modules[mi - 1].id);
+                    return (
+                      <motion.div
+                        key={stepIdx}
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: mi * 0.08 + stepIdx * 0.1, type: "spring", stiffness: 300 }}
+                        className="flex flex-col items-center"
+                      >
+                        <div className={cn(
+                          "w-3 h-3 rounded-full my-1 transition-colors duration-500",
+                          prevDone ? colors.bg : "bg-border"
+                        )} />
+                      </motion.div>
+                    );
+                  })}
+
+                  {/* Goal milestone card */}
+                  {milestone && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: mi * 0.08 + 0.3, type: "spring" }}
+                      className={cn(
+                        "flex items-center gap-3 px-4 py-3 rounded-2xl border-2 my-2 w-full",
+                        isModuleUnlocked
+                          ? cn(colors.light, colors.border)
+                          : "bg-muted/50 border-border opacity-60"
+                      )}
+                    >
+                      <motion.span
+                        className="text-3xl"
+                        animate={isModuleUnlocked && !isModuleComplete ? { scale: [1, 1.15, 1] } : {}}
+                        transition={{ repeat: Infinity, duration: 2 }}
+                      >
+                        {milestone.emoji}
+                      </motion.span>
+                      <div className="flex-1 min-w-0">
+                        <p className={cn("text-sm font-extrabold", isModuleUnlocked ? colors.text : "text-muted-foreground")}>
+                          {milestone.label}
+                        </p>
+                        <p className="text-xs text-muted-foreground font-semibold">
+                          Reward: {milestone.reward}
+                        </p>
+                      </div>
+                      {isModuleComplete && quizCompleted && (
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ type: "spring", stiffness: 400 }}
+                        >
+                          <CheckCircle2 className="w-6 h-6 text-primary" />
+                        </motion.div>
+                      )}
+                    </motion.div>
+                  )}
+
+                  {/* More stepping stones */}
+                  {[0, 1].map((stepIdx) => {
+                    const prevDone = modules[mi - 1].lessons.every(l => completedLessons.has(l.id)) && completedQuizzes.has(modules[mi - 1].id);
+                    return (
+                      <motion.div
+                        key={`post-${stepIdx}`}
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: mi * 0.08 + 0.5 + stepIdx * 0.1, type: "spring", stiffness: 300 }}
+                      >
+                        <div className={cn(
+                          "w-3 h-3 rounded-full my-1 transition-colors duration-500",
+                          prevDone ? colors.bg : "bg-border"
+                        )} />
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* First module goal (no steps before it) */}
+              {mi === 0 && milestone && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className={cn(
+                    "flex items-center gap-3 px-4 py-3 rounded-2xl border-2 mb-4 w-full",
+                    colors.light, colors.border
+                  )}
+                >
+                  <motion.span
+                    className="text-3xl"
+                    animate={!isModuleComplete ? { scale: [1, 1.15, 1] } : {}}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                  >
+                    {milestone.emoji}
+                  </motion.span>
+                  <div className="flex-1 min-w-0">
+                    <p className={cn("text-sm font-extrabold", colors.text)}>{milestone.label}</p>
+                    <p className="text-xs text-muted-foreground font-semibold">Reward: {milestone.reward}</p>
+                  </div>
+                  {isModuleComplete && quizCompleted && (
+                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 400 }}>
+                      <CheckCircle2 className="w-6 h-6 text-primary" />
+                    </motion.div>
+                  )}
+                </motion.div>
+              )}
 
               {/* Module header */}
               <div className={cn("rounded-2xl p-4 mb-4 text-center border-2", isModuleUnlocked ? colors.border : "border-border opacity-50")}>
@@ -320,7 +467,6 @@ const LearningPath = () => {
                   <h3 className={cn("font-black font-display text-lg", isModuleUnlocked ? colors.text : "text-muted-foreground")}>{mod.title}</h3>
                 </div>
                 <p className="text-xs text-muted-foreground font-semibold">{completedCount}/{modLessons.length} lessons{quizCompleted ? " · ✓ Certified" : ""}</p>
-                {/* Progress bar */}
                 <div className="h-2.5 rounded-full bg-muted overflow-hidden mt-2">
                   <motion.div className={cn("h-full rounded-full", colors.bg)}
                     initial={{ width: 0 }}
@@ -329,20 +475,32 @@ const LearningPath = () => {
                 </div>
               </div>
 
-              {/* Lesson nodes - winding path with steps */}
+              {/* Lesson nodes - winding path with step connectors */}
               <div className="flex flex-col items-center gap-0 mb-6">
                 {modLessons.map((lesson, li) => {
                   const unlocked = isLessonUnlocked(mi, li);
                   const completed = completedLessons.has(lesson.id);
                   const isCurrent = unlocked && !completed && isModuleUnlocked;
-                  // Zigzag offset
                   const offset = li % 3 === 0 ? 0 : li % 3 === 1 ? 50 : -50;
 
                   return (
                     <div key={lesson.id} className="flex flex-col items-center" style={{ marginLeft: offset }}>
-                      {/* Step connector */}
+                      {/* Step connector with animated dots */}
                       {li > 0 && (
-                        <div className={cn("w-1 h-6 rounded-full", completed || isCurrent ? colors.bg : "bg-border")} />
+                        <div className="flex flex-col items-center">
+                          {[0, 1, 2].map((dotIdx) => (
+                            <motion.div
+                              key={dotIdx}
+                              initial={{ opacity: 0, scale: 0 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: mi * 0.05 + li * 0.04 + dotIdx * 0.06, type: "spring", stiffness: 400 }}
+                              className={cn(
+                                "w-2 h-2 rounded-full my-0.5",
+                                completed || isCurrent ? colors.bg : "bg-border"
+                              )}
+                            />
+                          ))}
+                        </div>
                       )}
 
                       {/* Node */}
@@ -368,7 +526,6 @@ const LearningPath = () => {
                           <Lock className="w-5 h-5" />
                         )}
 
-                        {/* Step number badge */}
                         {unlocked && (
                           <span className={cn(
                             "absolute -top-1 -right-1 w-5 h-5 rounded-full text-[10px] font-black flex items-center justify-center text-primary-foreground",
@@ -377,7 +534,6 @@ const LearningPath = () => {
                         )}
                       </motion.button>
 
-                      {/* Label */}
                       <p className={cn("text-xs font-bold text-center mt-1.5 max-w-[110px] leading-tight",
                         completed ? colors.text : isCurrent ? "text-foreground" : "text-muted-foreground"
                       )}>{lesson.title}</p>
@@ -385,9 +541,20 @@ const LearningPath = () => {
                   );
                 })}
 
-                {/* Quiz node */}
+                {/* Quiz node with step connector */}
                 <div className="flex flex-col items-center">
-                  <div className={cn("w-1 h-6 rounded-full", quizCompleted ? "bg-duo-gold" : "bg-border")} />
+                  {[0, 1, 2].map((dotIdx) => (
+                    <motion.div
+                      key={dotIdx}
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: mi * 0.05 + modLessons.length * 0.04 + dotIdx * 0.06, type: "spring", stiffness: 400 }}
+                      className={cn(
+                        "w-2 h-2 rounded-full my-0.5",
+                        quizCompleted ? "bg-duo-gold" : "bg-border"
+                      )}
+                    />
+                  ))}
                   <motion.button
                     onClick={() => { if (quizUnlocked) setShowUnitQuiz(mod.id); }}
                     disabled={!quizUnlocked}
@@ -411,6 +578,40 @@ const LearningPath = () => {
             </motion.div>
           );
         })}
+
+        {/* Final celebration at bottom */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          className="flex flex-col items-center mb-8"
+        >
+          {[0, 1, 2].map((i) => (
+            <motion.div key={i} initial={{ scale: 0 }} animate={{ scale: 1 }}
+              transition={{ delay: 0.9 + i * 0.1, type: "spring" }}
+              className={cn("w-3 h-3 rounded-full my-1", completedModules === totalModules ? "bg-duo-gold" : "bg-border")}
+            />
+          ))}
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 1.2, type: "spring", stiffness: 200 }}
+            className={cn(
+              "w-24 h-24 rounded-full flex flex-col items-center justify-center border-4 mt-2",
+              completedModules === totalModules
+                ? "bg-duo-gold border-duo-gold text-primary-foreground shadow-xl"
+                : "bg-muted border-border text-muted-foreground"
+            )}
+          >
+            <span className="text-3xl">{completedModules === totalModules ? "🎓" : "🔒"}</span>
+            <span className="text-[8px] font-black uppercase mt-0.5">
+              {completedModules === totalModules ? "Complete!" : "Finish All"}
+            </span>
+          </motion.div>
+          <p className="text-sm font-extrabold mt-2 text-center">
+            {completedModules === totalModules ? "🎉 You've mastered financial literacy!" : "Financial Freedom Awaits"}
+          </p>
+        </motion.div>
       </div>
     </div>
   );
