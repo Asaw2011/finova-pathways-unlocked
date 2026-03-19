@@ -722,7 +722,9 @@ const GamesZone = () => {
                 <Diamond className="w-3 h-3 fill-cyan-500" /> Up to {(activeGameData?.maxGems ?? 30) * gemsMultiplier} gems
               </span>
             </div>
-            {ActiveComponent && <ActiveComponent earnGems={earnGems} onComplete={handleGameComplete} personalBest={personalBests?.[activeGame ?? ""] ?? null} gemsMultiplier={gemsMultiplier} completedModules={completedModules ?? []} />}
+            {ActiveComponent && activeGame === "quiz"
+              ? <QuizGame earnGems={earnGems} onComplete={handleGameComplete} personalBest={personalBests?.[activeGame ?? ""] ?? null} gemsMultiplier={gemsMultiplier} completedModules={completedModules ?? []} />
+              : ActiveComponent && <ActiveComponent earnGems={earnGems} onComplete={handleGameComplete} personalBest={personalBests?.[activeGame ?? ""] ?? null} gemsMultiplier={gemsMultiplier} />}
           </div>
         </div>
       )}
