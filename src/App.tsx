@@ -75,6 +75,7 @@ const App = () => (
                 <Route path="/paper-trading" element={<PaperTrading />} />
                 <Route path="/friends" element={<Friends />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/resource-hub" element={<Library />} />
               </Route>
 
