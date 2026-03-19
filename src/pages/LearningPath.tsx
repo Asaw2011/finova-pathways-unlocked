@@ -371,33 +371,8 @@ const LearningPath = () => {
                 </div>
               )}
 
-              {/* First module goal (no steps before it) */}
-              {mi === 0 && milestone && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className={cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-2xl border-2 mb-4 w-full",
-                    colors.light, colors.border
-                  )}
-                >
-                  <motion.div
-                    animate={!isModuleComplete ? { scale: [1, 1.15, 1] } : {}}
-                    transition={{ repeat: Infinity, duration: 2 }}
-                  >
-                    {(() => { const MIcon = milestone.icon; return <MIcon className={cn("w-7 h-7", colors.text)} />; })()}
-                  </motion.div>
-                  <div className="flex-1 min-w-0">
-                    <p className={cn("text-sm font-extrabold", colors.text)}>{milestone.label}</p>
-                    <p className="text-xs text-muted-foreground font-semibold">Reward: {milestone.reward}</p>
-                  </div>
-                  {isModuleComplete && quizCompleted && (
-                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 400 }}>
-                      <CheckCircle2 className="w-6 h-6 text-primary" />
-                    </motion.div>
-                  )}
-                </motion.div>
-              )}
+
+
 
               {/* Module header */}
               <div className={cn("rounded-2xl p-4 mb-4 text-center border-2", isModuleUnlocked ? colors.border : "border-border opacity-50")}>
