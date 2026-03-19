@@ -76,13 +76,28 @@ const bottomNavItems = [
   { to: "/profile", label: "Profile", icon: User },
 ];
 
-const sideNavItems = [
+type NavItem = {
+  to: string;
+  label: string;
+  icon: any;
+  sub?: { to: string; label: string }[];
+};
+
+const sideNavItems: NavItem[] = [
   { to: "/dashboard", label: "Home", icon: Home },
-  { to: "/learning-path", label: "Learn", icon: BookOpen },
+  { to: "/learning-path", label: "Learn", icon: BookOpen, sub: [
+    { to: "/courses", label: "Courses" },
+    { to: "/quests", label: "Quests" },
+    { to: "/mistakes", label: "Review" },
+  ]},
   { to: "/money-coach", label: "Coach", icon: Bot },
   { to: "/games", label: "Games", icon: Gamepad2 },
-  { to: "/rankings", label: "League", icon: Trophy },
-  { to: "/paper-trading", label: "Trade", icon: BarChart3 },
+  { to: "/rankings", label: "League", icon: Trophy, sub: [
+    { to: "/awards", label: "Awards" },
+  ]},
+  { to: "/paper-trading", label: "Trade", icon: BarChart3, sub: [
+    { to: "/shop", label: "Shop" },
+  ]},
   { to: "/profile", label: "Profile", icon: User },
 ];
 
