@@ -335,7 +335,7 @@ const GamesZone = () => {
     <div className="space-y-6">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl md:text-3xl font-extrabold font-display">Game Zone</h1>
-        <p className="text-muted-foreground mt-1">Learn by playing — {games.length} interactive financial games</p>
+        <p className="text-muted-foreground mt-1">8 interactive games — earn gems, learn by doing</p>
       </motion.div>
 
       {!activeGame ? (
