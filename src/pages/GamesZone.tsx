@@ -497,6 +497,35 @@ const GamesZone = () => {
     enabled: !!user,
   });
 
+  // Completed modules query - to split quiz into review vs challenge
+  const { data: completedModules } = useQuery({
+    queryKey: ["completed-modules", user?.id],
+    queryFn: async () => {
+      const { data: progress } = await supabase
+        .from("user_progress")
+        .select("lesson_id")
+        .eq("user_id", user!.id)
+        .eq("completed", true);
+      if (!progress || progress.length === 0) return [];
+
+      const lessonIds = progress.map(p => p.lesson_id);
+      const { data: lessons } = await supabase
+        .from("lessons")
+        .select("id, module_id")
+        .in("id", lessonIds);
+      if (!lessons) return [];
+
+      const moduleIds = [...new Set(lessons.map(l => l.module_id))];
+      const { data: modules } = await supabase
+        .from("modules")
+        .select("id, title")
+        .in("id", moduleIds);
+
+      return modules?.map(m => m.title) ?? [];
+    },
+    enabled: !!user,
+  });
+
   // Daily game played check
   const { data: playedTodayData } = useQuery({
     queryKey: ["played-today", user?.id, dailyFeaturedGameId],
