@@ -287,7 +287,7 @@ const RightSidebar = () => {
   );
 };
 
-
+type NavItem = {
   to: string;
   label: string;
   icon: any;
