@@ -424,10 +424,13 @@ const AppLayoutInner = () => {
           })}
         </nav>
 
-        {/* Main content */}
+        {/* Main content + Right sidebar */}
         <main className="flex-1 overflow-auto pb-20 md:pb-0 pt-14 md:ml-[64px]">
-          <div className="max-w-3xl mx-auto p-4 md:p-8">
-            <Outlet />
+          <div className="flex max-w-6xl mx-auto">
+            <div className="flex-1 min-w-0 p-4 md:p-8 max-w-3xl">
+              <Outlet />
+            </div>
+            <RightSidebar />
           </div>
         </main>
       </div>
