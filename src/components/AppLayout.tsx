@@ -311,6 +311,7 @@ const sideNavItems: NavItem[] = [
     { to: "/awards", label: "Awards" },
     { to: "/rankings", label: "Rankings" },
   ]},
+  { to: "/settings", label: "Settings", icon: Settings },
 ];
 
 const AppLayoutInner = () => {
