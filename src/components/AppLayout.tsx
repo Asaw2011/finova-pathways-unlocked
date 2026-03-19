@@ -114,12 +114,12 @@ const AppLayoutInner = () => {
     <GameEconomyProvider>
       <div className="flex min-h-screen bg-background">
         {/* Desktop Sidebar */}
-        <aside className="hidden md:flex w-[220px] flex-col border-r border-border bg-background p-4 fixed left-0 top-0 bottom-0 z-40">
-          <Link to="/dashboard" className="flex items-center gap-2.5 px-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-primary-foreground" />
+        <aside className="hidden md:flex w-[64px] hover:w-[200px] group/sidebar flex-col border-r border-border bg-background py-3 px-2 fixed left-0 top-0 bottom-0 z-40 transition-all duration-200 overflow-hidden">
+          <Link to="/dashboard" className="flex items-center gap-2 px-1.5 mb-4">
+            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shrink-0">
+              <TrendingUp className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="text-xl font-black font-display text-foreground">FinOva</span>
+            <span className="text-lg font-black font-display text-foreground opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 whitespace-nowrap">FinOva</span>
           </Link>
 
           <nav className="flex-1 space-y-0.5">
@@ -129,15 +129,16 @@ const AppLayoutInner = () => {
                 <Link
                   key={to}
                   to={to}
+                  title={label}
                   className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all border-2",
+                    "flex items-center gap-2.5 px-2 py-2 rounded-xl text-sm font-bold transition-all",
                     active
-                      ? "bg-primary/10 text-primary border-primary/20"
-                      : "text-muted-foreground hover:bg-muted border-transparent"
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:bg-muted"
                   )}
                 >
-                  <Icon className="w-5 h-5" />
-                  {label}
+                  <Icon className="w-5 h-5 shrink-0" />
+                  <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 whitespace-nowrap">{label}</span>
                 </Link>
               );
             })}
@@ -145,10 +146,10 @@ const AppLayoutInner = () => {
 
           <button
             onClick={signOut}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-muted-foreground hover:bg-muted transition-colors"
+            className="flex items-center gap-2.5 px-2 py-2 rounded-xl text-sm font-bold text-muted-foreground hover:bg-muted transition-colors"
           >
-            <LogOut className="w-5 h-5" />
-            Sign Out
+            <LogOut className="w-5 h-5 shrink-0" />
+            <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 whitespace-nowrap">Sign Out</span>
           </button>
         </aside>
 
@@ -178,7 +179,7 @@ const AppLayoutInner = () => {
         </nav>
 
         {/* Main content */}
-        <main className="flex-1 overflow-auto pb-20 md:pb-0 pt-14 md:pt-0 md:ml-[220px]">
+        <main className="flex-1 overflow-auto pb-20 md:pb-0 pt-14 md:pt-0 md:ml-[64px]">
           <div className="max-w-2xl mx-auto p-4 md:p-8">
             <Outlet />
           </div>
