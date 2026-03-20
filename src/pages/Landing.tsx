@@ -54,19 +54,64 @@ const featureSections = [
 
 const testimonials = [
   {
-    quote: "I never understood how credit scores worked until I played the Credit Score Challenge. Now I'm building mine before I even turn 18.",
-    name: "Jordan M.",
+    quote: "FinOva completely changed how I think about money. I went from spending every dollar I earned to actually having a savings plan. This app should be required in every school.",
+    name: "Aaliyah R.",
+    role: "High School Senior",
+    avatar: "AR",
+  },
+  {
+    quote: "The paper trading feature is incredible. I've been practicing for 3 months and my virtual portfolio is up 14%. I feel way more prepared to invest real money now. Best finance app I've ever used.",
+    name: "Marcus T.",
+    role: "College Sophomore",
+    avatar: "MT",
+  },
+  {
+    quote: "I brought FinOva into my classroom and engagement went through the roof. Students actually ASK to do their financial literacy assignments now. I've never seen anything like it in 12 years of teaching.",
+    name: "Ms. Patel",
+    role: "High School Economics Teacher",
+    avatar: "MP",
+  },
+  {
+    quote: "My parents never taught me about credit scores or taxes. FinOva filled that gap without making me feel dumb for not knowing. I've already recommended it to all my friends.",
+    name: "Jake W.",
     role: "High School Junior",
+    avatar: "JW",
   },
   {
-    quote: "The paper trading feature helped me understand the stock market without risking real money. I actually feel confident about investing now.",
-    name: "Priya K.",
+    quote: "I tried so many apps and YouTube channels to learn about investing but nothing stuck. FinOva's games and quizzes made everything click. I'm obsessed — I log in every single day to keep my streak going.",
+    name: "Sofia L.",
     role: "College Freshman",
+    avatar: "SL",
   },
   {
-    quote: "My students are actually excited about budgeting. FinOva turned the most boring topic into something they compete over.",
-    name: "Mr. Thompson",
-    role: "Economics Teacher",
+    quote: "As a first-generation college student, nobody in my family knew how to help me with FAFSA or student loans. The Student Finance module literally saved me thousands of dollars. I can't recommend this enough.",
+    name: "Daniel O.",
+    role: "High School Senior",
+    avatar: "DO",
+  },
+  {
+    quote: "I showed FinOva to my school principal and we're now rolling it out to every 10th grader next semester. The curriculum is solid, the games keep kids engaged, and the certificates give them something to show for it.",
+    name: "Mr. Richardson",
+    role: "Financial Literacy Teacher",
+    avatar: "MR",
+  },
+  {
+    quote: "I used to think budgeting was boring and investing was only for rich people. FinOva proved me wrong on both. I've already started a Roth IRA at 17 because of what I learned here. Life-changing app.",
+    name: "Jasmine K.",
+    role: "High School Junior",
+    avatar: "JK",
+  },
+  {
+    quote: "What sets FinOva apart is how fun it makes learning. The credit score game alone taught me more than an entire semester of personal finance class. Five stars isn't enough — this deserves ten.",
+    name: "Chris M.",
+    role: "College Junior",
+    avatar: "CM",
+  },
+  {
+    quote: "My daughter uses FinOva every day and actually talks to me about compound interest at dinner now. As a parent, I couldn't be happier. This is the financial education I wish I had growing up.",
+    name: "Mrs. Thompson",
+    role: "Parent",
+    avatar: "MT",
   },
 ];
 
