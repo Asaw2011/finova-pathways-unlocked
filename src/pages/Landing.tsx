@@ -283,13 +283,27 @@ const Landing = () => {
       <section className="px-6 py-16 md:py-20 bg-card texture-grid">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10">
+            <p className="text-xs font-bold text-primary uppercase tracking-wide mb-2">REVIEWS</p>
             <h2 className="text-2xl md:text-3xl font-extrabold font-display mb-2">
-              What learners are saying
+              Rated 5 stars by students, parents, and teachers
             </h2>
-            <p className="text-muted-foreground">Real feedback from students and educators.</p>
+            <p className="text-muted-foreground">Don't take our word for it — hear from the people using it.</p>
+
+            {/* Rating summary */}
+            <div className="flex items-center justify-center gap-2 mt-4">
+              <div className="flex gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />
+                ))}
+              </div>
+              <span className="font-extrabold font-display text-lg">5.0</span>
+              <span className="text-sm text-muted-foreground">from {testimonials.length} reviews</span>
+            </div>
           </div>
-          <div className="grid sm:grid-cols-3 gap-6">
-            {testimonials.map(({ quote, name, role }) => (
+
+          {/* First row — 3 featured reviews */}
+          <div className="grid sm:grid-cols-3 gap-6 mb-6">
+            {testimonials.slice(0, 3).map(({ quote, name, role, avatar }) => (
               <div key={name} className="bg-background rounded-2xl border border-border/60 p-6">
                 <div className="flex gap-1 mb-3">
                   {[...Array(5)].map((_, i) => (
@@ -299,7 +313,30 @@ const Landing = () => {
                 <p className="text-sm text-muted-foreground mb-4 leading-relaxed">"{quote}"</p>
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-full bg-primary/10 text-primary font-bold text-xs flex items-center justify-center">
-                    {name.split(" ").map((n) => n[0]).join("")}
+                    {avatar}
+                  </div>
+                  <div>
+                    <p className="font-bold text-sm">{name}</p>
+                    <p className="text-xs text-muted-foreground">{role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Remaining reviews in 2-column grid */}
+          <div className="grid sm:grid-cols-2 gap-4">
+            {testimonials.slice(3).map(({ quote, name, role, avatar }) => (
+              <div key={name} className="bg-background rounded-2xl border border-border/60 p-5">
+                <div className="flex gap-1 mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+                <p className="text-sm text-muted-foreground mb-3 leading-relaxed">"{quote}"</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 text-primary font-bold text-[10px] flex items-center justify-center">
+                    {avatar}
                   </div>
                   <div>
                     <p className="font-bold text-sm">{name}</p>
