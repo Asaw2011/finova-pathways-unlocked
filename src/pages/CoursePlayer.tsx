@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, CheckCircle2, Lock, Target, Award, ChevronDown, ChevronRight } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Lock, Target, Award, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -10,24 +10,19 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import LessonExperience from "@/components/courses/LessonExperience";
 import CourseQuiz from "@/components/courses/CourseQuiz";
+import StepConnector from "@/components/learning-path/StepConnector";
+import LessonTooltip from "@/components/learning-path/LessonTooltip";
 
-const sectionNodeBg = [
-  "bg-emerald-500", "bg-blue-500", "bg-purple-500", "bg-amber-500",
-  "bg-pink-500", "bg-teal-500", "bg-sky-500", "bg-violet-500",
-];
-const sectionNodeBgLight = [
-  "bg-emerald-100", "bg-blue-100", "bg-purple-100", "bg-amber-100",
-  "bg-pink-100", "bg-teal-100", "bg-sky-100", "bg-violet-100",
-];
-const sectionTextColors = [
-  "text-emerald-600", "text-blue-600", "text-purple-600", "text-amber-600",
-  "text-pink-600", "text-teal-600", "text-sky-600", "text-violet-600",
-];
-const sectionBgColors = [
-  "bg-emerald-50 border-emerald-200", "bg-blue-50 border-blue-200",
-  "bg-purple-50 border-purple-200", "bg-amber-50 border-amber-200",
-  "bg-pink-50 border-pink-200", "bg-teal-50 border-teal-200",
-  "bg-sky-50 border-sky-200", "bg-violet-50 border-violet-200",
+// Standardized color system matching LearningPath
+const moduleColors = [
+  { bg: "bg-primary", text: "text-primary", light: "bg-primary/10", border: "border-primary/30", hex: "hsl(152, 60%, 42%)" },
+  { bg: "bg-[hsl(205,70%,50%)]", text: "text-[hsl(205,70%,50%)]", light: "bg-[hsl(205,70%,50%)]/10", border: "border-[hsl(205,70%,50%)]/30", hex: "hsl(205, 70%, 50%)" },
+  { bg: "bg-[hsl(265,55%,60%)]", text: "text-[hsl(265,55%,60%)]", light: "bg-[hsl(265,55%,60%)]/10", border: "border-[hsl(265,55%,60%)]/30", hex: "hsl(265, 55%, 60%)" },
+  { bg: "bg-[hsl(25,85%,55%)]", text: "text-[hsl(25,85%,55%)]", light: "bg-[hsl(25,85%,55%)]/10", border: "border-[hsl(25,85%,55%)]/30", hex: "hsl(25, 85%, 55%)" },
+  { bg: "bg-destructive", text: "text-destructive", light: "bg-destructive/10", border: "border-destructive/30", hex: "hsl(4, 80%, 58%)" },
+  { bg: "bg-[hsl(38,90%,50%)]", text: "text-[hsl(38,90%,50%)]", light: "bg-[hsl(38,90%,50%)]/10", border: "border-[hsl(38,90%,50%)]/30", hex: "hsl(38, 90%, 50%)" },
+  { bg: "bg-primary", text: "text-primary", light: "bg-primary/10", border: "border-primary/30", hex: "hsl(152, 60%, 42%)" },
+  { bg: "bg-[hsl(205,70%,50%)]", text: "text-[hsl(205,70%,50%)]", light: "bg-[hsl(205,70%,50%)]/10", border: "border-[hsl(205,70%,50%)]/30", hex: "hsl(205, 70%, 50%)" },
 ];
 
 const CoursePlayer = () => {
