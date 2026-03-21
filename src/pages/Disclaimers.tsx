@@ -17,9 +17,9 @@ const Disclaimers = () => {
               <h2 className="font-display font-bold text-lg">Investment & Financial Disclaimer</h2>
             </div>
             <div className="text-sm text-muted-foreground space-y-3">
-              <p><strong>FinOva provides educational content only.</strong> The quantitative strategies, investment materials, courses, and any financial information presented on this platform are for educational and illustrative purposes only. They do not constitute investment advice, financial advice, trading advice, or any other sort of advice.</p>
+              <p><strong>FinOva provides educational content only.</strong> The investment materials, courses, and any financial information presented on this platform are for educational and illustrative purposes only. They do not constitute investment advice, financial advice, trading advice, or any other sort of advice.</p>
               <p>You should not make any investment decisions based on any information presented on FinOva without conducting your own research and due diligence and consulting with a licensed financial advisor or professional.</p>
-              <p><strong>Past performance is not indicative of future results.</strong> Any quantitative strategies, backtesting data, simulated returns, or historical performance shown on this platform are hypothetical and should not be considered as guarantees of future performance.</p>
+              <p><strong>Past performance is not indicative of future results.</strong> Any simulated returns or historical performance shown on this platform are hypothetical and should not be considered as guarantees of future performance.</p>
               <p><strong>Risk of loss:</strong> Investing and trading involve risk of loss. You may lose some or all of your invested capital. Never invest money you cannot afford to lose.</p>
               <p>FinOva, its founders, employees, partners, and the Financial Freedom Initiative assume no responsibility or liability for any losses, damages, or costs arising from use of information presented on this platform.</p>
             </div>
