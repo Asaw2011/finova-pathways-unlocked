@@ -123,13 +123,6 @@ const Landing = () => {
             <span className="gradient-text">FinOva</span>
           </span>
           <div className="flex items-center gap-3">
-            <a href="https://instagram.com/financial.freedom.initiative" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors p-2 hidden sm:block">
-              <Instagram className="w-4 h-4" />
-            </a>
-            <a href="https://bcinvestments.wixsite.com/financial-freedom--2" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors p-2 hidden sm:block">
-              <ExternalLink className="w-4 h-4" />
-            </a>
-            <div className="w-px h-5 bg-border mx-1 hidden sm:block" />
             <Link to="/auth"><Button variant="ghost" size="sm" className="font-semibold">Log in</Button></Link>
             <Link to="/auth"><Button size="sm" className="font-semibold">Get Started</Button></Link>
           </div>
