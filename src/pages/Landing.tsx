@@ -421,7 +421,7 @@ const Landing = () => {
               },
               {
                 q: "Can I use FinOva in my classroom?",
-                a: "Absolutely. Our School Program gives teachers a turnkey curriculum with progress tracking, quizzes, and certificates. Visit our Schools page to learn more.",
+                a: "Absolutely. FinOva gives teachers a turnkey curriculum with progress tracking, quizzes, and certificates that students can earn.",
               },
               {
                 q: "Is the paper trading feature safe?",
