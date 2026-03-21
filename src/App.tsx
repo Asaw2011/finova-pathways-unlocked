@@ -46,11 +46,8 @@ const App = () => (
               <Route path="/" element={<Landing />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
               <Route path="/financial-freedom-initiative" element={<FFI />} />
               <Route path="/disclaimers" element={<Disclaimers />} />
-              <Route path="/school-program" element={<SchoolProgram />} />
-              <Route path="/quant-vault" element={<QuantVault />} />
               <Route path="/courses-preview" element={<CoursesPreview />} />
               <Route path="/plus" element={<Plus />} />
               <Route path="/resources" element={<Landing />} />

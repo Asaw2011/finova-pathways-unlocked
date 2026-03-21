@@ -53,18 +53,16 @@ const Disclaimers = () => {
             </div>
           </div>
 
-          {/* Risk Disclosure */}
+          {/* Paper Trading Disclaimer */}
           <div className="glass rounded-xl p-6 border-l-4 border-destructive">
             <div className="flex items-center gap-2 mb-3">
               <Scale className="w-5 h-5 text-destructive" />
-              <h2 className="font-display font-bold text-lg">Risk Disclosure — Quant Vault</h2>
+              <h2 className="font-display font-bold text-lg">Paper Trading Disclaimer</h2>
             </div>
             <div className="text-sm text-muted-foreground space-y-3">
-              <p>The Quant Vault section provides educational access to a quantitative investment strategy, including backtesting data, factor analysis, and algorithmic trading concepts.</p>
-              <p><strong>This is not a managed account, fund, or advisory service.</strong> FinOva does not manage money, execute trades, or provide personalized investment recommendations.</p>
-              <p>Any code, notebooks, models, or datasets provided are for educational exploration only. If used in live trading, users assume 100% of the risk and liability.</p>
-              <p>Users purchasing Quant Vault access must acknowledge this risk disclosure before gaining access to premium strategy content.</p>
-              <p><em>If you are an accredited investor seeking algorithmic trading services, please consult with a registered investment advisor and securities attorney regarding applicable regulations.</em></p>
+              <p>The paper trading feature uses simulated (virtual) money and real market data for educational purposes only.</p>
+              <p><strong>This is not a brokerage, managed account, or advisory service.</strong> FinOva does not manage money, execute real trades, or provide personalized investment recommendations.</p>
+              <p>Simulated trading results do not represent actual trading. Real trading involves risk of loss that simulated trading does not replicate.</p>
             </div>
           </div>
         </div>

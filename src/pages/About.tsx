@@ -46,10 +46,7 @@ const About = () => {
             <h2 className="text-2xl font-bold font-display mb-4">Our Team</h2>
             <p className="text-muted-foreground mb-6">
               FinOva is built by a team of financial professionals, educators, and technologists passionate about financial empowerment. We partner with the Financial Freedom Initiative to bring workshops, mentorship, and community outreach to learners nationwide.
-            </p>
-            <p className="text-sm text-muted-foreground italic">
-              Interested in joining our team or partnering with us? <a href="/contact" className="text-primary hover:underline">Get in touch</a>.
-            </p>
+            </div>
           </div>
         </div>
       </div>

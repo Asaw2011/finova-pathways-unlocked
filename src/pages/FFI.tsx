@@ -1,11 +1,12 @@
 import PublicNav from "@/components/PublicNav";
 import PublicFooter from "@/components/PublicFooter";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Instagram, ExternalLink, Calendar, Users, Heart } from "lucide-react";
+import { GraduationCap, Calendar, Users, Heart } from "lucide-react";
 import FFIVideos from "@/components/ffi/FFIVideos";
 import FFIGames from "@/components/ffi/FFIGames";
 import FFICourses from "@/components/ffi/FFICourses";
 import FFILearningPath from "@/components/ffi/FFILearningPath";
+import { Link } from "react-router-dom";
 
 const FFI = () => {
   return (
@@ -24,14 +25,9 @@ const FFI = () => {
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
               FFI delivers free workshops, interactive tools, and mentorship to help young people build real financial skills and achieve independence.
             </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              <a href="https://bcinvestments.wixsite.com/financial-freedom--2" target="_blank" rel="noopener noreferrer">
-                <Button size="lg"><ExternalLink className="w-4 h-4 mr-2" /> Visit FFI Website</Button>
-              </a>
-              <a href="https://instagram.com/financial.freedom.initiative" target="_blank" rel="noopener noreferrer">
-                <Button size="lg" variant="outline"><Instagram className="w-4 h-4 mr-2" /> Follow on Instagram</Button>
-              </a>
-            </div>
+            <Link to="/auth">
+              <Button size="lg">Get Started with FinOva</Button>
+            </Link>
           </div>
 
           {/* Learning Path */}
@@ -54,9 +50,9 @@ const FFI = () => {
                 { icon: Calendar, title: "Live Workshops", desc: "Interactive sessions on budgeting, investing, credit, and entrepreneurship — in-person and virtual." },
                 { icon: Users, title: "Community Outreach", desc: "Free programs for schools, youth organizations, and underserved communities." },
                 { icon: Heart, title: "Mentorship", desc: "Connect with financial professionals who guide you on your path to independence." },
-                { icon: GraduationCap, title: "School Partnerships", desc: "Curriculum integration, teacher training, and student resources for districts." },
-                { icon: Instagram, title: "Social Content", desc: "Follow @financial.freedom.initiative for daily tips, reels, and financial motivation." },
-                { icon: ExternalLink, title: "Blog & Newsletter", desc: "Articles on credit, investing, and entrepreneurship delivered to your inbox." },
+                { icon: GraduationCap, title: "Student Resources", desc: "Courses, games, and tools designed specifically for high school and college students." },
+                { icon: Calendar, title: "Events & Challenges", desc: "Participate in financial literacy challenges, competitions, and community events." },
+                { icon: Users, title: "Peer Learning", desc: "Learn alongside other students who are on the same journey to financial independence." },
               ].map(({ icon: Icon, title, desc }) => (
                 <div key={title} className="glass rounded-xl p-6 hover:border-primary/30 transition-all">
                   <Icon className="w-6 h-6 text-primary mb-3" />
@@ -67,20 +63,13 @@ const FFI = () => {
             </div>
           </section>
 
-          {/* Newsletter signup */}
+          {/* CTA */}
           <div className="glass rounded-xl p-8 text-center">
             <h3 className="text-xl font-bold font-display mb-2">Join the Movement</h3>
-            <p className="text-muted-foreground mb-6">Subscribe to FFI's newsletter for financial tips, workshop invites, and educational content.</p>
-            <div className="flex max-w-md mx-auto gap-3">
-              <input type="email" placeholder="your@email.com" className="flex-1 px-4 py-2 rounded-lg bg-secondary border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
-              <Button>Subscribe</Button>
-            </div>
-            <p className="text-xs text-muted-foreground mt-3">
-              Follow FFI on Instagram:{" "}
-              <a href="https://instagram.com/financial.freedom.initiative" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                @financial.freedom.initiative
-              </a>
-            </p>
+            <p className="text-muted-foreground mb-6">Start your financial literacy journey today with FinOva — built in partnership with FFI.</p>
+            <Link to="/auth">
+              <Button>Start Learning Free</Button>
+            </Link>
           </div>
         </div>
       </div>
