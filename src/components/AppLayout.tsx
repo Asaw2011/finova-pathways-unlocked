@@ -164,7 +164,7 @@ const TopBar = () => {
 
 const bottomNavItems = [
   { to: "/learning-path", label: "Learn", icon: BookOpen },
-  { to: "/games", label: "Games", icon: Gamepad2 },
+  { to: "/paper-trading", label: "Trade", icon: TrendingUp },
   { to: "/quests", label: "Quests", icon: Target },
   { to: "/friends", label: "Friends", icon: Users },
   { to: "/profile", label: "Profile", icon: User },
