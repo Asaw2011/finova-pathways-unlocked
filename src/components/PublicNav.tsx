@@ -16,18 +16,14 @@ const FinOvaLogo = () => (
     <span className="gradient-text">Fin</span>
     <span className="relative inline-flex items-center justify-center mx-[-1px]">
       <span className="gradient-text">O</span>
-      {/* Nova glow effect */}
       <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <span
           className="w-5 h-5 rounded-full opacity-60 blur-[6px] animate-pulse"
           style={{ background: "linear-gradient(135deg, hsl(36 100% 55%), hsl(28 100% 50%), hsl(45 100% 60%))" }}
         />
       </span>
-      <span
-        className="absolute inset-0 flex items-center justify-center pointer-events-none"
-      >
+      <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-70" fill="none">
-          {/* 4-point starburst */}
           <path d="M12 2 L13 10 L22 12 L13 14 L12 22 L11 14 L2 12 L11 10 Z" fill="url(#novaGrad)" />
           <defs>
             <linearGradient id="novaGrad" x1="0" y1="0" x2="1" y2="1">
@@ -54,7 +50,6 @@ const PublicNav = () => {
           <FinOvaLogo />
         </Link>
 
-        {/* Desktop nav */}
         <nav className="hidden lg:flex items-center gap-1">
           {links.map(({ to, label }) => (
             <Link
@@ -87,13 +82,11 @@ const PublicNav = () => {
           <Link to="/auth"><Button size="sm">Start Free</Button></Link>
         </div>
 
-        {/* Mobile menu toggle */}
         <button className="lg:hidden p-2" onClick={() => setOpen(!open)}>
           {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
-      {/* Mobile menu */}
       {open && (
         <div className="lg:hidden border-t border-border bg-background px-6 py-4 space-y-1">
           {links.map(({ to, label }) => (

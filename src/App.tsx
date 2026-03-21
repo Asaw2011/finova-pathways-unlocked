@@ -41,7 +41,6 @@ const App = () => (
         <BrowserRouter>
           <AuthProvider>
             <Routes>
-              {/* Public pages */}
               <Route path="/" element={<Landing />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/about" element={<About />} />
@@ -50,8 +49,6 @@ const App = () => (
               <Route path="/courses-preview" element={<CoursesPreview />} />
               <Route path="/plus" element={<Plus />} />
               <Route path="/resources" element={<Landing />} />
-
-              {/* Authenticated app */}
               <Route element={<AppLayout />}>
                 <Route path="/dashboard" element={<Navigate to="/learning-path" replace />} />
                 <Route path="/learning-path" element={<LearningPath />} />
@@ -72,7 +69,6 @@ const App = () => (
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/resource-hub" element={<Library />} />
               </Route>
-
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>
