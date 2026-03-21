@@ -340,50 +340,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* For Schools */}
-      <section className="px-6 py-16 md:py-20 bg-background texture-dots">
-        <div className="max-w-5xl mx-auto">
-          <div className="bg-card rounded-2xl border border-border/60 p-8 md:p-12 flex flex-col md:flex-row gap-8 items-center">
-            <div className="flex-1">
-              <p className="text-xs font-bold text-primary uppercase tracking-wide mb-2 flex items-center gap-1.5">
-                <GraduationCap className="w-4 h-4" />
-                FOR EDUCATORS
-              </p>
-              <h2 className="text-2xl md:text-3xl font-extrabold font-display mb-3">
-                Bring FinOva to your school
-              </h2>
-              <p className="text-muted-foreground mb-6">
-                Our school program gives teachers a complete financial literacy curriculum with student progress tracking, quizzes, certificates, and gamified engagement. Affordable pricing for any school budget.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Link to="/school-program">
-                  <Button className="font-bold rounded-xl">
-                    School Program <ChevronRight className="w-4 h-4 ml-1" />
-                  </Button>
-                </Link>
-                <Link to="/contact">
-                  <Button variant="outline" className="font-bold rounded-xl">
-                    Contact Us
-                  </Button>
-                </Link>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { icon: Users, label: "Class dashboards" },
-                { icon: Award, label: "Certificates" },
-                { icon: Gamepad2, label: "Interactive games" },
-                { icon: BarChart3, label: "Progress tracking" },
-              ].map(({ icon: Icon, label }) => (
-                <div key={label} className="bg-background rounded-xl border border-border/60 p-3 text-center">
-                  <Icon className="w-5 h-5 text-primary mx-auto mb-1" />
-                  <p className="text-xs font-bold">{label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Plus banner */}
       <section className="px-6 py-16 md:py-20 bg-card texture-grid">
