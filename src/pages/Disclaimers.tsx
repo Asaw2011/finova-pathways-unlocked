@@ -49,8 +49,7 @@ const Disclaimers = () => {
               <p>FinOva is committed to protecting your privacy. We collect only the information necessary to provide our educational services — including email, name, and learning progress data.</p>
               <p>We do not sell personal information to third parties. Data is stored securely and encrypted in transit.</p>
               <p><strong>COPPA Compliance:</strong> For users under 13, we require verifiable parental consent before collecting any personal information, in compliance with the Children's Online Privacy Protection Act.</p>
-              <p><strong>FERPA Compliance:</strong> School program data is handled in accordance with the Family Educational Rights and Privacy Act. Student education records are accessible only to authorized school personnel.</p>
-              <p><strong>GDPR & CCPA:</strong> Users may request access to, correction of, or deletion of their personal data at any time by contacting us.</p>
+              <p><strong>GDPR & CCPA:</strong> Users may request access to, correction of, or deletion of their personal data at any time.</p>
             </div>
           </div>
 
