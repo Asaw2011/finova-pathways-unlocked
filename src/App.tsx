@@ -59,7 +59,7 @@ const App = () => (
                 <Route path="/courses/:courseId" element={<CoursePlayer />} />
                 <Route path="/awards" element={<Awards />} />
                 <Route path="/certificates" element={<Awards />} />
-                
+                <Route path="/games" element={<Navigate to="/learning-path" replace />} />
                 <Route path="/mistakes" element={<MistakesReview />} />
                 <Route path="/quests" element={<Quests />} />
                 <Route path="/rankings" element={<Rankings />} />
