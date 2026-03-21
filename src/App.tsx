@@ -21,7 +21,6 @@ import About from "./pages/About";
 import FFI from "./pages/FFI";
 import Disclaimers from "./pages/Disclaimers";
 import CoursesPreview from "./pages/CoursesPreview";
-import CoursesPreview from "./pages/CoursesPreview";
 import Plus from "./pages/Plus";
 import MistakesReview from "./pages/MistakesReview";
 import Quests from "./pages/Quests";
