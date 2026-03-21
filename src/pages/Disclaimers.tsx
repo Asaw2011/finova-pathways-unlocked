@@ -33,8 +33,8 @@ const Disclaimers = () => {
             </div>
             <div className="text-sm text-muted-foreground space-y-3">
               <p>By accessing and using FinOva, you agree to be bound by these terms. FinOva is an educational platform — all content, including courses, games, videos, and strategies, is intended for learning purposes.</p>
-              <p>Users must be at least 13 years old. Users under 18 should have parental or guardian consent. School accounts are managed by authorized educators.</p>
-              <p>You may not redistribute, resell, or share premium content (including the Quant Vault materials) without written permission from FinOva.</p>
+              <p>Users must be at least 13 years old. Users under 18 should have parental or guardian consent.</p>
+              <p>You may not redistribute, resell, or share premium content without written permission from FinOva.</p>
               <p>FinOva reserves the right to modify, suspend, or discontinue any aspect of the service at any time.</p>
             </div>
           </div>
