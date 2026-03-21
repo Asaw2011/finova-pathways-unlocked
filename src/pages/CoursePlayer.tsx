@@ -188,7 +188,7 @@ const CoursePlayer = () => {
           const unitCompleted = module.lessons.every((l: any) => completedIds.has(l.id));
           const unitLessonsCompleted = module.lessons.filter((l: any) => completedIds.has(l.id)).length;
           const quizUnlocked = isUnitQuizUnlocked(mi);
-          const colorIdx = mi % sectionNodeBg.length;
+          const colors = moduleColors[mi % moduleColors.length];
 
           return (
             <motion.div
@@ -198,20 +198,17 @@ const CoursePlayer = () => {
               transition={{ delay: mi * 0.08 }}
             >
               {/* Section Header */}
-              <div className={cn(
-                "rounded-2xl p-5 mb-4 border",
-                sectionBgColors[colorIdx]
-              )}>
+              <div className={cn("rounded-2xl p-5 mb-4 border-2", colors.border, colors.light)}>
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <div className={cn(
-                      "w-10 h-10 rounded-xl flex items-center justify-center font-extrabold text-white text-lg",
-                      unitCompleted ? "bg-emerald-500" : sectionNodeBg[colorIdx]
+                      "w-10 h-10 rounded-xl flex items-center justify-center font-extrabold text-primary-foreground text-lg",
+                      unitCompleted ? "bg-primary" : colors.bg
                     )}>
                       {unitCompleted ? <CheckCircle2 className="w-5 h-5" /> : mi + 1}
                     </div>
                     <div>
-                      <h3 className={cn("font-extrabold font-display text-lg", sectionTextColors[colorIdx])}>
+                      <h3 className={cn("font-extrabold font-display text-lg", colors.text)}>
                         {module.title}
                       </h3>
                       <p className="text-xs text-muted-foreground">{unitLessonsCompleted}/{module.lessons.length} lessons</p>
@@ -219,9 +216,9 @@ const CoursePlayer = () => {
                   </div>
                 </div>
 
-                <div className="h-2 rounded-full bg-white/60 overflow-hidden">
+                <div className="h-2 rounded-full bg-muted overflow-hidden">
                   <motion.div
-                    className={cn("h-full rounded-full", sectionNodeBg[colorIdx])}
+                    className={cn("h-full rounded-full", colors.bg)}
                     initial={{ width: 0 }}
                     animate={{ width: `${(unitLessonsCompleted / module.lessons.length) * 100}%` }}
                     transition={{ duration: 0.8, delay: mi * 0.1 }}
@@ -229,79 +226,97 @@ const CoursePlayer = () => {
                 </div>
               </div>
 
-              {/* Lesson Nodes - Ladder Style */}
-              <div className="flex flex-col items-center gap-3 mb-4 px-4">
+              {/* Lesson Nodes - Zigzag Ladder (standardized) */}
+              <div className="relative flex flex-col items-center mb-6 max-w-sm mx-auto">
                 {module.lessons.map((lesson: any, li: number) => {
                   const completed = completedIds.has(lesson.id);
                   const unlocked = isUnlocked(lesson.id);
                   const hasContent = !!lesson.content;
-                  const offset = li % 2 === 0 ? -40 : 40;
+                  const isCurrent = unlocked && hasContent && !completed;
+                  const offset = li === 0 ? 0 : li % 2 === 1 ? 50 : -50;
+
+                  // Connector type
+                  let connectorType: "completed" | "active" | "locked" | "far-locked" | null = null;
+                  if (li > 0) {
+                    const prevLesson = module.lessons[li - 1] as any;
+                    const prevCompleted = completedIds.has(prevLesson.id);
+                    if (prevCompleted && completed) connectorType = "completed";
+                    else if (prevCompleted && isCurrent) connectorType = "active";
+                    else if (prevCompleted && !unlocked) connectorType = "locked";
+                    else if (!prevCompleted) connectorType = "far-locked";
+                    else connectorType = "locked";
+                  }
+
+                  const tooltipStatus = completed ? "completed" as const : isCurrent ? "current" as const : "locked" as const;
 
                   return (
-                    <motion.div
-                      key={lesson.id}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: mi * 0.08 + li * 0.05 }}
-                      style={{ marginLeft: offset }}
-                      className="relative"
-                    >
-                      {li > 0 && <div className="absolute -top-3 left-1/2 w-0.5 h-3 bg-border" />}
-                      <button
-                        onClick={() => {
-                          if (unlocked && hasContent && !completed) setActiveLesson(lesson.id);
-                        }}
-                        disabled={!unlocked || !hasContent}
-                        className={cn(
-                          "relative w-16 h-16 rounded-full flex items-center justify-center transition-all",
-                          completed
-                            ? cn(sectionNodeBg[colorIdx], "text-white shadow-lg")
-                            : unlocked && hasContent
-                              ? cn(sectionNodeBgLight[colorIdx], "border-4", sectionTextColors[colorIdx], "hover:scale-110 shadow-md cursor-pointer")
-                              : "bg-muted border-2 border-border text-muted-foreground cursor-not-allowed"
-                        )}
-                      >
-                        {completed ? <CheckCircle2 className="w-7 h-7" /> : unlocked && hasContent ? <Target className="w-6 h-6" /> : <Lock className="w-5 h-5" />}
-                      </button>
-                      <p className={cn("text-xs font-semibold text-center mt-1.5 max-w-[100px]", !unlocked && "text-muted-foreground")}>
-                        {lesson.title}
-                      </p>
-                      {lesson.duration_minutes && <p className="text-[10px] text-muted-foreground text-center">{lesson.duration_minutes}m</p>}
-                    </motion.div>
+                    <div key={lesson.id} className="flex flex-col items-center" style={{ marginLeft: offset }}>
+                      {li > 0 && connectorType && (
+                        <div style={{ marginLeft: -offset / 2 }}>
+                          <StepConnector type={connectorType} stepNumber={li + 1} delay={mi * 0.08 + li * 0.05} />
+                        </div>
+                      )}
+                      <LessonTooltip lessonTitle={lesson.title} status={tooltipStatus}>
+                        <motion.button
+                          onClick={() => {
+                            if (unlocked && hasContent && !completed) setActiveLesson(lesson.id);
+                          }}
+                          disabled={!unlocked || !hasContent}
+                          whileTap={unlocked ? { scale: 0.95 } : {}}
+                          className={cn(
+                            "relative w-16 h-16 rounded-full flex items-center justify-center transition-all z-10",
+                            completed
+                              ? cn(colors.bg, "text-primary-foreground shadow-lg")
+                              : isCurrent
+                                ? cn("bg-background border-[4px] shadow-lg cursor-pointer duo-pulse", colors.border)
+                                : "bg-muted border-2 border-border text-muted-foreground cursor-not-allowed"
+                          )}
+                          style={completed ? { boxShadow: `0 4px 0 ${colors.hex}80` } : isCurrent ? { borderColor: colors.hex } : {}}
+                        >
+                          {completed ? <CheckCircle2 className="w-7 h-7" /> : isCurrent ? <Target className="w-6 h-6" style={{ color: colors.hex }} /> : <Lock className="w-5 h-5" />}
+                          {unlocked && (
+                            <span className={cn(
+                              "absolute -top-1 -right-1 w-5 h-5 rounded-full text-[10px] font-black flex items-center justify-center text-primary-foreground",
+                              completed ? "bg-primary" : colors.bg
+                            )}>{li + 1}</span>
+                          )}
+                        </motion.button>
+                      </LessonTooltip>
+                    </div>
                   );
                 })}
 
                 {/* Unit Quiz Node */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: mi * 0.08 + module.lessons.length * 0.05 }}
-                  className="relative mt-2"
-                >
-                  <div className="absolute -top-5 left-1/2 w-0.5 h-5 bg-border" />
-                  <button
+                <div className="flex flex-col items-center">
+                  <StepConnector
+                    type={unitCompleted ? "completed" : quizUnlocked ? "active" : "locked"}
+                    stepNumber={module.lessons.length + 1}
+                    delay={mi * 0.08 + module.lessons.length * 0.05}
+                  />
+                  <motion.button
                     disabled={!quizUnlocked}
                     onClick={() => {
                       if (quizUnlocked) {
                         toast.info("Unit quiz coming soon! Complete all lessons first.");
                       }
                     }}
+                    whileTap={quizUnlocked ? { scale: 0.95 } : {}}
                     className={cn(
                       "relative w-20 h-20 rounded-2xl flex flex-col items-center justify-center gap-1 transition-all border-2",
                       unitCompleted
-                        ? "bg-emerald-500 text-white border-emerald-600 shadow-lg"
+                        ? "bg-[hsl(38,90%,50%)] text-primary-foreground border-[hsl(38,90%,50%)] shadow-lg"
                         : quizUnlocked
-                          ? "bg-amber-50 border-amber-400 text-amber-600 hover:scale-105 shadow-md cursor-pointer"
+                          ? "bg-background border-[hsl(38,90%,50%)] text-[hsl(38,90%,50%)] cursor-pointer duo-pulse shadow-md"
                           : "bg-muted border-border text-muted-foreground cursor-not-allowed"
                     )}
                   >
-                    {unitCompleted ? <Award className="w-6 h-6" /> : quizUnlocked ? <Award className="w-6 h-6" /> : <Lock className="w-5 h-5" />}
-                    <span className="text-[9px] font-bold">QUIZ</span>
-                  </button>
-                  <p className="text-xs font-bold text-center mt-1.5 max-w-[100px]">
+                    {unitCompleted ? <Trophy className="w-7 h-7" /> : quizUnlocked ? <Award className="w-7 h-7" /> : <Lock className="w-5 h-5" />}
+                    <span className="text-[9px] font-black uppercase">Quiz</span>
+                  </motion.button>
+                  <p className="text-xs font-bold text-center mt-1.5 text-muted-foreground">
                     {unitCompleted ? "✓ Complete" : "Unit Quiz"}
                   </p>
-                </motion.div>
+                </div>
               </div>
             </motion.div>
           );
