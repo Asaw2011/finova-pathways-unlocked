@@ -33,9 +33,9 @@ const useReveal = () => {
   return ref;
 };
 
-const S = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => {
+const S = ({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) => {
   const ref = useReveal();
-  return <div ref={ref} className={className}>{children}</div>;
+  return <div ref={ref} className={className} id={id}>{children}</div>;
 };
 
 const img = {
