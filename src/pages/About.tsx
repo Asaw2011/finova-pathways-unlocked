@@ -29,7 +29,7 @@ const About = () => {
           <div className="grid sm:grid-cols-2 gap-6 mb-12">
             {[
               { icon: BookOpen, title: "Education First", desc: "Every piece of content is expert-reviewed and designed for real understanding, not just memorization." },
-              { icon: Heart, title: "Accessible to All", desc: "Core courses are free. School programs are affordable. Nobody gets left behind." },
+              { icon: Heart, title: "Accessible to All", desc: "Core courses are free. Nobody gets left behind." },
               { icon: Users, title: "Community Driven", desc: "Connected to the Financial Freedom Initiative, we're part of a movement — not just a platform." },
               { icon: GraduationCap, title: "Outcome Focused", desc: "Certificates, portfolio simulations, and real-world capstones ensure students can apply what they learn." },
             ].map(({ icon: Icon, title, desc }) => (
