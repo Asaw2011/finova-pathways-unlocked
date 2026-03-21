@@ -1,10 +1,8 @@
 import { Link } from "react-router-dom";
 import {
-  ArrowRight, ExternalLink, Instagram,
-  Heart, BookOpen, Zap, Shield, Star, Crown,
+  ArrowRight, Heart, BookOpen, Zap, Shield, Star, Crown,
   TrendingUp, Users, Award, CheckCircle,
-  ChevronRight, BarChart3, Wallet, PiggyBank,
-  GraduationCap, Gamepad2, Brain, Target, Sparkles
+  BarChart3, Wallet, PiggyBank, GraduationCap, Gamepad2, Brain, Target, Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroIllustration from "@/assets/hero-illustration.png";
