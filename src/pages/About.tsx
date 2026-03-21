@@ -48,7 +48,6 @@ const About = () => {
               FinOva is built by a team of financial professionals, educators, and technologists passionate about financial empowerment. We partner with the Financial Freedom Initiative to bring workshops, mentorship, and community outreach to learners nationwide.
             </p>
           </div>
-          </div>
         </div>
       </div>
       <PublicFooter />
