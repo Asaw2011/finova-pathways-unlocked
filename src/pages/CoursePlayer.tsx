@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, CheckCircle2, Lock, Target, Award, ChevronDown, ChevronRight } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Lock, Target, Award, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -10,24 +10,19 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import LessonExperience from "@/components/courses/LessonExperience";
 import CourseQuiz from "@/components/courses/CourseQuiz";
+import StepConnector from "@/components/learning-path/StepConnector";
+import LessonTooltip from "@/components/learning-path/LessonTooltip";
 
-const sectionNodeBg = [
-  "bg-emerald-500", "bg-blue-500", "bg-purple-500", "bg-amber-500",
-  "bg-pink-500", "bg-teal-500", "bg-sky-500", "bg-violet-500",
-];
-const sectionNodeBgLight = [
-  "bg-emerald-100", "bg-blue-100", "bg-purple-100", "bg-amber-100",
-  "bg-pink-100", "bg-teal-100", "bg-sky-100", "bg-violet-100",
-];
-const sectionTextColors = [
-  "text-emerald-600", "text-blue-600", "text-purple-600", "text-amber-600",
-  "text-pink-600", "text-teal-600", "text-sky-600", "text-violet-600",
-];
-const sectionBgColors = [
-  "bg-emerald-50 border-emerald-200", "bg-blue-50 border-blue-200",
-  "bg-purple-50 border-purple-200", "bg-amber-50 border-amber-200",
-  "bg-pink-50 border-pink-200", "bg-teal-50 border-teal-200",
-  "bg-sky-50 border-sky-200", "bg-violet-50 border-violet-200",
+// Standardized color system matching LearningPath
+const moduleColors = [
+  { bg: "bg-primary", text: "text-primary", light: "bg-primary/10", border: "border-primary/30", hex: "hsl(152, 60%, 42%)" },
+  { bg: "bg-[hsl(205,70%,50%)]", text: "text-[hsl(205,70%,50%)]", light: "bg-[hsl(205,70%,50%)]/10", border: "border-[hsl(205,70%,50%)]/30", hex: "hsl(205, 70%, 50%)" },
+  { bg: "bg-[hsl(265,55%,60%)]", text: "text-[hsl(265,55%,60%)]", light: "bg-[hsl(265,55%,60%)]/10", border: "border-[hsl(265,55%,60%)]/30", hex: "hsl(265, 55%, 60%)" },
+  { bg: "bg-[hsl(25,85%,55%)]", text: "text-[hsl(25,85%,55%)]", light: "bg-[hsl(25,85%,55%)]/10", border: "border-[hsl(25,85%,55%)]/30", hex: "hsl(25, 85%, 55%)" },
+  { bg: "bg-destructive", text: "text-destructive", light: "bg-destructive/10", border: "border-destructive/30", hex: "hsl(4, 80%, 58%)" },
+  { bg: "bg-[hsl(38,90%,50%)]", text: "text-[hsl(38,90%,50%)]", light: "bg-[hsl(38,90%,50%)]/10", border: "border-[hsl(38,90%,50%)]/30", hex: "hsl(38, 90%, 50%)" },
+  { bg: "bg-primary", text: "text-primary", light: "bg-primary/10", border: "border-primary/30", hex: "hsl(152, 60%, 42%)" },
+  { bg: "bg-[hsl(205,70%,50%)]", text: "text-[hsl(205,70%,50%)]", light: "bg-[hsl(205,70%,50%)]/10", border: "border-[hsl(205,70%,50%)]/30", hex: "hsl(205, 70%, 50%)" },
 ];
 
 const CoursePlayer = () => {
@@ -193,7 +188,7 @@ const CoursePlayer = () => {
           const unitCompleted = module.lessons.every((l: any) => completedIds.has(l.id));
           const unitLessonsCompleted = module.lessons.filter((l: any) => completedIds.has(l.id)).length;
           const quizUnlocked = isUnitQuizUnlocked(mi);
-          const colorIdx = mi % sectionNodeBg.length;
+          const colors = moduleColors[mi % moduleColors.length];
 
           return (
             <motion.div
@@ -203,20 +198,17 @@ const CoursePlayer = () => {
               transition={{ delay: mi * 0.08 }}
             >
               {/* Section Header */}
-              <div className={cn(
-                "rounded-2xl p-5 mb-4 border",
-                sectionBgColors[colorIdx]
-              )}>
+              <div className={cn("rounded-2xl p-5 mb-4 border-2", colors.border, colors.light)}>
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <div className={cn(
-                      "w-10 h-10 rounded-xl flex items-center justify-center font-extrabold text-white text-lg",
-                      unitCompleted ? "bg-emerald-500" : sectionNodeBg[colorIdx]
+                      "w-10 h-10 rounded-xl flex items-center justify-center font-extrabold text-primary-foreground text-lg",
+                      unitCompleted ? "bg-primary" : colors.bg
                     )}>
                       {unitCompleted ? <CheckCircle2 className="w-5 h-5" /> : mi + 1}
                     </div>
                     <div>
-                      <h3 className={cn("font-extrabold font-display text-lg", sectionTextColors[colorIdx])}>
+                      <h3 className={cn("font-extrabold font-display text-lg", colors.text)}>
                         {module.title}
                       </h3>
                       <p className="text-xs text-muted-foreground">{unitLessonsCompleted}/{module.lessons.length} lessons</p>
@@ -224,9 +216,9 @@ const CoursePlayer = () => {
                   </div>
                 </div>
 
-                <div className="h-2 rounded-full bg-white/60 overflow-hidden">
+                <div className="h-2 rounded-full bg-muted overflow-hidden">
                   <motion.div
-                    className={cn("h-full rounded-full", sectionNodeBg[colorIdx])}
+                    className={cn("h-full rounded-full", colors.bg)}
                     initial={{ width: 0 }}
                     animate={{ width: `${(unitLessonsCompleted / module.lessons.length) * 100}%` }}
                     transition={{ duration: 0.8, delay: mi * 0.1 }}
@@ -234,79 +226,97 @@ const CoursePlayer = () => {
                 </div>
               </div>
 
-              {/* Lesson Nodes - Ladder Style */}
-              <div className="flex flex-col items-center gap-3 mb-4 px-4">
+              {/* Lesson Nodes - Zigzag Ladder (standardized) */}
+              <div className="relative flex flex-col items-center mb-6 max-w-sm mx-auto">
                 {module.lessons.map((lesson: any, li: number) => {
                   const completed = completedIds.has(lesson.id);
                   const unlocked = isUnlocked(lesson.id);
                   const hasContent = !!lesson.content;
-                  const offset = li % 2 === 0 ? -40 : 40;
+                  const isCurrent = unlocked && hasContent && !completed;
+                  const offset = li === 0 ? 0 : li % 2 === 1 ? 50 : -50;
+
+                  // Connector type
+                  let connectorType: "completed" | "active" | "locked" | "far-locked" | null = null;
+                  if (li > 0) {
+                    const prevLesson = module.lessons[li - 1] as any;
+                    const prevCompleted = completedIds.has(prevLesson.id);
+                    if (prevCompleted && completed) connectorType = "completed";
+                    else if (prevCompleted && isCurrent) connectorType = "active";
+                    else if (prevCompleted && !unlocked) connectorType = "locked";
+                    else if (!prevCompleted) connectorType = "far-locked";
+                    else connectorType = "locked";
+                  }
+
+                  const tooltipStatus = completed ? "completed" as const : isCurrent ? "current" as const : "locked" as const;
 
                   return (
-                    <motion.div
-                      key={lesson.id}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: mi * 0.08 + li * 0.05 }}
-                      style={{ marginLeft: offset }}
-                      className="relative"
-                    >
-                      {li > 0 && <div className="absolute -top-3 left-1/2 w-0.5 h-3 bg-border" />}
-                      <button
-                        onClick={() => {
-                          if (unlocked && hasContent && !completed) setActiveLesson(lesson.id);
-                        }}
-                        disabled={!unlocked || !hasContent}
-                        className={cn(
-                          "relative w-16 h-16 rounded-full flex items-center justify-center transition-all",
-                          completed
-                            ? cn(sectionNodeBg[colorIdx], "text-white shadow-lg")
-                            : unlocked && hasContent
-                              ? cn(sectionNodeBgLight[colorIdx], "border-4", sectionTextColors[colorIdx], "hover:scale-110 shadow-md cursor-pointer")
-                              : "bg-muted border-2 border-border text-muted-foreground cursor-not-allowed"
-                        )}
-                      >
-                        {completed ? <CheckCircle2 className="w-7 h-7" /> : unlocked && hasContent ? <Target className="w-6 h-6" /> : <Lock className="w-5 h-5" />}
-                      </button>
-                      <p className={cn("text-xs font-semibold text-center mt-1.5 max-w-[100px]", !unlocked && "text-muted-foreground")}>
-                        {lesson.title}
-                      </p>
-                      {lesson.duration_minutes && <p className="text-[10px] text-muted-foreground text-center">{lesson.duration_minutes}m</p>}
-                    </motion.div>
+                    <div key={lesson.id} className="flex flex-col items-center" style={{ marginLeft: offset }}>
+                      {li > 0 && connectorType && (
+                        <div style={{ marginLeft: -offset / 2 }}>
+                          <StepConnector type={connectorType} stepNumber={li + 1} delay={mi * 0.08 + li * 0.05} />
+                        </div>
+                      )}
+                      <LessonTooltip lessonTitle={lesson.title} status={tooltipStatus}>
+                        <motion.button
+                          onClick={() => {
+                            if (unlocked && hasContent && !completed) setActiveLesson(lesson.id);
+                          }}
+                          disabled={!unlocked || !hasContent}
+                          whileTap={unlocked ? { scale: 0.95 } : {}}
+                          className={cn(
+                            "relative w-16 h-16 rounded-full flex items-center justify-center transition-all z-10",
+                            completed
+                              ? cn(colors.bg, "text-primary-foreground shadow-lg")
+                              : isCurrent
+                                ? cn("bg-background border-[4px] shadow-lg cursor-pointer duo-pulse", colors.border)
+                                : "bg-muted border-2 border-border text-muted-foreground cursor-not-allowed"
+                          )}
+                          style={completed ? { boxShadow: `0 4px 0 ${colors.hex}80` } : isCurrent ? { borderColor: colors.hex } : {}}
+                        >
+                          {completed ? <CheckCircle2 className="w-7 h-7" /> : isCurrent ? <Target className="w-6 h-6" style={{ color: colors.hex }} /> : <Lock className="w-5 h-5" />}
+                          {unlocked && (
+                            <span className={cn(
+                              "absolute -top-1 -right-1 w-5 h-5 rounded-full text-[10px] font-black flex items-center justify-center text-primary-foreground",
+                              completed ? "bg-primary" : colors.bg
+                            )}>{li + 1}</span>
+                          )}
+                        </motion.button>
+                      </LessonTooltip>
+                    </div>
                   );
                 })}
 
                 {/* Unit Quiz Node */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: mi * 0.08 + module.lessons.length * 0.05 }}
-                  className="relative mt-2"
-                >
-                  <div className="absolute -top-5 left-1/2 w-0.5 h-5 bg-border" />
-                  <button
+                <div className="flex flex-col items-center">
+                  <StepConnector
+                    type={unitCompleted ? "completed" : quizUnlocked ? "active" : "locked"}
+                    stepNumber={module.lessons.length + 1}
+                    delay={mi * 0.08 + module.lessons.length * 0.05}
+                  />
+                  <motion.button
                     disabled={!quizUnlocked}
                     onClick={() => {
                       if (quizUnlocked) {
                         toast.info("Unit quiz coming soon! Complete all lessons first.");
                       }
                     }}
+                    whileTap={quizUnlocked ? { scale: 0.95 } : {}}
                     className={cn(
                       "relative w-20 h-20 rounded-2xl flex flex-col items-center justify-center gap-1 transition-all border-2",
                       unitCompleted
-                        ? "bg-emerald-500 text-white border-emerald-600 shadow-lg"
+                        ? "bg-[hsl(38,90%,50%)] text-primary-foreground border-[hsl(38,90%,50%)] shadow-lg"
                         : quizUnlocked
-                          ? "bg-amber-50 border-amber-400 text-amber-600 hover:scale-105 shadow-md cursor-pointer"
+                          ? "bg-background border-[hsl(38,90%,50%)] text-[hsl(38,90%,50%)] cursor-pointer duo-pulse shadow-md"
                           : "bg-muted border-border text-muted-foreground cursor-not-allowed"
                     )}
                   >
-                    {unitCompleted ? <Award className="w-6 h-6" /> : quizUnlocked ? <Award className="w-6 h-6" /> : <Lock className="w-5 h-5" />}
-                    <span className="text-[9px] font-bold">QUIZ</span>
-                  </button>
-                  <p className="text-xs font-bold text-center mt-1.5 max-w-[100px]">
+                    {unitCompleted ? <Trophy className="w-7 h-7" /> : quizUnlocked ? <Award className="w-7 h-7" /> : <Lock className="w-5 h-5" />}
+                    <span className="text-[9px] font-black uppercase">Quiz</span>
+                  </motion.button>
+                  <p className="text-xs font-bold text-center mt-1.5 text-muted-foreground">
                     {unitCompleted ? "✓ Complete" : "Unit Quiz"}
                   </p>
-                </motion.div>
+                </div>
               </div>
             </motion.div>
           );
