@@ -13,7 +13,7 @@ import CoursePlayer from "./pages/CoursePlayer";
 import Awards from "./pages/Awards";
 import Profile from "./pages/Profile";
 import Library from "./pages/Library";
-import GamesZone from "./pages/GamesZone";
+
 import LearningPath from "./pages/LearningPath";
 import MoneyCoach from "./pages/MoneyCoach";
 import Shop from "./pages/Shop";
