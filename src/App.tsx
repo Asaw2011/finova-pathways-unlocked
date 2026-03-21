@@ -13,7 +13,7 @@ import CoursePlayer from "./pages/CoursePlayer";
 import Awards from "./pages/Awards";
 import Profile from "./pages/Profile";
 import Library from "./pages/Library";
-import GamesZone from "./pages/GamesZone";
+
 import LearningPath from "./pages/LearningPath";
 import MoneyCoach from "./pages/MoneyCoach";
 import Shop from "./pages/Shop";
@@ -59,7 +59,7 @@ const App = () => (
                 <Route path="/courses/:courseId" element={<CoursePlayer />} />
                 <Route path="/awards" element={<Awards />} />
                 <Route path="/certificates" element={<Awards />} />
-                <Route path="/games" element={<GamesZone />} />
+                
                 <Route path="/mistakes" element={<MistakesReview />} />
                 <Route path="/quests" element={<Quests />} />
                 <Route path="/rankings" element={<Rankings />} />
