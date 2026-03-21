@@ -352,8 +352,8 @@ const LearningPath = () => {
         </button>
       </div>
 
-      {/* Lesson ladder — centered, clean, no offset */}
-      <div className="flex flex-col items-center pb-8">
+      {/* Lesson ladder — zigzag winding path */}
+      <div className="relative flex flex-col items-center pb-8 max-w-sm mx-auto">
         {modLessons.map((lesson, li) => {
           const unlocked = isLessonUnlocked(viewingModuleIndex, li);
           const completed = completedLessons.has(lesson.id);
@@ -373,11 +373,15 @@ const LearningPath = () => {
           }
 
           const tooltipStatus = completed ? "completed" : isCurrent ? "current" : "locked";
+          // Zigzag offset: alternate left and right, first one centered
+          const offset = li === 0 ? 0 : li % 2 === 1 ? 50 : -50;
 
           return (
-            <div key={lesson.id} className="flex flex-col items-center">
+            <div key={lesson.id} className="flex flex-col items-center" style={{ marginLeft: offset }}>
               {li > 0 && connectorType && (
-                <StepConnector type={connectorType} stepNumber={li + 1} delay={li * 0.06} />
+                <div style={{ marginLeft: -offset / 2 }}>
+                  <StepConnector type={connectorType} stepNumber={li + 1} delay={li * 0.06} />
+                </div>
               )}
               <LessonTooltip lessonTitle={lesson.title} status={tooltipStatus}>
                 <motion.button
@@ -385,7 +389,7 @@ const LearningPath = () => {
                   disabled={!unlocked}
                   whileTap={unlocked ? { scale: 0.95 } : {}}
                   className={cn(
-                    "relative w-16 h-16 rounded-full flex items-center justify-center transition-all",
+                    "relative w-16 h-16 rounded-full flex items-center justify-center transition-all z-10",
                     completed
                       ? cn(colors.bg, "text-primary-foreground shadow-lg")
                       : isCurrent
