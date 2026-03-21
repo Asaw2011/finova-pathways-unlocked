@@ -29,7 +29,7 @@ const About = () => {
           <div className="grid sm:grid-cols-2 gap-6 mb-12">
             {[
               { icon: BookOpen, title: "Education First", desc: "Every piece of content is expert-reviewed and designed for real understanding, not just memorization." },
-              { icon: Heart, title: "Accessible to All", desc: "Core courses are free. School programs are affordable. Nobody gets left behind." },
+              { icon: Heart, title: "Accessible to All", desc: "Core courses are free. Nobody gets left behind." },
               { icon: Users, title: "Community Driven", desc: "Connected to the Financial Freedom Initiative, we're part of a movement — not just a platform." },
               { icon: GraduationCap, title: "Outcome Focused", desc: "Certificates, portfolio simulations, and real-world capstones ensure students can apply what they learn." },
             ].map(({ icon: Icon, title, desc }) => (
@@ -44,11 +44,8 @@ const About = () => {
           {/* Team */}
           <div className="glass rounded-xl p-8">
             <h2 className="text-2xl font-bold font-display mb-4">Our Team</h2>
-            <p className="text-muted-foreground mb-6">
+            <p className="text-muted-foreground">
               FinOva is built by a team of financial professionals, educators, and technologists passionate about financial empowerment. We partner with the Financial Freedom Initiative to bring workshops, mentorship, and community outreach to learners nationwide.
-            </p>
-            <p className="text-sm text-muted-foreground italic">
-              Interested in joining our team or partnering with us? <a href="/contact" className="text-primary hover:underline">Get in touch</a>.
             </p>
           </div>
         </div>

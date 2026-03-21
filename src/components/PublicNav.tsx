@@ -7,11 +7,8 @@ import { cn } from "@/lib/utils";
 const links = [
   { to: "/about", label: "About" },
   { to: "/courses-preview", label: "Courses" },
-  { to: "/school-program", label: "Schools" },
   { to: "/resources", label: "Resources" },
-  { to: "/quant-vault", label: "Quant Vault" },
   { to: "/financial-freedom-initiative", label: "FFI" },
-  { to: "/contact", label: "Contact" },
 ];
 
 const FinOvaLogo = () => (

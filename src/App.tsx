@@ -18,11 +18,8 @@ import LearningPath from "./pages/LearningPath";
 import MoneyCoach from "./pages/MoneyCoach";
 import Shop from "./pages/Shop";
 import About from "./pages/About";
-import Contact from "./pages/Contact";
 import FFI from "./pages/FFI";
 import Disclaimers from "./pages/Disclaimers";
-import SchoolProgram from "./pages/SchoolProgram";
-import QuantVault from "./pages/QuantVault";
 import CoursesPreview from "./pages/CoursesPreview";
 import Plus from "./pages/Plus";
 import MistakesReview from "./pages/MistakesReview";
@@ -48,11 +45,8 @@ const App = () => (
               <Route path="/" element={<Landing />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
               <Route path="/financial-freedom-initiative" element={<FFI />} />
               <Route path="/disclaimers" element={<Disclaimers />} />
-              <Route path="/school-program" element={<SchoolProgram />} />
-              <Route path="/quant-vault" element={<QuantVault />} />
               <Route path="/courses-preview" element={<CoursesPreview />} />
               <Route path="/plus" element={<Plus />} />
               <Route path="/resources" element={<Landing />} />

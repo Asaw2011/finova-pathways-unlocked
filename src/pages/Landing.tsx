@@ -1,10 +1,8 @@
 import { Link } from "react-router-dom";
 import {
-  ArrowRight, ExternalLink, Instagram,
-  Heart, BookOpen, Zap, Shield, Star, Crown,
+  ArrowRight, Heart, BookOpen, Zap, Shield, Star, Crown,
   TrendingUp, Users, Award, CheckCircle,
-  ChevronRight, BarChart3, Wallet, PiggyBank,
-  GraduationCap, Gamepad2, Brain, Target, Sparkles
+  BarChart3, Wallet, PiggyBank, GraduationCap, Gamepad2, Brain, Target, Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroIllustration from "@/assets/hero-illustration.png";
@@ -125,13 +123,6 @@ const Landing = () => {
             <span className="gradient-text">FinOva</span>
           </span>
           <div className="flex items-center gap-3">
-            <a href="https://instagram.com/financial.freedom.initiative" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors p-2 hidden sm:block">
-              <Instagram className="w-4 h-4" />
-            </a>
-            <a href="https://bcinvestments.wixsite.com/financial-freedom--2" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors p-2 hidden sm:block">
-              <ExternalLink className="w-4 h-4" />
-            </a>
-            <div className="w-px h-5 bg-border mx-1 hidden sm:block" />
             <Link to="/auth"><Button variant="ghost" size="sm" className="font-semibold">Log in</Button></Link>
             <Link to="/auth"><Button size="sm" className="font-semibold">Get Started</Button></Link>
           </div>
@@ -349,50 +340,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* For Schools */}
-      <section className="px-6 py-16 md:py-20 bg-background texture-dots">
-        <div className="max-w-5xl mx-auto">
-          <div className="bg-card rounded-2xl border border-border/60 p-8 md:p-12 flex flex-col md:flex-row gap-8 items-center">
-            <div className="flex-1">
-              <p className="text-xs font-bold text-primary uppercase tracking-wide mb-2 flex items-center gap-1.5">
-                <GraduationCap className="w-4 h-4" />
-                FOR EDUCATORS
-              </p>
-              <h2 className="text-2xl md:text-3xl font-extrabold font-display mb-3">
-                Bring FinOva to your school
-              </h2>
-              <p className="text-muted-foreground mb-6">
-                Our school program gives teachers a complete financial literacy curriculum with student progress tracking, quizzes, certificates, and gamified engagement. Affordable pricing for any school budget.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Link to="/school-program">
-                  <Button className="font-bold rounded-xl">
-                    School Program <ChevronRight className="w-4 h-4 ml-1" />
-                  </Button>
-                </Link>
-                <Link to="/contact">
-                  <Button variant="outline" className="font-bold rounded-xl">
-                    Contact Us
-                  </Button>
-                </Link>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { icon: Users, label: "Class dashboards" },
-                { icon: Award, label: "Certificates" },
-                { icon: Gamepad2, label: "Interactive games" },
-                { icon: BarChart3, label: "Progress tracking" },
-              ].map(({ icon: Icon, label }) => (
-                <div key={label} className="bg-background rounded-xl border border-border/60 p-3 text-center">
-                  <Icon className="w-5 h-5 text-primary mx-auto mb-1" />
-                  <p className="text-xs font-bold">{label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Plus banner */}
       <section className="px-6 py-16 md:py-20 bg-card texture-grid">
@@ -474,7 +421,7 @@ const Landing = () => {
               },
               {
                 q: "Can I use FinOva in my classroom?",
-                a: "Absolutely. Our School Program gives teachers a turnkey curriculum with progress tracking, quizzes, and certificates. Visit our Schools page to learn more.",
+                a: "Absolutely. FinOva gives teachers a turnkey curriculum with progress tracking, quizzes, and certificates that students can earn.",
               },
               {
                 q: "Is the paper trading feature safe?",
@@ -512,7 +459,7 @@ const Landing = () => {
       {/* Footer */}
       <footer className="border-t border-border/40 py-10 px-6">
         <div className="max-w-5xl mx-auto">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
             <div>
               <p className="font-bold font-display gradient-text mb-2">FinOva</p>
               <p className="text-sm text-muted-foreground">
@@ -523,7 +470,6 @@ const Landing = () => {
               <h4 className="font-display font-semibold mb-3 text-sm">Platform</h4>
               <div className="space-y-2 text-sm text-muted-foreground">
                 <Link to="/courses-preview" className="block hover:text-foreground transition-colors">Courses</Link>
-                <Link to="/quant-vault" className="block hover:text-foreground transition-colors">Quant Vault</Link>
                 <Link to="/resources" className="block hover:text-foreground transition-colors">Resources</Link>
                 <Link to="/plus" className="block hover:text-foreground transition-colors">FinOva Plus</Link>
               </div>
@@ -532,36 +478,14 @@ const Landing = () => {
               <h4 className="font-display font-semibold mb-3 text-sm">Company</h4>
               <div className="space-y-2 text-sm text-muted-foreground">
                 <Link to="/about" className="block hover:text-foreground transition-colors">About</Link>
-                <Link to="/school-program" className="block hover:text-foreground transition-colors">Schools</Link>
                 <Link to="/financial-freedom-initiative" className="block hover:text-foreground transition-colors">FFI</Link>
-                <Link to="/contact" className="block hover:text-foreground transition-colors">Contact</Link>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-display font-semibold mb-3 text-sm">Legal</h4>
-              <div className="space-y-2 text-sm text-muted-foreground">
                 <Link to="/disclaimers" className="block hover:text-foreground transition-colors">Disclaimers</Link>
-                <Link to="/disclaimers" className="block hover:text-foreground transition-colors">Privacy Policy</Link>
                 <Link to="/disclaimers" className="block hover:text-foreground transition-colors">Terms of Use</Link>
-              </div>
-              <div className="flex items-center gap-3 mt-4">
-                <a href="https://instagram.com/financial.freedom.initiative" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                  <Instagram className="w-5 h-5" />
-                </a>
-                <a href="https://bcinvestments.wixsite.com/financial-freedom--2" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                  <ExternalLink className="w-5 h-5" />
-                </a>
               </div>
             </div>
           </div>
           <div className="border-t border-border pt-6 text-center text-xs text-muted-foreground">
-            <p>
-              © {new Date().getFullYear()} FinOva · Powered by the{" "}
-              <a href="https://bcinvestments.wixsite.com/financial-freedom--2" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                Financial Freedom Initiative
-              </a>
-              {" "}· <Link to="/disclaimers" className="hover:text-foreground">Terms</Link>
-            </p>
+            <p>© {new Date().getFullYear()} FinOva. All rights reserved.</p>
           </div>
         </div>
       </footer>
