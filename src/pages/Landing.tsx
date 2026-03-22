@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { InvestingTimeline } from "@/components/ffi/FFIGames";
 import { Button } from "@/components/ui/button";
+import FinOvaLogo from "@/components/FinOvaLogo";
 
 const useReveal = () => {
   const ref = useRef<HTMLDivElement>(null);
