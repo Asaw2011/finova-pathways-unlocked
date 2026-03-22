@@ -4,7 +4,7 @@ import {
   ArrowRight, Heart, BookOpen, Zap, Shield, Star,
   Crown, TrendingUp, Users, CheckCircle, ChevronDown,
   BarChart3, Wallet, PiggyBank, GraduationCap, Gamepad2, Brain, Target,
-  Sparkles, Play, Lock, MessageCircle, Trophy, Flame, Award, ExternalLink,
+  Sparkles, Lock, MessageCircle, Trophy, Flame, Award, ExternalLink,
 } from "lucide-react";
 import FFILearningPath from "@/components/ffi/FFILearningPath";
 import { Button } from "@/components/ui/button";
@@ -133,7 +133,7 @@ const Landing = () => {
             <p className="cinema-in cinema-delay-2 text-sm text-muted-foreground font-medium mb-8">Built by students. Trusted by educators. Used nationwide.</p>
             <div className="cinema-in cinema-delay-3 flex flex-wrap gap-4 mb-12">
               <Link to="/auth"><Button size="lg" className="btn-cinema bg-primary text-primary-foreground text-base px-8 py-6 rounded-2xl font-bold">Start Learning Free <ArrowRight className="ml-2 w-5 h-5" /></Button></Link>
-              <a href="#features"><Button size="lg" variant="outline" className="text-base px-8 py-6 rounded-2xl font-bold"><Play className="mr-2 w-5 h-5" /> Watch Demo</Button></a>
+              <a href="#features"><Button size="lg" variant="outline" className="text-base px-8 py-6 rounded-2xl font-bold">See What You'll Learn <ArrowRight className="ml-2 w-5 h-5" /></Button></a>
             </div>
             <div className="cinema-in cinema-delay-4 grid grid-cols-2 md:grid-cols-4 gap-4">
               {[{ icon: BookOpen, val: "80+", label: "Lessons" },{ icon: Gamepad2, val: "8", label: "Games" },{ icon: TrendingUp, val: "Live", label: "Paper Trading" },{ icon: MessageCircle, val: "24/7", label: "AI Coach" }].map(({ icon: Icon, val, label }, idx) => (

@@ -67,7 +67,7 @@ const CoursesPreview = () => {
               Course <span className="gradient-text">Catalog</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              9+ expert-created courses covering every aspect of financial literacy. Each course includes 3-6 modules with video lessons, interactive exercises, quizzes, and capstone projects.
+              9+ expert-created courses covering every aspect of financial literacy. Each course includes 3-6 modules with interactive lessons, exercises, quizzes, and capstone projects.
             </p>
           </div>
 
