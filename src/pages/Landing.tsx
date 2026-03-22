@@ -287,7 +287,7 @@ const Landing = () => {
               <div className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-4">MOST POPULAR</div>
               <h3 className="text-2xl font-black mb-1" style={{ fontFamily: "var(--font-display)" }}>Monucate <span className="gradient-text">Plus</span></h3>
               <p className="text-muted-foreground text-sm mb-4">For serious learners who want it all</p>
-              <p className="text-4xl font-black mb-1" style={{ fontFamily: "var(--font-display)" }}>$10 <span className="text-base font-normal text-muted-foreground">/month</span></p>
+              <p className="text-4xl font-black mb-1" style={{ fontFamily: "var(--font-display)" }}>$9.99 <span className="text-base font-normal text-muted-foreground">/month</span></p>
               <p className="text-xs text-muted-foreground mb-6">Cancel anytime &middot; No commitment</p>
               <Link to="/plus"><Button className="w-full btn-cinema bg-primary text-primary-foreground rounded-xl font-bold mb-6">Upgrade to Plus <ArrowRight className="ml-2 w-4 h-4" /></Button></Link>
               <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Everything in Free, plus:</p>
