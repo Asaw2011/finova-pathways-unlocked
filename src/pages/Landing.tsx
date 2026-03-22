@@ -164,20 +164,20 @@ const Landing = () => {
       </S>
 
       {/* CURRICULUM */}
-      <S className="py-24 px-6 texture-grid">
+      <S className="py-16 sm:py-24 px-4 sm:px-6 texture-grid">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16 reveal">
-            <p className="text-sm font-bold text-primary tracking-widest uppercase mb-3">WHAT YOU&apos;LL LEARN</p>
-            <h2 className="text-3xl md:text-5xl font-black mb-4" style={{ fontFamily: "var(--font-display)" }}>Every money skill you need.{" "}<span className="gradient-text">In one place.</span></h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">Our 10-module curriculum covers everything schools skip &mdash; from daily budgeting to taxes, student loans, scam protection, and long-term wealth building. Designed by financial professionals and educators.</p>
+          <div className="text-center mb-10 sm:mb-16 reveal">
+            <p className="text-xs sm:text-sm font-bold text-primary tracking-widest uppercase mb-3">WHAT YOU&apos;LL LEARN</p>
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-black mb-4" style={{ fontFamily: "var(--font-display)" }}>Every money skill you need.{" "}<span className="gradient-text">In one place.</span></h2>
+            <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">Our 10-module curriculum covers everything schools skip &mdash; from daily budgeting to taxes, student loans, scam protection, and long-term wealth building.</p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 stagger">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 stagger">
             {[{ icon: Wallet, label: "Budgeting", desc: "Income, expenses, the 50/30/20 rule, and building a plan" },{ icon: PiggyBank, label: "Saving", desc: "Emergency funds, high-yield accounts, and automation" },{ icon: TrendingUp, label: "Investing", desc: "Stocks, ETFs, index funds, and compound growth" },{ icon: BarChart3, label: "Credit & Debt", desc: "Credit scores, cards, building credit, and debt traps" },{ icon: Brain, label: "Taxes", desc: "W-2s, filing, deductions, brackets, and refunds" },{ icon: Sparkles, label: "Wealth Building", desc: "Net worth, multiple income streams, and FIRE" },{ icon: GraduationCap, label: "Student Life", desc: "First job, student loans, renting, and side hustles" },{ icon: Shield, label: "Money Protection", desc: "Scams, identity theft, insurance, and fine print" },{ icon: Target, label: "Financial Freedom", desc: "4% rule, retirement accounts, and action plans" },{ icon: Crown, label: "Money Basics", desc: "What money is, needs vs wants, and time value" }].map(({ icon: Icon, label, desc }) => (
               <div key={label} className="reveal card-3d">
-                <div className="card-3d-inner p-5 rounded-2xl bg-card border border-border h-full">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-3"><Icon className="w-5 h-5 text-primary" /></div>
-                  <p className="font-bold text-sm mb-1">{label}</p>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
+                <div className="card-3d-inner p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-card border border-border h-full">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-primary/10 flex items-center justify-center mb-2 sm:mb-3"><Icon className="w-4 h-4 sm:w-5 sm:h-5 text-primary" /></div>
+                  <p className="font-bold text-xs sm:text-sm mb-0.5 sm:mb-1">{label}</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground leading-relaxed hidden sm:block">{desc}</p>
                 </div>
               </div>
             ))}
