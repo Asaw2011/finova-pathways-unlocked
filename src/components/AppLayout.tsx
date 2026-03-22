@@ -344,7 +344,7 @@ const AppLayoutInner = () => {
             <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shrink-0">
               <TrendingUp className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="text-lg font-black font-display text-foreground whitespace-nowrap">FinOva</span>
+            <FinOvaLogo />
           </Link>
 
           <nav className="flex-1 space-y-0.5 overflow-y-auto">
