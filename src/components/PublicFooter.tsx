@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { TrendingUp } from "lucide-react";
+import FinOvaLogo from "@/components/FinOvaLogo";
 
 const PublicFooter = () => (
   <footer className="border-t border-border bg-card/30 py-12 px-6">
