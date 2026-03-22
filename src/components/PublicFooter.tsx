@@ -27,7 +27,7 @@ const PublicFooter = () => (
           <h4 className="font-display font-semibold mb-3 text-sm">Company</h4>
           <div className="space-y-2 text-sm text-muted-foreground">
             <Link to="/about" className="block hover:text-foreground transition-colors">About Us</Link>
-            <Link to="/financial-freedom-initiative" className="block hover:text-foreground transition-colors">FFI</Link>
+            <a href="https://www.instagram.com/financial.freedom.initiative?igsh=MW5jNGVkOWppZW1yaQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" className="block hover:text-foreground transition-colors">FFI</a>
             <Link to="/disclaimers" className="block hover:text-foreground transition-colors">Disclaimers</Link>
             <Link to="/disclaimers" className="block hover:text-foreground transition-colors">Terms of Use</Link>
           </div>

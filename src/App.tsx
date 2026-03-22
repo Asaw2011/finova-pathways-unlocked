@@ -18,7 +18,7 @@ import LearningPath from "./pages/LearningPath";
 import MoneyCoach from "./pages/MoneyCoach";
 import Shop from "./pages/Shop";
 import About from "./pages/About";
-import FFI from "./pages/FFI";
+
 import Disclaimers from "./pages/Disclaimers";
 import CoursesPreview from "./pages/CoursesPreview";
 import Plus from "./pages/Plus";
@@ -44,7 +44,7 @@ const App = () => (
               <Route path="/" element={<Landing />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/about" element={<About />} />
-              <Route path="/financial-freedom-initiative" element={<FFI />} />
+              
               <Route path="/disclaimers" element={<Disclaimers />} />
               <Route path="/courses-preview" element={<CoursesPreview />} />
               <Route path="/plus" element={<Plus />} />

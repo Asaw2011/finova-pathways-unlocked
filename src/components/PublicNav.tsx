@@ -8,7 +8,6 @@ const links = [
   { to: "/about", label: "About" },
   { to: "/courses-preview", label: "Courses" },
   { to: "/resources", label: "Resources" },
-  { to: "/financial-freedom-initiative", label: "FFI" },
 ];
 
 const MonucateLogo = () => (

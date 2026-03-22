@@ -4,8 +4,9 @@ import {
   ArrowRight, Heart, BookOpen, Zap, Shield, Star,
   Crown, TrendingUp, Users, CheckCircle, ChevronDown,
   BarChart3, Wallet, PiggyBank, GraduationCap, Gamepad2, Brain, Target,
-  Sparkles, Play, Lock, MessageCircle, Trophy, Flame, Award,
+  Sparkles, Play, Lock, MessageCircle, Trophy, Flame, Award, ExternalLink,
 } from "lucide-react";
+import FFILearningPath from "@/components/ffi/FFILearningPath";
 import { Button } from "@/components/ui/button";
 
 const useReveal = () => {
@@ -298,11 +299,18 @@ const Landing = () => {
 
       {/* FFI */}
       <S className="py-24 px-6">
-        <div className="max-w-3xl mx-auto text-center reveal">
-          <p className="text-sm font-bold text-primary tracking-widest uppercase mb-3">OUR PARTNER</p>
-          <h2 className="text-3xl md:text-5xl font-black mb-6" style={{ fontFamily: "var(--font-display)" }}>Financial Freedom Initiative</h2>
-          <p className="text-muted-foreground leading-relaxed mb-8 max-w-2xl mx-auto">FFI is a student-led nonprofit bringing financial literacy to high schoolers nationwide through workshops, mentorship, and real-world education programs. Monucate is the digital extension of their mission.</p>
-          <Link to="/financial-freedom-initiative"><Button variant="outline" className="rounded-xl font-bold">Learn about FFI <ArrowRight className="ml-2 w-4 h-4" /></Button></Link>
+        <div className="max-w-5xl mx-auto">
+          <div className="mb-16">
+            <FFILearningPath />
+          </div>
+          <div className="text-center reveal">
+            <p className="text-sm font-bold text-primary tracking-widest uppercase mb-3">OUR PARTNER</p>
+            <h2 className="text-3xl md:text-5xl font-black mb-6" style={{ fontFamily: "var(--font-display)" }}>Financial Freedom Initiative</h2>
+            <p className="text-muted-foreground leading-relaxed mb-8 max-w-2xl mx-auto">FFI is a student-led nonprofit bringing financial literacy to high schoolers nationwide through workshops, mentorship, and real-world education programs. Monucate is the digital extension of their mission.</p>
+            <a href="https://www.instagram.com/financial.freedom.initiative?igsh=MW5jNGVkOWppZW1yaQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer">
+              <Button variant="outline" className="rounded-xl font-bold">Follow FFI on Instagram <ExternalLink className="ml-2 w-4 h-4" /></Button>
+            </a>
+          </div>
         </div>
       </S>
 
@@ -359,7 +367,7 @@ const Landing = () => {
               <h5 className="font-bold text-sm mb-3">Company</h5>
               <div className="space-y-2 text-sm text-muted-foreground">
                 <Link to="/about" className="block hover:text-foreground transition-colors">About Us</Link>
-                <Link to="/financial-freedom-initiative" className="block hover:text-foreground transition-colors">FFI Partnership</Link>
+                <a href="https://www.instagram.com/financial.freedom.initiative?igsh=MW5jNGVkOWppZW1yaQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" className="block hover:text-foreground transition-colors">FFI Partnership</a>
                 <Link to="/disclaimers" className="block hover:text-foreground transition-colors">Disclaimers</Link>
                 <Link to="/disclaimers" className="block hover:text-foreground transition-colors">Terms of Use</Link>
               </div>
