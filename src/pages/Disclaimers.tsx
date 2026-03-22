@@ -10,7 +10,6 @@ const Disclaimers = () => {
         <div className="max-w-3xl mx-auto space-y-8">
           <h1 className="text-4xl font-bold font-display">Legal & <span className="gradient-text">Disclaimers</span></h1>
 
-          {/* Investment Disclaimer */}
           <div className="glass rounded-xl p-6 border-l-4 border-warning">
             <div className="flex items-center gap-2 mb-3">
               <AlertTriangle className="w-5 h-5 text-warning" />
@@ -25,7 +24,6 @@ const Disclaimers = () => {
             </div>
           </div>
 
-          {/* Terms of Use */}
           <div className="glass rounded-xl p-6">
             <div className="flex items-center gap-2 mb-3">
               <FileText className="w-5 h-5 text-primary" />
@@ -39,7 +37,6 @@ const Disclaimers = () => {
             </div>
           </div>
 
-          {/* Privacy Policy */}
           <div className="glass rounded-xl p-6">
             <div className="flex items-center gap-2 mb-3">
               <Shield className="w-5 h-5 text-primary" />
@@ -53,7 +50,6 @@ const Disclaimers = () => {
             </div>
           </div>
 
-          {/* Paper Trading Disclaimer */}
           <div className="glass rounded-xl p-6 border-l-4 border-destructive">
             <div className="flex items-center gap-2 mb-3">
               <Scale className="w-5 h-5 text-destructive" />
