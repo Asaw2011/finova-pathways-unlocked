@@ -14,7 +14,6 @@ const FFI = () => {
       <PublicNav />
       <div className="pt-32 pb-20 px-6">
         <div className="max-w-5xl mx-auto">
-          {/* Hero */}
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6">
               <GraduationCap className="w-4 h-4" /> Financial Freedom Initiative
@@ -30,19 +29,11 @@ const FFI = () => {
             </Link>
           </div>
 
-          {/* Learning Path */}
           <FFILearningPath />
-
-          {/* Videos */}
           <FFIVideos />
-
-          {/* Games */}
           <FFIGames />
-
-          {/* Courses */}
           <FFICourses />
 
-          {/* What FFI Offers */}
           <section className="mb-16">
             <h2 className="text-2xl font-bold font-display mb-6">What FFI <span className="gradient-text">Offers</span></h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -63,7 +54,6 @@ const FFI = () => {
             </div>
           </section>
 
-          {/* CTA */}
           <div className="glass rounded-xl p-8 text-center">
             <h3 className="text-xl font-bold font-display mb-2">Join the Movement</h3>
             <p className="text-muted-foreground mb-6">Start your financial literacy journey today with Monucate — built in partnership with FFI.</p>

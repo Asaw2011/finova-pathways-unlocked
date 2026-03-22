@@ -15,7 +15,6 @@ const About = () => {
             We believe everyone deserves the financial knowledge to build wealth, avoid debt traps, and make confident money decisions.
           </p>
 
-          {/* Mission */}
           <div className="glass rounded-xl p-8 mb-8">
             <h2 className="text-2xl font-bold font-display mb-4 flex items-center gap-3">
               <Target className="w-6 h-6 text-primary" /> Our Mission
@@ -25,7 +24,6 @@ const About = () => {
             </p>
           </div>
 
-          {/* Values */}
           <div className="grid sm:grid-cols-2 gap-6 mb-12">
             {[
               { icon: BookOpen, title: "Education First", desc: "Every piece of content is expert-reviewed and designed for real understanding, not just memorization." },
@@ -41,7 +39,6 @@ const About = () => {
             ))}
           </div>
 
-          {/* Team */}
           <div className="glass rounded-xl p-8">
             <h2 className="text-2xl font-bold font-display mb-4">Our Team</h2>
             <p className="text-muted-foreground">
