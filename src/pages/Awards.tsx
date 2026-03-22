@@ -3,7 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { Award, Trophy, Share2, Medal, Star, Flame, BookOpen, Printer, Target, Zap, Brain, GraduationCap, Heart, Crown, Shield, Gem } from "lucide-react";
-import { modules } from "@/pages/LearningPath";
+import { modules } from "@/data/course-modules";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";

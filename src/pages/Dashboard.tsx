@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import DailyChallenge from "@/components/learning-path/DailyChallenge";
-import { modules } from "@/pages/LearningPath";
+import { modules } from "@/data/course-modules";
 import { useGameEconomy } from "@/contexts/GameEconomyContext";
 import { usePremiumAccess } from "@/hooks/usePremiumAccess";
 import FinancialAssessment from "@/components/onboarding/FinancialAssessment";
