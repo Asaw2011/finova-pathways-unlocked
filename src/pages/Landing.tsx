@@ -300,8 +300,8 @@ const Landing = () => {
       {/* FFI */}
       <S className="py-24 px-6">
         <div className="max-w-5xl mx-auto">
-          <div className="mb-16">
-            <FFILearningPath />
+          <div className="mb-16 max-w-lg mx-auto">
+            <InvestingTimeMachine />
           </div>
           <div className="text-center reveal">
             <p className="text-sm font-bold text-primary tracking-widest uppercase mb-3">OUR PARTNER</p>
