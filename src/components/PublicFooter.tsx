@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { TrendingUp } from "lucide-react";
+import FinOvaLogo from "@/components/FinOvaLogo";
 
 const PublicFooter = () => (
   <footer className="border-t border-border bg-card/30 py-12 px-6">
@@ -8,7 +9,7 @@ const PublicFooter = () => (
         <div>
           <div className="flex items-center gap-2 mb-3">
             <TrendingUp className="w-5 h-5 text-primary" />
-            <span className="font-bold font-display gradient-text">FinOva</span>
+            <FinOvaLogo size="text-base" />
           </div>
           <p className="text-sm text-muted-foreground">
             The gamified financial literacy platform built for the next generation.
