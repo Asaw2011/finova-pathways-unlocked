@@ -1,16 +1,123 @@
-export const modules = [
+export interface QuizQuestion { q: string; options: string[]; answer: number; }
+
+export interface FillBlank { sentence: string; options: string[]; answer: number; }
+export interface SortItems { items: string[]; correctOrder: number[]; }
+export interface RealCost { apply: string; ignore: string; }
+
+export interface Lesson {
+  id: string;
+  title: string;
+  xp: number;
+  content: string;
+  takeaway: string;
+  quote?: { text: string; author: string };
+  example?: string;
+  quiz: QuizQuestion[];
+  fillBlank?: FillBlank;
+  sortItems?: SortItems;
+  realCost?: RealCost;
+}
+
+export interface Module {
+  id: string;
+  title: string;
+  badge: string;
+  badgeIcon: string;
+  lessons: Lesson[];
+  unitQuiz: QuizQuestion[];
+}
+
+export const modules: Module[] = [
   {
     id: "money-basics",
     title: "Money Basics",
     badge: "Money Master",
     badgeIcon: "wallet",
     lessons: [
-      { id: "mb-1", title: "What Is Money?", xp: 10, content: "Money is a tool that helps us exchange value. It comes in many forms: cash, digital payments, and even cryptocurrency. Understanding money starts with knowing it's simply a medium of exchange — a way to trade your time and skills for goods and services.", takeaway: "Money is a tool for exchanging value, not just paper in your wallet.", quote: { text: "Money is only a tool. It will take you wherever you wish, but it will not replace you as the driver.", author: "Ayn Rand" }, example: "When you babysit for $15/hour, you're trading your time for money. When you buy lunch for $10, you're trading money for food. Money makes these exchanges simple.", quiz: [{ q: "What is the primary purpose of money?", options: ["To make you rich", "Medium of exchange", "A government control tool", "To collect in a bank"], answer: 1 }, { q: "Which is NOT a form of money?", options: ["Cash", "Digital payment", "Credit score", "Cryptocurrency"], answer: 2 }] },
-      { id: "mb-2", title: "Where Your Money Goes", xp: 10, content: "Most people think they have a spending problem. In reality, they have a tracking problem. Money disappears through small purchases: food, online shopping, subscriptions, entertainment. Tracking spending for just 30 days can reveal patterns.", takeaway: "Awareness is the first step to financial control.", quote: { text: "Do not save what is left after spending, but spend what is left after saving.", author: "Warren Buffett" }, example: "If you spend $5 on coffee every weekday, that's $100/month or $1,200/year — enough for a weekend trip.", quiz: [{ q: "What's the FIRST step to controlling your finances?", options: ["Investing in stocks", "Tracking your spending", "Getting a credit card", "Opening a savings account"], answer: 1 }, { q: "Which of these is NOT a common money leak?", options: ["Subscriptions", "Coffee runs", "Emergency savings", "Impulse purchases"], answer: 2 }] },
-      { id: "mb-3", title: "Budgeting Made Simple", xp: 10, content: "A budget is not about restriction — it's about planning your money before you spend it. The 50/30/20 rule divides your income: 50% for needs, 30% for wants, and 20% for savings.", takeaway: "Pay yourself first by saving before spending.", quote: { text: "A budget is telling your money where to go instead of wondering where it went.", author: "Dave Ramsey" }, example: "Using the 50/30/20 rule on a $2,000 paycheck: $1,000 for needs, $600 for wants, $400 for savings.", quiz: [{ q: "What is the 50/30/20 rule?", options: ["Save 50%, spend 30%, invest 20%", "Needs 50%, wants 30%, savings 20%", "Taxes 50%, rent 30%, food 20%", "Invest 50%, save 30%, spend 20%"], answer: 1 }, { q: "What does 'pay yourself first' mean?", options: ["Buy yourself a gift", "Save before spending", "Take a salary advance", "Pay your own bills first"], answer: 1 }] },
-      { id: "mb-4", title: "Needs vs Wants", xp: 10, content: "Needs are things required to live: food, housing, medicine, transportation. Wants improve your life but are optional: new sneakers, streaming services, gaming upgrades. Smart money decisions come from knowing the difference.", takeaway: "Distinguishing needs from wants is essential for smart spending.", quote: { text: "Too many people spend money they earned to buy things they don't want to impress people they don't like.", author: "Will Rogers" }, example: "Your phone is a need for communication. The latest $1,200 model when your current phone works fine? That's a want.", quiz: [{ q: "Which is a NEED?", options: ["Netflix subscription", "New gaming console", "Groceries", "Designer shoes"], answer: 2 }, { q: "Which is a WANT?", options: ["Rent", "Medicine", "Transportation to work", "Latest smartphone"], answer: 3 }] },
-      { id: "mb-5", title: "Emergency Funds", xp: 10, content: "An emergency fund protects you from unexpected expenses: car repair, medical costs, laptop replacement. Recommended starting goal: $500–$1,000. Start small — even $25/month adds up.", takeaway: "Savings create financial security.", quote: { text: "An investment in knowledge pays the best interest.", author: "Benjamin Franklin" }, example: "Without an emergency fund, a $600 car repair could mean credit card debt at 24% interest — costing you $744 total.", quiz: [{ q: "What's a good starting emergency fund goal?", options: ["$50", "$500–$1,000", "$10,000", "$100,000"], answer: 1 }, { q: "Which is an emergency expense?", options: ["Concert tickets", "New shoes", "Car breakdown repair", "Vacation"], answer: 2 }] },
-      { id: "mb-6", title: "Setting Financial Goals", xp: 10, content: "Goals give your money purpose. Short-term goals (1-12 months): save for headphones, a trip. Medium-term (1-5 years): car, college fund. Long-term (5+ years): house, retirement. Write them down — you're 42% more likely to achieve written goals.", takeaway: "A goal without a plan is just a wish.", quote: { text: "The secret of getting ahead is getting started.", author: "Mark Twain" }, example: "Goal: Save $600 for a new phone in 6 months = $100/month or $25/week. That's skipping 2-3 takeout meals per week.", quiz: [{ q: "A short-term financial goal is typically:", options: ["10+ years", "1-12 months", "30 years", "A lifetime"], answer: 1 }, { q: "Writing goals down makes you:", options: ["Less motivated", "42% more likely to achieve them", "No difference", "Stressed out"], answer: 1 }] },
+      {
+        id: "mb-1", title: "What Is Money?", xp: 10,
+        content: "Money is a tool that helps us exchange value. It comes in many forms: cash, digital payments, and even cryptocurrency. Understanding money starts with knowing it's simply a medium of exchange — a way to trade your time and skills for goods and services.",
+        takeaway: "Money is a tool for exchanging value, not just paper in your wallet.",
+        quote: { text: "Money is only a tool. It will take you wherever you wish, but it will not replace you as the driver.", author: "Ayn Rand" },
+        example: "When you babysit for $15/hour, you're trading your time for money. When you buy lunch for $10, you're trading money for food. Money makes these exchanges simple.",
+        quiz: [
+          { q: "What is the primary purpose of money?", options: ["To make you rich", "Medium of exchange", "A government control tool", "To collect in a bank"], answer: 1 },
+          { q: "Which is NOT a form of money?", options: ["Cash", "Digital payment", "Credit score", "Cryptocurrency"], answer: 2 },
+        ],
+        fillBlank: { sentence: "Money is a [___] that helps us exchange value between people.", options: ["tool", "gift", "burden"], answer: 0 },
+        sortItems: { items: ["Get paid for work", "Decide what to buy", "Trade money for goods", "Save the rest"], correctOrder: [0, 1, 2, 3] },
+        realCost: { apply: "You understand that $15/hr babysitting is trading your time fairly — and you can decide if it's worth it.", ignore: "You accept any job offer without knowing your time's value — and get underpaid for years." },
+      },
+      {
+        id: "mb-2", title: "Where Your Money Goes", xp: 10,
+        content: "Most people think they have a spending problem. In reality, they have a tracking problem. Money disappears through small purchases: food, online shopping, subscriptions, entertainment. Tracking spending for just 30 days can reveal patterns.",
+        takeaway: "Awareness is the first step to financial control.",
+        quote: { text: "Do not save what is left after spending, but spend what is left after saving.", author: "Warren Buffett" },
+        example: "If you spend $5 on coffee every weekday, that's $100/month or $1,200/year — enough for a weekend trip.",
+        quiz: [
+          { q: "What's the FIRST step to controlling your finances?", options: ["Investing in stocks", "Tracking your spending", "Getting a credit card", "Opening a savings account"], answer: 1 },
+          { q: "Which of these is NOT a common money leak?", options: ["Subscriptions", "Coffee runs", "Emergency savings", "Impulse purchases"], answer: 2 },
+        ],
+        fillBlank: { sentence: "Most people have a [___] problem, not a spending problem.", options: ["tracking", "income", "budget"], answer: 0 },
+        sortItems: { items: ["Track spending for 30 days", "Identify biggest categories", "Find money leaks", "Redirect savings"], correctOrder: [0, 1, 2, 3] },
+        realCost: { apply: "$5/day coffee tracked → realize it's $1,825/year → redirect $1,000 to savings.", ignore: "Spend $1,825 on coffee over a year without noticing, then wonder why there's no savings." },
+      },
+      {
+        id: "mb-3", title: "Budgeting Made Simple", xp: 10,
+        content: "A budget is not about restriction — it's about planning your money before you spend it. The 50/30/20 rule divides your income: 50% for needs, 30% for wants, and 20% for savings.",
+        takeaway: "Pay yourself first by saving before spending.",
+        quote: { text: "A budget is telling your money where to go instead of wondering where it went.", author: "Dave Ramsey" },
+        example: "Using the 50/30/20 rule on a $2,000 paycheck: $1,000 for needs, $600 for wants, $400 for savings.",
+        quiz: [
+          { q: "What is the 50/30/20 rule?", options: ["Save 50%, spend 30%, invest 20%", "Needs 50%, wants 30%, savings 20%", "Taxes 50%, rent 30%, food 20%", "Invest 50%, save 30%, spend 20%"], answer: 1 },
+          { q: "What does 'pay yourself first' mean?", options: ["Buy yourself a gift", "Save before spending", "Take a salary advance", "Pay your own bills first"], answer: 1 },
+        ],
+        fillBlank: { sentence: "The 50/30/20 rule puts [___]% toward savings and debt repayment.", options: ["20", "30", "50"], answer: 0 },
+        sortItems: { items: ["List all income", "List all expenses", "Subtract expenses from income", "Assign remaining to savings"], correctOrder: [0, 1, 2, 3] },
+        realCost: { apply: "On a $2,000 paycheck with 50/30/20: $400/month saved = $4,800/year without trying.", ignore: "No budget = spending everything by month 3, $0 saved, wondering where it went." },
+      },
+      {
+        id: "mb-4", title: "Needs vs Wants", xp: 10,
+        content: "Needs are things required to live: food, housing, medicine, transportation. Wants improve your life but are optional: new sneakers, streaming services, gaming upgrades. Smart money decisions come from knowing the difference.",
+        takeaway: "Distinguishing needs from wants is essential for smart spending.",
+        quote: { text: "Too many people spend money they earned to buy things they don't want to impress people they don't like.", author: "Will Rogers" },
+        example: "Your phone is a need for communication. The latest $1,200 model when your current phone works fine? That's a want.",
+        quiz: [
+          { q: "Which is a NEED?", options: ["Netflix subscription", "New gaming console", "Groceries", "Designer shoes"], answer: 2 },
+          { q: "Which is a WANT?", options: ["Rent", "Medicine", "Transportation to work", "Latest smartphone"], answer: 3 },
+        ],
+        fillBlank: { sentence: "Things required to live (food, shelter, medicine) are called [___].", options: ["needs", "wants", "luxuries"], answer: 0 },
+        sortItems: { items: ["Groceries", "Streaming service", "Rent", "Designer shoes"], correctOrder: [2, 0, 1, 3] },
+        realCost: { apply: "Identifying wants vs needs frees up $200-400/month that was going to optional purchases.", ignore: "Treating every want as a need = living paycheck to paycheck even on a good salary." },
+      },
+      {
+        id: "mb-5", title: "Emergency Funds", xp: 10,
+        content: "An emergency fund protects you from unexpected expenses: car repair, medical costs, laptop replacement. Recommended starting goal: $500–$1,000. Start small — even $25/month adds up.",
+        takeaway: "Savings create financial security.",
+        quote: { text: "An investment in knowledge pays the best interest.", author: "Benjamin Franklin" },
+        example: "Without an emergency fund, a $600 car repair could mean credit card debt at 24% interest — costing you $744 total.",
+        quiz: [
+          { q: "What's a good starting emergency fund goal?", options: ["$50", "$500–$1,000", "$10,000", "$100,000"], answer: 1 },
+          { q: "Which is an emergency expense?", options: ["Concert tickets", "New shoes", "Car breakdown repair", "Vacation"], answer: 2 },
+        ],
+        fillBlank: { sentence: "A starting emergency fund goal is $[___] to $1,000.", options: ["500", "100", "5,000"], answer: 0 },
+        sortItems: { items: ["Open a separate savings account", "Set automatic $25/week transfer", "Build to $500", "Work toward 3-6 months of expenses"], correctOrder: [0, 1, 2, 3] },
+        realCost: { apply: "$500 emergency fund = pay for car breakdown with cash, zero debt, no stress.", ignore: "No emergency fund = $600 car repair on a 24% APR credit card = $744 total cost." },
+      },
+      {
+        id: "mb-6", title: "Setting Financial Goals", xp: 10,
+        content: "Goals give your money purpose. Short-term goals (1-12 months): save for headphones, a trip. Medium-term (1-5 years): car, college fund. Long-term (5+ years): house, retirement. Write them down — you're 42% more likely to achieve written goals.",
+        takeaway: "A goal without a plan is just a wish.",
+        quote: { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+        example: "Goal: Save $600 for a new phone in 6 months = $100/month or $25/week. That's skipping 2-3 takeout meals per week.",
+        quiz: [
+          { q: "A short-term financial goal is typically:", options: ["10+ years", "1-12 months", "30 years", "A lifetime"], answer: 1 },
+          { q: "Writing goals down makes you:", options: ["Less motivated", "42% more likely to achieve them", "No difference", "Stressed out"], answer: 1 },
+        ],
+        fillBlank: { sentence: "People who write down goals are [___]% more likely to achieve them.", options: ["42", "10", "90"], answer: 0 },
+        sortItems: { items: ["Define the goal clearly", "Assign a dollar amount", "Set a target date", "Break it into monthly savings"], correctOrder: [0, 1, 2, 3] },
+        realCost: { apply: "Written goal: $600 for a phone in 6 months = $25/week plan = achieved on schedule.", ignore: "No written goal = vague intention = forgotten by week 2." },
+      },
     ],
     unitQuiz: [
       { q: "What is the 50/30/20 rule?", options: ["Save 50%, spend 50%", "Needs 50%, wants 30%, savings 20%", "Invest everything", "Spend 80%, save 20%"], answer: 1 },
