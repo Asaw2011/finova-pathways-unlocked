@@ -1,4 +1,5 @@
 import { Navigate, Outlet, useLocation, Link } from "react-router-dom";
+import FinOvaLogo from "@/components/FinOvaLogo";
 import { useAuth } from "@/contexts/AuthContext";
 import { GameEconomyProvider, useGameEconomy } from "@/contexts/GameEconomyContext";
 import {
