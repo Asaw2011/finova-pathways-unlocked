@@ -10,8 +10,8 @@ const links = [
   { to: "/resources", label: "Resources" },
 ];
 
-const MonucateLogo = () => (
-  <span className="text-lg font-bold font-display gradient-text">Monucate</span>
+const FinOvaLogo = () => (
+  <span className="text-lg font-bold font-display gradient-text">FinOva</span>
 );
 
 const PublicNav = () => {
@@ -22,7 +22,7 @@ const PublicNav = () => {
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-6 h-16">
         <Link to="/" className="flex items-center gap-2">
-          <MonucateLogo />
+          <FinOvaLogo />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-1">

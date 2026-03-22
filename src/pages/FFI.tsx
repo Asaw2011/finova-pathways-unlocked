@@ -25,7 +25,7 @@ const FFI = () => {
               FFI delivers free workshops, interactive tools, and mentorship to help young people build real financial skills and achieve independence.
             </p>
             <Link to="/auth">
-              <Button size="lg">Get Started with Monucate</Button>
+              <Button size="lg">Get Started with FinOva</Button>
             </Link>
           </div>
 
@@ -56,7 +56,7 @@ const FFI = () => {
 
           <div className="glass rounded-xl p-8 text-center">
             <h3 className="text-xl font-bold font-display mb-2">Join the Movement</h3>
-            <p className="text-muted-foreground mb-6">Start your financial literacy journey today with Monucate — built in partnership with FFI.</p>
+            <p className="text-muted-foreground mb-6">Start your financial literacy journey today with FinOva — built in partnership with FFI.</p>
             <Link to="/auth">
               <Button>Start Learning Free</Button>
             </Link>

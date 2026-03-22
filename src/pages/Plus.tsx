@@ -19,7 +19,7 @@ const Plus = () => {
         <div className="max-w-6xl mx-auto flex items-center justify-between px-6 h-14">
           <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-lg font-bold font-display"><span className="gradient-text">Monucate</span></span>
+            <span className="text-lg font-bold font-display"><span className="gradient-text">FinOva</span></span>
           </Link>
           <Link to="/auth">
             <Button size="sm" className="font-semibold">Get Started</Button>
@@ -34,7 +34,7 @@ const Plus = () => {
             <Crown className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-4xl md:text-5xl font-extrabold font-display mb-3">
-            Monucate <span className="gradient-gold">Plus</span>
+            FinOva <span className="gradient-gold">Plus</span>
           </h1>
           <p className="text-lg text-muted-foreground mb-8">
             The premium way to master money. No limits, no interruptions.
@@ -93,7 +93,7 @@ const Plus = () => {
       <section className="bg-card border-y border-border/40 px-6 py-14 md:py-16 text-center">
         <div className="max-w-md mx-auto">
           <h2 className="text-2xl font-extrabold font-display mb-3">Upgrade today</h2>
-          <p className="text-muted-foreground text-sm mb-6">Start your free trial and unlock everything Monucate has to offer.</p>
+          <p className="text-muted-foreground text-sm mb-6">Start your free trial and unlock everything FinOva has to offer.</p>
           <Link to="/auth">
             <Button size="lg" className="font-bold rounded-xl px-8 bg-gradient-to-r from-amber-400 to-amber-500 text-white hover:from-amber-500 hover:to-amber-600 shadow-lg">
               Try Plus Free <ArrowLeft className="w-4 h-4 ml-2 rotate-180" />
@@ -105,7 +105,7 @@ const Plus = () => {
       {/* Footer */}
       <footer className="border-t border-border/40 py-5 px-6 text-center text-sm text-muted-foreground">
         <p>
-          © {new Date().getFullYear()} Monucate ·{" "}
+          © {new Date().getFullYear()} FinOva ·{" "}
           <Link to="/" className="hover:text-foreground">Home</Link> ·{" "}
           <Link to="/disclaimers" className="hover:text-foreground">Terms</Link>
         </p>

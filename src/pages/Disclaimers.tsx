@@ -16,11 +16,11 @@ const Disclaimers = () => {
               <h2 className="font-display font-bold text-lg">Investment & Financial Disclaimer</h2>
             </div>
             <div className="text-sm text-muted-foreground space-y-3">
-              <p><strong>Monucate provides educational content only.</strong> The investment materials, courses, and any financial information presented on this platform are for educational and illustrative purposes only. They do not constitute investment advice, financial advice, trading advice, or any other sort of advice.</p>
-              <p>You should not make any investment decisions based on any information presented on Monucate without conducting your own research and due diligence and consulting with a licensed financial advisor or professional.</p>
+              <p><strong>FinOva provides educational content only.</strong> The investment materials, courses, and any financial information presented on this platform are for educational and illustrative purposes only. They do not constitute investment advice, financial advice, trading advice, or any other sort of advice.</p>
+              <p>You should not make any investment decisions based on any information presented on FinOva without conducting your own research and due diligence and consulting with a licensed financial advisor or professional.</p>
               <p><strong>Past performance is not indicative of future results.</strong> Any simulated returns or historical performance shown on this platform are hypothetical and should not be considered as guarantees of future performance.</p>
               <p><strong>Risk of loss:</strong> Investing and trading involve risk of loss. You may lose some or all of your invested capital. Never invest money you cannot afford to lose.</p>
-              <p>Monucate, its founders, employees, partners, and the Financial Freedom Initiative assume no responsibility or liability for any losses, damages, or costs arising from use of information presented on this platform.</p>
+              <p>FinOva, its founders, employees, partners, and the Financial Freedom Initiative assume no responsibility or liability for any losses, damages, or costs arising from use of information presented on this platform.</p>
             </div>
           </div>
 
@@ -30,10 +30,10 @@ const Disclaimers = () => {
               <h2 className="font-display font-bold text-lg">Terms of Use</h2>
             </div>
             <div className="text-sm text-muted-foreground space-y-3">
-              <p>By accessing and using Monucate, you agree to be bound by these terms. Monucate is an educational platform — all content, including courses, games, videos, and strategies, is intended for learning purposes.</p>
+              <p>By accessing and using FinOva, you agree to be bound by these terms. FinOva is an educational platform — all content, including courses, games, videos, and strategies, is intended for learning purposes.</p>
               <p>Users must be at least 13 years old. Users under 18 should have parental or guardian consent.</p>
-              <p>You may not redistribute, resell, or share premium content without written permission from Monucate.</p>
-              <p>Monucate reserves the right to modify, suspend, or discontinue any aspect of the service at any time.</p>
+              <p>You may not redistribute, resell, or share premium content without written permission from FinOva.</p>
+              <p>FinOva reserves the right to modify, suspend, or discontinue any aspect of the service at any time.</p>
             </div>
           </div>
 
@@ -43,7 +43,7 @@ const Disclaimers = () => {
               <h2 className="font-display font-bold text-lg">Privacy Policy</h2>
             </div>
             <div className="text-sm text-muted-foreground space-y-3">
-              <p>Monucate is committed to protecting your privacy. We collect only the information necessary to provide our educational services — including email, name, and learning progress data.</p>
+              <p>FinOva is committed to protecting your privacy. We collect only the information necessary to provide our educational services — including email, name, and learning progress data.</p>
               <p>We do not sell personal information to third parties. Data is stored securely and encrypted in transit.</p>
               <p><strong>COPPA Compliance:</strong> For users under 13, we require verifiable parental consent before collecting any personal information, in compliance with the Children's Online Privacy Protection Act.</p>
               <p><strong>GDPR & CCPA:</strong> Users may request access to, correction of, or deletion of their personal data at any time.</p>
@@ -57,7 +57,7 @@ const Disclaimers = () => {
             </div>
             <div className="text-sm text-muted-foreground space-y-3">
               <p>The paper trading feature uses simulated (virtual) money and real market data for educational purposes only.</p>
-              <p><strong>This is not a brokerage, managed account, or advisory service.</strong> Monucate does not manage money, execute real trades, or provide personalized investment recommendations.</p>
+              <p><strong>This is not a brokerage, managed account, or advisory service.</strong> FinOva does not manage money, execute real trades, or provide personalized investment recommendations.</p>
               <p>Simulated trading results do not represent actual trading. Real trading involves risk of loss that simulated trading does not replicate.</p>
             </div>
           </div>

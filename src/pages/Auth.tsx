@@ -61,7 +61,7 @@ const Auth = () => {
         <div className="absolute inset-0 opacity-10" style={{ background: "var(--gradient-primary)" }} />
         <div className="relative z-10">
           <h1 className="text-5xl font-bold font-display mb-4">
-            <span className="gradient-text">Monucate</span>
+            <span className="gradient-text">FinOva</span>
           </h1>
           <p className="text-xl text-muted-foreground mb-12">
             Master your money. Build your future.
@@ -90,7 +90,7 @@ const Auth = () => {
       <div className="flex-1 flex items-center justify-center px-6">
         <div className="w-full max-w-md">
           <div className="lg:hidden mb-8">
-            <h1 className="text-3xl font-bold font-display gradient-text">Monucate</h1>
+            <h1 className="text-3xl font-bold font-display gradient-text">FinOva</h1>
           </div>
 
           <h2 className="text-2xl font-bold font-display mb-2">
