@@ -1,20 +1,21 @@
 import { cn } from "@/lib/utils";
 
 const FinOvaLogo = ({ className = "", size = "text-lg" }: { className?: string; size?: string }) => (
-  <span className={cn("font-bold font-display gradient-text relative", size, className)}>
-    Fin
-    <span className="relative inline-block">
-      <span className="relative z-10">O</span>
-      {/* Nova glow behind the O */}
-      <span
-        className="absolute inset-0 z-0 blur-[3px] opacity-70"
-        style={{
-          background: "radial-gradient(circle, hsl(38 90% 55% / 0.8), hsl(25 85% 55% / 0.4), transparent 70%)",
-        }}
-        aria-hidden="true"
-      />
+  <span className={cn("font-bold font-display relative inline-flex items-baseline", size, className)}>
+    <span className="gradient-text">Fin</span>
+    <span
+      className="relative"
+      style={{
+        background: "linear-gradient(135deg, hsl(38 90% 55%), hsl(25 85% 50%))",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+        backgroundClip: "text",
+        filter: "drop-shadow(0 0 6px hsl(38 90% 50% / 0.6)) drop-shadow(0 0 12px hsl(25 85% 50% / 0.4))",
+      }}
+    >
+      O
     </span>
-    va
+    <span className="gradient-text">va</span>
   </span>
 );
 
