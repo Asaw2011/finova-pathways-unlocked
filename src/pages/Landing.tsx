@@ -99,7 +99,7 @@ const Landing = () => {
       {/* NAV */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="text-xl font-extrabold tracking-tight gradient-text" style={{ fontFamily: "var(--font-display)" }}>FinOva</Link>
+          <Link to="/" className="flex items-center"><FinOvaLogo size="text-xl" /></Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>
             <a href="#how-it-works" className="hover:text-foreground transition-colors">How It Works</a>
