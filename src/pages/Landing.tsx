@@ -4,7 +4,7 @@ import {
   ArrowRight, Heart, BookOpen, Zap, Shield, Star,
   Crown, TrendingUp, Users, CheckCircle, ChevronDown,
   BarChart3, Wallet, PiggyBank, GraduationCap, Gamepad2, Brain, Target,
-  Sparkles, Play, Lock, MessageCircle, Trophy, Flame, Award, ExternalLink,
+  Sparkles, Lock, MessageCircle, Trophy, Flame, Award, ExternalLink,
 } from "lucide-react";
 import FFILearningPath from "@/components/ffi/FFILearningPath";
 import { Button } from "@/components/ui/button";
