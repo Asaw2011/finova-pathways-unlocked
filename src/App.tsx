@@ -32,6 +32,7 @@ import SettingsPage from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
+
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
