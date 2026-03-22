@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { InvestingTimeline } from "@/components/ffi/FFIGames";
 import { Button } from "@/components/ui/button";
+import FinOvaLogo from "@/components/FinOvaLogo";
 
 const useReveal = () => {
   const ref = useRef<HTMLDivElement>(null);
@@ -98,7 +99,7 @@ const Landing = () => {
       {/* NAV */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="text-xl font-extrabold tracking-tight gradient-text" style={{ fontFamily: "var(--font-display)" }}>FinOva</Link>
+          <Link to="/" className="flex items-center"><FinOvaLogo size="text-xl" /></Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>
             <a href="#how-it-works" className="hover:text-foreground transition-colors">How It Works</a>
@@ -351,7 +352,7 @@ const Landing = () => {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12 mb-8 sm:mb-12">
             <div className="col-span-2 sm:col-span-1">
-              <h4 className="text-lg font-black mb-2 sm:mb-3 gradient-text" style={{ fontFamily: "var(--font-display)" }}>FinOva</h4>
+              <FinOvaLogo size="text-lg" className="mb-2 sm:mb-3" />
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">The gamified financial literacy platform built for the next generation.</p>
             </div>
             <div>
