@@ -147,58 +147,102 @@ const NeedsVsWants = () => {
 
 // ─── Investing Timeline ───
 const GROWTH_DATA = [
-  { age: 18, label: "Age 18", monthly: 100, at60: "$403,927", data: [0, 8, 20, 42, 78, 130, 200, 290, 404] },
-  { age: 25, label: "Age 25", monthly: 100, at60: "$229,388", data: [0, 6, 15, 30, 55, 95, 150, 229] },
-  { age: 35, label: "Age 35", monthly: 100, at60: "$118,589", data: [0, 5, 12, 24, 48, 80, 119] },
+  { age: 18, label: "Age 18", emoji: "🎓", monthly: 100, at60: "$403,927", raw: 403927, data: [0, 8, 20, 42, 78, 130, 200, 290, 404] },
+  { age: 25, label: "Age 25", emoji: "💼", monthly: 100, at60: "$229,388", raw: 229388, data: [0, 6, 15, 30, 55, 95, 150, 229] },
+  { age: 35, label: "Age 35", emoji: "🏠", monthly: 100, at60: "$118,589", raw: 118589, data: [0, 5, 12, 24, 48, 80, 119] },
 ];
 
 export const InvestingTimeline = () => {
   const [selected, setSelected] = useState(0);
   const d = GROWTH_DATA[selected];
   const maxVal = 404;
+  const diff18 = GROWTH_DATA[0].raw - d.raw;
 
   return (
-    <div className="glass rounded-xl p-6">
-      <div className="flex items-center gap-2 mb-2">
-        <TrendingUp className="w-5 h-5 text-primary" />
-        <h3 className="font-display font-bold text-lg">Start Investing Early</h3>
-      </div>
-      <div className="bg-secondary/50 rounded-lg p-3 mb-4 text-sm space-y-1">
-        <p><strong>What you learn:</strong> How compound growth rewards early investors.</p>
-        <p><strong>How to play:</strong> Choose a starting age to see projected growth investing $100/month.</p>
-        <p><strong>Takeaway:</strong> Time is the most powerful investing tool.</p>
-      </div>
-
-      <div className="flex gap-2 mb-6">
-        {GROWTH_DATA.map((g, i) => (
-          <button
-            key={g.age}
-            onClick={() => setSelected(i)}
-            className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-colors ${selected === i ? "bg-primary text-primary-foreground" : "bg-secondary hover:bg-secondary/80"}`}
-          >
-            {g.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Simple bar chart */}
-      <div className="flex items-end gap-1 h-40 mb-4">
-        {d.data.map((val, i) => (
-          <div key={i} className="flex-1 flex flex-col items-center gap-1">
-            <div
-              className="w-full rounded-t-sm bg-primary/80 transition-all duration-500"
-              style={{ height: `${(val / maxVal) * 100}%`, minHeight: val > 0 ? 4 : 0 }}
-            />
+    <div className="rounded-3xl border border-border bg-card overflow-hidden shadow-lg">
+      {/* Header */}
+      <div className="px-6 pt-6 pb-4 bg-gradient-to-br from-primary/5 to-accent/5">
+        <div className="flex items-center gap-3 mb-1">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <TrendingUp className="w-5 h-5 text-primary" />
           </div>
-        ))}
+          <div>
+            <h3 className="font-display font-extrabold text-lg">Start Investing Early</h3>
+            <p className="text-xs text-muted-foreground">See why time beats timing</p>
+          </div>
+        </div>
       </div>
 
-      <div className="text-center">
-        <p className="text-sm text-muted-foreground mb-1">
-          Start at <span className="font-bold text-foreground">{d.label}</span> investing <span className="font-bold text-foreground">${d.monthly}/mo</span>
+      <div className="px-6 pb-6">
+        {/* Age selector */}
+        <div className="flex gap-2 my-5">
+          {GROWTH_DATA.map((g, i) => (
+            <button
+              key={g.age}
+              onClick={() => setSelected(i)}
+              className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${
+                selected === i
+                  ? "bg-primary text-primary-foreground shadow-md scale-[1.02]"
+                  : "bg-secondary hover:bg-secondary/80 text-muted-foreground"
+              }`}
+            >
+              <span className="block text-base">{g.emoji}</span>
+              <span className="block text-xs mt-0.5">{g.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Bar chart */}
+        <div className="relative flex items-end gap-1.5 h-44 mb-5 px-1">
+          {/* Grid lines */}
+          {[0, 25, 50, 75, 100].map(pct => (
+            <div key={pct} className="absolute left-0 right-0 border-t border-border/40" style={{ bottom: `${pct}%` }} />
+          ))}
+          {d.data.map((val, i) => {
+            const height = (val / maxVal) * 100;
+            return (
+              <div key={i} className="flex-1 flex flex-col items-center justify-end relative z-10 group">
+                {val > 0 && (
+                  <span className="text-[9px] font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity mb-1">
+                    ${val}k
+                  </span>
+                )}
+                <div
+                  className="w-full rounded-t-md transition-all duration-700 ease-out"
+                  style={{
+                    height: `${height}%`,
+                    minHeight: val > 0 ? 6 : 0,
+                    background: `linear-gradient(to top, hsl(var(--primary)), hsl(var(--accent)))`,
+                    opacity: 0.15 + (i / d.data.length) * 0.85,
+                  }}
+                />
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Result card */}
+        <div className="rounded-2xl bg-gradient-to-br from-primary/5 via-background to-accent/5 border border-border p-5 text-center">
+          <p className="text-sm text-muted-foreground mb-1">
+            Investing <span className="font-bold text-foreground">${d.monthly}/mo</span> starting at <span className="font-bold text-foreground">{d.label}</span>
+          </p>
+          <p className="text-3xl md:text-4xl font-black font-display gradient-text mb-1">{d.at60}</p>
+          <p className="text-xs text-muted-foreground">by age 60</p>
+          {selected > 0 && (
+            <p className="text-xs text-destructive font-semibold mt-2">
+              That's ${diff18.toLocaleString()} less than starting at 18
+            </p>
+          )}
+          {selected === 0 && (
+            <p className="text-xs text-primary font-semibold mt-2">
+              ✨ Starting earliest = maximum compound growth
+            </p>
+          )}
+        </div>
+
+        <p className="text-[10px] text-muted-foreground text-center mt-3">
+          *Hypothetical example · 8% avg annual return · Compounded monthly · Not a guarantee
         </p>
-        <p className="text-2xl font-bold font-display gradient-text">{d.at60} by age 60</p>
-        <p className="text-xs text-muted-foreground mt-2">*Assumes 8% average annual return, compounded monthly</p>
       </div>
     </div>
   );

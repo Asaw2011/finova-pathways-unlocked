@@ -97,7 +97,7 @@ const Landing = () => {
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       {/* NAV */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link to="/" className="text-xl font-extrabold tracking-tight" style={{ fontFamily: "var(--font-display)" }}>Monu<span className="text-primary">c</span>ate</Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>
@@ -105,48 +105,48 @@ const Landing = () => {
             <a href="#reviews" className="hover:text-foreground transition-colors">Reviews</a>
             <a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a>
           </div>
-          <div className="flex items-center gap-3">
-            <Link to="/auth"><Button variant="ghost" size="sm">Log in</Button></Link>
-            <Link to="/auth"><Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">Start Free</Button></Link>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link to="/auth"><Button variant="ghost" size="sm" className="text-xs sm:text-sm">Log in</Button></Link>
+            <Link to="/auth"><Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 text-xs sm:text-sm">Start Free</Button></Link>
           </div>
         </div>
       </nav>
 
       {/* HERO */}
-      <section className="relative min-h-screen flex items-center pt-16">
+      <section className="relative min-h-[100svh] flex items-center pt-16">
         <div className="absolute inset-0 z-0">
           <img src={img.hero} alt="" className="w-full h-full object-cover" style={{ filter: "saturate(0.82) contrast(1.08)" }} />
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/60" />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
         </div>
-        <div className="relative z-10 max-w-7xl mx-auto px-6 py-24 md:py-32">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-24 md:py-32">
           <div className="max-w-2xl">
-            <div className="cinema-in inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-8">
-              <Sparkles className="w-4 h-4" /> 100% free &mdash; no credit card needed
+            <div className="cinema-in inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-semibold mb-6 sm:mb-8">
+              <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> 100% free &mdash; no credit card needed
             </div>
-            <h1 className="cinema-in cinema-delay-1 text-5xl md:text-7xl font-black tracking-tight leading-[1.05] mb-6" style={{ fontFamily: "var(--font-display)" }}>
+            <h1 className="cinema-in cinema-delay-1 text-3xl sm:text-5xl md:text-7xl font-black tracking-tight leading-[1.08] mb-4 sm:mb-6" style={{ fontFamily: "var(--font-display)" }}>
               Master your money.{" "}<span className="gradient-text">Shape your future.</span>
             </h1>
-            <p className="cinema-in cinema-delay-2 text-lg md:text-xl text-muted-foreground leading-relaxed mb-4 max-w-xl">
+            <p className="cinema-in cinema-delay-2 text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed mb-3 sm:mb-4 max-w-xl">
               The gamified platform that teaches you budgeting, investing, credit, and taxes &mdash; through lessons, games, and real stock simulations.
             </p>
-            <p className="cinema-in cinema-delay-2 text-sm text-muted-foreground font-medium mb-8">Built by students. Trusted by educators. Used nationwide.</p>
-            <div className="cinema-in cinema-delay-3 flex flex-wrap gap-4 mb-12">
-              <Link to="/auth"><Button size="lg" className="btn-cinema bg-primary text-primary-foreground text-base px-8 py-6 rounded-2xl font-bold">Start Learning Free <ArrowRight className="ml-2 w-5 h-5" /></Button></Link>
-              <a href="#features"><Button size="lg" variant="outline" className="text-base px-8 py-6 rounded-2xl font-bold">See What You'll Learn <ArrowRight className="ml-2 w-5 h-5" /></Button></a>
+            <p className="cinema-in cinema-delay-2 text-xs sm:text-sm text-muted-foreground font-medium mb-6 sm:mb-8">Built by students. Trusted by educators. Used nationwide.</p>
+            <div className="cinema-in cinema-delay-3 flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8 sm:mb-12">
+              <Link to="/auth" className="w-full sm:w-auto"><Button size="lg" className="w-full sm:w-auto btn-cinema bg-primary text-primary-foreground text-sm sm:text-base px-6 sm:px-8 py-5 sm:py-6 rounded-2xl font-bold">Start Learning Free <ArrowRight className="ml-2 w-5 h-5" /></Button></Link>
+              <a href="#features" className="w-full sm:w-auto"><Button size="lg" variant="outline" className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 py-5 sm:py-6 rounded-2xl font-bold">See What You'll Learn <ArrowRight className="ml-2 w-5 h-5" /></Button></a>
             </div>
-            <div className="cinema-in cinema-delay-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="cinema-in cinema-delay-4 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
               {[{ icon: BookOpen, val: "80+", label: "Lessons" },{ icon: Gamepad2, val: "8", label: "Games" },{ icon: TrendingUp, val: "Live", label: "Paper Trading" },{ icon: MessageCircle, val: "24/7", label: "AI Coach" }].map(({ icon: Icon, val, label }, idx) => (
-                <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-card/60 backdrop-blur-sm border border-border/50">
-                  <Icon className="w-5 h-5 text-primary shrink-0" />
-                  <div><p className="text-sm font-bold">{val}</p><p className="text-xs text-muted-foreground">{label}</p></div>
+                <div key={idx} className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-xl bg-card/60 backdrop-blur-sm border border-border/50">
+                  <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-primary shrink-0" />
+                  <div><p className="text-xs sm:text-sm font-bold">{val}</p><p className="text-[10px] sm:text-xs text-muted-foreground">{label}</p></div>
                 </div>
               ))}
             </div>
           </div>
         </div>
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
-          <a href="#stats" className="animate-bounce block"><ChevronDown className="w-8 h-8 text-muted-foreground" /></a>
+        <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-10">
+          <a href="#stats" className="animate-bounce block"><ChevronDown className="w-7 h-7 sm:w-8 sm:h-8 text-muted-foreground" /></a>
         </div>
       </section>
 
