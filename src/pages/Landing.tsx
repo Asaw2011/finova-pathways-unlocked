@@ -351,7 +351,7 @@ const Landing = () => {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12 mb-8 sm:mb-12">
             <div className="col-span-2 sm:col-span-1">
-              <h4 className="text-lg font-black mb-2 sm:mb-3" style={{ fontFamily: "var(--font-display)" }}>Monu<span className="text-primary">c</span>ate</h4>
+              <h4 className="text-lg font-black mb-2 sm:mb-3" style={{ fontFamily: "var(--font-display)" }}>Fin<span style={{ background: "linear-gradient(135deg, hsl(38 90% 50%), hsl(25 85% 55%))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>O</span>va</h4>
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">The gamified financial literacy platform built for the next generation.</p>
             </div>
             <div>
