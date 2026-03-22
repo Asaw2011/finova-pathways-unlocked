@@ -11,7 +11,7 @@ const links = [
   { to: "/financial-freedom-initiative", label: "FFI" },
 ];
 
-const FinOvaLogo = () => (
+const MonucateLogo = () => (
   <span className="text-lg font-bold font-display flex items-center">
     <span className="gradient-text">Fin</span>
     <span className="relative inline-flex items-center justify-center mx-[-1px]">
@@ -47,7 +47,7 @@ const PublicNav = () => {
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-6 h-16">
         <Link to="/" className="flex items-center gap-2">
-          <FinOvaLogo />
+          <MonucateLogo />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-1">

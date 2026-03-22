@@ -55,7 +55,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (user && profile) {
-      const onboarded = localStorage.getItem(`finova_onboarded_${user.id}`);
+      const onboarded = localStorage.getItem(`monucate_onboarded_${user.id}`);
       const profileOnboarded = (profile as any).onboarding_completed;
       if (!onboarded && !profileOnboarded && (!profile.display_name || profile.display_name === user.email?.split("@")[0])) {
         setShowOnboarding(true);
