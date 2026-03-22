@@ -4,18 +4,15 @@ const FinOvaLogo = ({ className = "", size = "text-lg" }: { className?: string; 
   <span className={cn("font-bold font-display gradient-text relative", size, className)}>
     Fin
     <span className="relative inline-block">
-      O
-      {/* Nova glow layers */}
+      <span className="relative z-10">O</span>
+      {/* Nova glow behind the O */}
       <span
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 z-0 blur-[3px] opacity-70"
         style={{
-          textShadow: "0 0 8px hsl(38 90% 50% / 0.7), 0 0 20px hsl(25 85% 55% / 0.5), 0 0 40px hsl(15 80% 50% / 0.3), 0 0 60px hsl(38 90% 50% / 0.15)",
-          color: "transparent",
+          background: "radial-gradient(circle, hsl(38 90% 55% / 0.8), hsl(25 85% 55% / 0.4), transparent 70%)",
         }}
         aria-hidden="true"
-      >
-        O
-      </span>
+      />
     </span>
     va
   </span>
