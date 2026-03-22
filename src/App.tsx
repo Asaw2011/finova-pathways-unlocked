@@ -44,7 +44,7 @@ const App = () => (
               <Route path="/" element={<Landing />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/about" element={<About />} />
-              <Route path="/financial-freedom-initiative" element={<FFI />} />
+              
               <Route path="/disclaimers" element={<Disclaimers />} />
               <Route path="/courses-preview" element={<CoursesPreview />} />
               <Route path="/plus" element={<Plus />} />
