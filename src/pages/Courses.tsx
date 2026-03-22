@@ -1,7 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { BookOpen, Lock, Crown, ChevronRight } from "lucide-react";
+import { BookOpen, Lock, Crown, ChevronRight, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
@@ -15,7 +15,7 @@ const Courses = () => {
   const { data: courses, isLoading } = useQuery({
     queryKey: ["courses"],
     queryFn: async () => {
-      const { data } = await supabase.from("courses").select("*, modules(id, lessons(id))").order("sort_order");
+      const { data } = await supabase.from("courses").select("*, modules(id, title, lessons(id))").order("sort_order");
       return data ?? [];
     },
   });
@@ -48,21 +48,18 @@ const Courses = () => {
               return sum + (m.lessons?.filter((l: any) => progress?.has(l.id)).length ?? 0);
             }, 0) ?? 0;
             const progressPct = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
-            // Plus users can access ALL courses — no lock
             const locked = course.is_premium && !isPremium;
             const unitCount = course.modules?.length ?? 0;
+            const firstModuleTitle = course.modules?.[0]?.title;
+            const estHours = course.estimated_hours || Math.max(1, Math.ceil(totalLessons * 8 / 60));
 
             return (
-              <motion.div
-                key={course.id}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-              >
+              <motion.div key={course.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
                 {locked ? (
                   <div className="relative bg-card rounded-2xl border border-border p-5 overflow-hidden">
                     <div className="absolute inset-0 bg-background/60 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center gap-2">
                       <Lock className="w-6 h-6 text-muted-foreground" />
+                      <p className="text-xs text-muted-foreground font-medium">This course is included in FinOva Plus</p>
                       <Link to="/plus">
                         <Button size="sm" variant="outline" className="gap-1.5">
                           <Crown className="w-3.5 h-3.5 text-amber-500" /> Upgrade to Plus
@@ -70,12 +67,12 @@ const Courses = () => {
                       </Link>
                     </div>
                     <div className="opacity-50">
-                      <CourseCardContent course={course} unitCount={unitCount} totalLessons={totalLessons} progressPct={0} />
+                      <CourseCardContent course={course} unitCount={unitCount} totalLessons={totalLessons} progressPct={0} firstModuleTitle={firstModuleTitle} estHours={estHours} />
                     </div>
                   </div>
                 ) : (
                   <Link to={`/courses/${course.id}`} className="block bg-card rounded-2xl border border-border p-5 hover:shadow-md transition-all group">
-                    <CourseCardContent course={course} unitCount={unitCount} totalLessons={totalLessons} progressPct={progressPct} />
+                    <CourseCardContent course={course} unitCount={unitCount} totalLessons={totalLessons} progressPct={progressPct} firstModuleTitle={firstModuleTitle} estHours={estHours} />
                   </Link>
                 )}
               </motion.div>
@@ -87,13 +84,15 @@ const Courses = () => {
   );
 };
 
-const CourseCardContent = ({ course, unitCount, totalLessons, progressPct }: { course: any; unitCount: number; totalLessons: number; progressPct: number }) => (
+const CourseCardContent = ({ course, unitCount, totalLessons, progressPct, firstModuleTitle, estHours }: {
+  course: any; unitCount: number; totalLessons: number; progressPct: number; firstModuleTitle?: string; estHours: number;
+}) => (
   <>
     <div className="flex items-start justify-between mb-2">
       <div className="flex items-center gap-2">
         <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-primary/10 text-primary">{course.category}</span>
         {course.is_premium && (
-          <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-700 flex items-center gap-1">
+          <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 flex items-center gap-1">
             <Crown className="w-3 h-3" /> Plus
           </span>
         )}
@@ -101,15 +100,23 @@ const CourseCardContent = ({ course, unitCount, totalLessons, progressPct }: { c
       <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
     </div>
     <h3 className="font-display font-extrabold text-lg mb-1 group-hover:text-primary transition-colors">{course.title}</h3>
-    <p className="text-sm text-muted-foreground line-clamp-1 mb-3">{course.description}</p>
+    <p className="text-sm text-muted-foreground line-clamp-1 mb-2">{course.description}</p>
+    {firstModuleTitle && (
+      <p className="text-xs text-muted-foreground mb-2">Starts with: <span className="font-semibold text-foreground/70">{firstModuleTitle}</span></p>
+    )}
     <div className="flex items-center gap-4 text-xs text-muted-foreground font-medium mb-2">
+      <span className="flex items-center gap-1"><BookOpen className="w-3 h-3" /> {totalLessons} lessons</span>
       <span>{unitCount} units</span>
-      <span>{totalLessons} lessons</span>
-      {course.estimated_hours && <span>~{course.estimated_hours}h</span>}
+      <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> ~{estHours}h</span>
     </div>
     {progressPct > 0 && (
-      <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-        <div className="h-full rounded-full transition-all duration-700 bg-primary" style={{ width: `${progressPct}%` }} />
+      <div className="flex items-center gap-2">
+        <div className="h-1.5 bg-muted rounded-full overflow-hidden flex-1">
+          <div className="h-full rounded-full transition-all duration-700 bg-primary" style={{ width: `${progressPct}%` }} />
+        </div>
+        {progressPct > 0 && progressPct < 100 && (
+          <span className="text-xs font-bold text-primary">Continue →</span>
+        )}
       </div>
     )}
   </>
