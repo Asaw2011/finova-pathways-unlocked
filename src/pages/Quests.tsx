@@ -179,7 +179,7 @@ const Quests = () => {
   };
 
   // Track claimed daily/weekly quests in localStorage
-  const getClaimedKey = (questText: string, period: string) => `finova_quest_${period}_${questText}`;
+  const getClaimedKey = (questText: string, period: string) => `monucate_quest_${period}_${questText}`;
   const isClaimed = (questText: string, period: string) => localStorage.getItem(getClaimedKey(questText, period)) === "true";
   const markClaimed = (questText: string, period: string) => localStorage.setItem(getClaimedKey(questText, period), "true");
 

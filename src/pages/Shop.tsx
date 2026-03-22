@@ -70,9 +70,9 @@ const Shop = () => {
             Most Popular
           </div>
           <h2 className="font-extrabold font-display text-xl flex items-center gap-2 text-amber-700 dark:text-amber-400">
-            <Crown className="w-6 h-6 text-amber-500" /> Finova Plus
+            <Crown className="w-6 h-6 text-amber-500" /> Monucate Plus
           </h2>
-          <p className="text-sm text-amber-800 dark:text-amber-300">Unlock the full Finova experience and learn without limits.</p>
+          <p className="text-sm text-amber-800 dark:text-amber-300">Unlock the full Monucate experience and learn without limits.</p>
           <ul className="space-y-2.5 text-sm text-amber-800 dark:text-amber-300">
             <li className="flex items-center gap-2.5">
               <Heart className="w-4 h-4 text-destructive fill-destructive shrink-0" />
