@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 type ThemeMode = "light" | "dark" | "system";
 
-const getStoredTheme = (): ThemeMode => (localStorage.getItem("finova-theme") as ThemeMode) || "light";
+const getStoredTheme = (): ThemeMode => (localStorage.getItem("monucate-theme") as ThemeMode) || "light";
 
 const applyTheme = (mode: ThemeMode) => {
   const root = document.documentElement;
@@ -17,20 +17,20 @@ const applyTheme = (mode: ThemeMode) => {
 
 const Settings = () => {
   const [theme, setTheme] = useState<ThemeMode>(getStoredTheme);
-  const [notifications, setNotifications] = useState(() => localStorage.getItem("finova-notifications") !== "off");
-  const [sounds, setSounds] = useState(() => localStorage.getItem("finova-sounds") !== "off");
+  const [notifications, setNotifications] = useState(() => localStorage.getItem("monucate-notifications") !== "off");
+  const [sounds, setSounds] = useState(() => localStorage.getItem("monucate-sounds") !== "off");
 
   useEffect(() => {
-    localStorage.setItem("finova-theme", theme);
+    localStorage.setItem("monucate-theme", theme);
     applyTheme(theme);
   }, [theme]);
 
   useEffect(() => {
-    localStorage.setItem("finova-notifications", notifications ? "on" : "off");
+    localStorage.setItem("monucate-notifications", notifications ? "on" : "off");
   }, [notifications]);
 
   useEffect(() => {
-    localStorage.setItem("finova-sounds", sounds ? "on" : "off");
+    localStorage.setItem("monucate-sounds", sounds ? "on" : "off");
   }, [sounds]);
 
   const themeOptions: { value: ThemeMode; label: string; icon: typeof Sun }[] = [
@@ -43,7 +43,7 @@ const Settings = () => {
     <div className="max-w-xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-extrabold font-display mb-1">Settings</h1>
-        <p className="text-sm text-muted-foreground">Customize your FinOva experience.</p>
+        <p className="text-sm text-muted-foreground">Customize your Monucate experience.</p>
       </div>
 
       {/* Appearance */}
@@ -110,7 +110,7 @@ const Settings = () => {
           </div>
           <div className="flex justify-between">
             <span>Platform</span>
-            <span className="font-semibold text-foreground">FinOva Web</span>
+            <span className="font-semibold text-foreground">Monucate Web</span>
           </div>
         </div>
       </section>

@@ -65,7 +65,7 @@ Tailor ALL your responses to their specific life stage, goal, and knowledge leve
         messages: [
           {
             role: "system",
-            content: `You are Finova Money Coach — a friendly, knowledgeable financial advisor for people of all ages learning about personal finance.
+            content: `You are Monucate Money Coach — a friendly, knowledgeable financial advisor for people of all ages learning about personal finance.
 ${personalContext}
 
 Your personality:

@@ -71,9 +71,9 @@ const Awards = () => {
   const getModuleCategory = (cert: any) => cert.courses?.category || "Learning Path Module";
 
   const handleShare = (cert: any) => {
-    const text = `I just earned a Finova Certificate in ${getModuleTitle(cert)}! 🎓 #Finova #FinancialLiteracy`;
+    const text = `I just earned a Monucate Certificate in ${getModuleTitle(cert)}! 🎓 #Monucate #FinancialLiteracy`;
     if (navigator.share) {
-      navigator.share({ title: "Finova Certificate", text });
+      navigator.share({ title: "Monucate Certificate", text });
     } else {
       navigator.clipboard.writeText(text);
       toast.success("Copied to clipboard!");
@@ -85,7 +85,7 @@ const Awards = () => {
     const name = profile?.display_name || "Learner";
     const w = window.open("", "_blank");
     if (!w) return;
-    w.document.write(`<html><head><title>Certificate</title><style>body{font-family:Georgia,serif;text-align:center;padding:60px;border:8px double #c4a35a;margin:40px;min-height:80vh;display:flex;flex-direction:column;justify-content:center}h1{color:#c4a35a;font-size:18px;letter-spacing:4px;margin-bottom:8px}h2{font-size:32px;margin:20px 0}p{color:#555;font-size:16px;line-height:1.6}</style></head><body><h1>FINOVA</h1><h2>Certificate of Completion</h2><p>This certifies that<br/><strong style="font-size:24px;color:#222">${name}</strong><br/>has successfully completed<br/><strong style="font-size:20px;color:#222">${title}</strong></p><p style="margin-top:40px;font-size:12px">Certificate #${cert.certificate_number}<br/>Issued: ${new Date(cert.issued_at).toLocaleDateString()}</p></body></html>`);
+    w.document.write(`<html><head><title>Certificate</title><style>body{font-family:Georgia,serif;text-align:center;padding:60px;border:8px double #c4a35a;margin:40px;min-height:80vh;display:flex;flex-direction:column;justify-content:center}h1{color:#c4a35a;font-size:18px;letter-spacing:4px;margin-bottom:8px}h2{font-size:32px;margin:20px 0}p{color:#555;font-size:16px;line-height:1.6}</style></head><body><h1>MONUCATE</h1><h2>Certificate of Completion</h2><p>This certifies that<br/><strong style="font-size:24px;color:#222">${name}</strong><br/>has successfully completed<br/><strong style="font-size:20px;color:#222">${title}</strong></p><p style="margin-top:40px;font-size:12px">Certificate #${cert.certificate_number}<br/>Issued: ${new Date(cert.issued_at).toLocaleDateString()}</p></body></html>`);
     w.document.close();
     w.print();
   };

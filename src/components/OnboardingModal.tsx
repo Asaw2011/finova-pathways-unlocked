@@ -51,7 +51,7 @@ const OnboardingModal = ({ open, onClose }: Props) => {
     if (!user) return;
     await earnGems(100);
     await supabase.from("profiles").update({ onboarding_completed: true }).eq("user_id", user.id);
-    localStorage.setItem(`finova_onboarded_${user.id}`, "true");
+    localStorage.setItem(`monucate_onboarded_${user.id}`, "true");
     onClose();
     navigate("/learning-path");
   };
@@ -64,7 +64,7 @@ const OnboardingModal = ({ open, onClose }: Props) => {
             <motion.div key="step0" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
               className="p-8 text-center space-y-5">
               <p className="text-4xl">🎉</p>
-              <h2 className="text-2xl font-extrabold font-display">Welcome to Finova!</h2>
+              <h2 className="text-2xl font-extrabold font-display">Welcome to Monucate!</h2>
               <p className="text-muted-foreground text-sm">You're about to learn money skills that schools don't teach. It takes 5 minutes a day.</p>
               <div className="space-y-2 text-left">
                 <label className="text-sm font-bold">What's your name?</label>

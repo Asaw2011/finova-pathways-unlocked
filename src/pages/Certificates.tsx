@@ -22,9 +22,9 @@ const Certificates = () => {
   });
 
   const handleShare = (cert: any) => {
-    const text = `I just earned a FinOva Certificate in ${cert.courses?.title}! 🎓 #FinOva #FinancialLiteracy`;
+    const text = `I just earned a Monucate Certificate in ${cert.courses?.title}! 🎓 #Monucate #FinancialLiteracy`;
     if (navigator.share) {
-      navigator.share({ title: "FinOva Certificate", text });
+      navigator.share({ title: "Monucate Certificate", text });
     } else {
       navigator.clipboard.writeText(text);
       toast.success("Copied to clipboard!");

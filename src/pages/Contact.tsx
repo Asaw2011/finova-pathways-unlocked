@@ -32,7 +32,7 @@ const Contact = () => {
             Get in <span className="gradient-text">Touch</span>
           </h1>
           <p className="text-xl text-muted-foreground mb-12">
-            Questions about FinOva, school licensing, partnerships, or our Quant Vault? We'd love to hear from you.
+            Questions about Monucate, school licensing, partnerships, or our Quant Vault? We'd love to hear from you.
           </p>
 
           <div className="grid lg:grid-cols-5 gap-8">
@@ -66,7 +66,7 @@ const Contact = () => {
               <div className="glass rounded-xl p-5">
                 <Mail className="w-5 h-5 text-primary mb-2" />
                 <h3 className="font-display font-semibold text-sm">Email</h3>
-                <p className="text-sm text-muted-foreground">hello@finova.com</p>
+                <p className="text-sm text-muted-foreground">hello@monucate.com</p>
               </div>
               <div className="glass rounded-xl p-5">
                 <Instagram className="w-5 h-5 text-primary mb-2" />

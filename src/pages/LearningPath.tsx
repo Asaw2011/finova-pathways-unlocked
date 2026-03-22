@@ -203,7 +203,7 @@ const LearningPath = () => {
       if (!user) throw new Error("Not authenticated");
       await supabase.from("user_xp").insert({ user_id: user.id, xp_amount: 50, source: "unit-quiz", source_id: moduleId });
       try { await supabase.from("user_badges").insert({ user_id: user.id, badge_name: badgeName, badge_icon: badgeIcon }); } catch (_) {}
-      const certNumber = `FINOVA-${moduleId.toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
+      const certNumber = `MONUCATE-${moduleId.toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
       try { await supabase.from("certificates").insert({ user_id: user.id, course_id: moduleId, certificate_number: certNumber, score: 100 }); } catch (_) {}
     },
     onSuccess: () => {

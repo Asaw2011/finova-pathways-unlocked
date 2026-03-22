@@ -57,16 +57,16 @@ const features = [
 ];
 
 const reviews = [
-  { q: "FinOva completely changed how I think about money. I went from spending every dollar to actually having a savings plan. This app should be required in every school.", n: "Aaliyah R.", r: "High School Senior", a: "AR" },
+  { q: "Monucate completely changed how I think about money. I went from spending every dollar to actually having a savings plan. This app should be required in every school.", n: "Aaliyah R.", r: "High School Senior", a: "AR" },
   { q: "The paper trading feature is incredible. My virtual portfolio is up 14% in 3 months. I feel way more prepared to invest real money now.", n: "Marcus T.", r: "College Sophomore", a: "MT" },
   { q: "Students actually ASK to do their financial literacy assignments now. I\u2019ve never seen anything like it in 12 years of teaching.", n: "Ms. Patel", r: "Economics Teacher", a: "MP" },
   { q: "Nobody in my family knew how to help with FAFSA. The Student Finance module literally saved me thousands of dollars.", n: "Daniel O.", r: "High School Senior", a: "DO" },
-  { q: "I\u2019m obsessed \u2014 I log in every single day to keep my streak going. FinOva\u2019s games made everything click.", n: "Sofia L.", r: "College Freshman", a: "SL" },
+  { q: "I\u2019m obsessed \u2014 I log in every single day to keep my streak going. Monucate\u2019s games made everything click.", n: "Sofia L.", r: "College Freshman", a: "SL" },
   { q: "I\u2019ve already started a Roth IRA at 17 because of what I learned here. Life-changing app.", n: "Jasmine K.", r: "High School Junior", a: "JK" },
   { q: "We\u2019re rolling it out to every 10th grader next semester. The curriculum is solid and the certificates give students something to show.", n: "Mr. Richardson", r: "Financial Literacy Teacher", a: "MR" },
   { q: "The credit score game taught me more than an entire semester of personal finance class. Five stars isn\u2019t enough.", n: "Chris M.", r: "College Junior", a: "CM" },
   { q: "My daughter talks to me about compound interest at dinner now. This is the financial education I wish I had growing up.", n: "Mrs. Thompson", r: "Parent", a: "MT2" },
-  { q: "My parents never taught me about credit. FinOva filled that gap without making me feel dumb. I\u2019ve recommended it to all my friends.", n: "Jake W.", r: "High School Junior", a: "JW" },
+  { q: "My parents never taught me about credit. Monucate filled that gap without making me feel dumb. I\u2019ve recommended it to all my friends.", n: "Jake W.", r: "High School Junior", a: "JW" },
 ];
 
 const FaqItem = ({ q, a }: { q: string; a: string }) => {
@@ -97,7 +97,7 @@ const Landing = () => {
       {/* NAV */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="text-xl font-extrabold tracking-tight" style={{ fontFamily: "var(--font-display)" }}>Fin<span className="text-primary">O</span>va</Link>
+          <Link to="/" className="text-xl font-extrabold tracking-tight" style={{ fontFamily: "var(--font-display)" }}>Monu<span className="text-primary">c</span>ate</Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>
             <a href="#how-it-works" className="hover:text-foreground transition-colors">How It Works</a>
@@ -272,7 +272,7 @@ const Landing = () => {
           <div className="text-center mb-16 reveal">
             <p className="text-sm font-bold text-primary tracking-widest uppercase mb-3">PRICING</p>
             <h2 className="text-3xl md:text-5xl font-black mb-4" style={{ fontFamily: "var(--font-display)" }}>Free forever. Plus if you want more.</h2>
-            <p className="text-muted-foreground max-w-xl mx-auto">Every core feature is free. FinOva Plus unlocks premium perks for power learners.</p>
+            <p className="text-muted-foreground max-w-xl mx-auto">Every core feature is free. Monucate Plus unlocks premium perks for power learners.</p>
           </div>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="reveal p-8 rounded-3xl bg-background border border-border">
@@ -284,7 +284,7 @@ const Landing = () => {
             </div>
             <div className="reveal gradient-border p-8 rounded-3xl bg-background">
               <div className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-4">MOST POPULAR</div>
-              <h3 className="text-2xl font-black mb-1" style={{ fontFamily: "var(--font-display)" }}>FinOva <span className="gradient-text">Plus</span></h3>
+              <h3 className="text-2xl font-black mb-1" style={{ fontFamily: "var(--font-display)" }}>Monucate <span className="gradient-text">Plus</span></h3>
               <p className="text-muted-foreground text-sm mb-4">For serious learners who want it all</p>
               <p className="text-4xl font-black mb-1" style={{ fontFamily: "var(--font-display)" }}>$10 <span className="text-base font-normal text-muted-foreground">/month</span></p>
               <p className="text-xs text-muted-foreground mb-6">Cancel anytime &middot; No commitment</p>
@@ -301,7 +301,7 @@ const Landing = () => {
         <div className="max-w-3xl mx-auto text-center reveal">
           <p className="text-sm font-bold text-primary tracking-widest uppercase mb-3">OUR PARTNER</p>
           <h2 className="text-3xl md:text-5xl font-black mb-6" style={{ fontFamily: "var(--font-display)" }}>Financial Freedom Initiative</h2>
-          <p className="text-muted-foreground leading-relaxed mb-8 max-w-2xl mx-auto">FFI is a student-led nonprofit bringing financial literacy to high schoolers nationwide through workshops, mentorship, and real-world education programs. FinOva is the digital extension of their mission.</p>
+          <p className="text-muted-foreground leading-relaxed mb-8 max-w-2xl mx-auto">FFI is a student-led nonprofit bringing financial literacy to high schoolers nationwide through workshops, mentorship, and real-world education programs. Monucate is the digital extension of their mission.</p>
           <Link to="/financial-freedom-initiative"><Button variant="outline" className="rounded-xl font-bold">Learn about FFI <ArrowRight className="ml-2 w-4 h-4" /></Button></Link>
         </div>
       </S>
@@ -314,12 +314,12 @@ const Landing = () => {
             <h2 className="text-3xl md:text-5xl font-black" style={{ fontFamily: "var(--font-display)" }}>Questions? Answers.</h2>
           </div>
           <div className="reveal">
-            <FaqItem q="Is FinOva really free?" a="Yes! All 10 learning modules, 80+ lessons, and 8 games are completely free. FinOva Plus is optional and adds extra perks like unlimited hearts and bonus gems." />
-            <FaqItem q="Who is FinOva for?" a="Anyone who wants to learn personal finance — but especially high school and college students. Our content is designed to be approachable whether you're 15 or 50." />
-            <FaqItem q="Can I use FinOva in my classroom?" a="Absolutely. Our platform gives teachers a complete financial literacy curriculum with progress tracking, quizzes, and certificates." />
+            <FaqItem q="Is Monucate really free?" a="Yes! All 10 learning modules, 80+ lessons, and 8 games are completely free. Monucate Plus is optional and adds extra perks like unlimited hearts and bonus gems." />
+            <FaqItem q="Who is Monucate for?" a="Anyone who wants to learn personal finance — but especially high school and college students. Our content is designed to be approachable whether you're 15 or 50." />
+            <FaqItem q="Can I use Monucate in my classroom?" a="Absolutely. Our platform gives teachers a complete financial literacy curriculum with progress tracking, quizzes, and certificates." />
             <FaqItem q="Is the paper trading feature safe?" a="100%. Paper trading uses virtual money with real market data. You can't lose real money — it's purely for practice and learning." />
-            <FaqItem q="What's the Financial Freedom Initiative?" a="FFI is the student-led nonprofit behind FinOva. They run workshops, mentorship programs, and financial literacy events at high schools across the country." />
-            <FaqItem q="How do I cancel FinOva Plus?" a="You can cancel anytime from your account settings. There are no contracts, hidden fees, or cancellation penalties." />
+            <FaqItem q="What's the Financial Freedom Initiative?" a="FFI is the student-led nonprofit behind Monucate. They run workshops, mentorship programs, and financial literacy events at high schools across the country." />
+            <FaqItem q="How do I cancel Monucate Plus?" a="You can cancel anytime from your account settings. There are no contracts, hidden fees, or cancellation penalties." />
           </div>
         </div>
       </S>
@@ -343,7 +343,7 @@ const Landing = () => {
         <div className="max-w-6xl mx-auto">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
             <div>
-              <h4 className="text-lg font-black mb-3" style={{ fontFamily: "var(--font-display)" }}>Fin<span className="text-primary">O</span>va</h4>
+              <h4 className="text-lg font-black mb-3" style={{ fontFamily: "var(--font-display)" }}>Monu<span className="text-primary">c</span>ate</h4>
               <p className="text-sm text-muted-foreground leading-relaxed">The gamified financial literacy platform built for the next generation.</p>
             </div>
             <div>
@@ -351,7 +351,7 @@ const Landing = () => {
               <div className="space-y-2 text-sm text-muted-foreground">
                 <Link to="/courses-preview" className="block hover:text-foreground transition-colors">Courses</Link>
                 <Link to="/resources" className="block hover:text-foreground transition-colors">Resources</Link>
-                <Link to="/plus" className="block hover:text-foreground transition-colors">FinOva Plus</Link>
+                <Link to="/plus" className="block hover:text-foreground transition-colors">Monucate Plus</Link>
                 <Link to="/auth" className="block hover:text-foreground transition-colors">Sign Up Free</Link>
               </div>
             </div>
@@ -375,7 +375,7 @@ const Landing = () => {
             </div>
           </div>
           <div className="border-t border-border pt-8 text-center">
-            <p className="text-xs text-muted-foreground">&copy; {new Date().getFullYear()} FinOva. All rights reserved.</p>
+            <p className="text-xs text-muted-foreground">&copy; {new Date().getFullYear()} Monucate. All rights reserved.</p>
             <p className="text-xs text-muted-foreground mt-1">Built in partnership with the Financial Freedom Initiative.</p>
           </div>
         </div>

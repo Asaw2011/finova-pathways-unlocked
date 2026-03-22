@@ -72,7 +72,7 @@ const QuantVault = () => {
               <AlertTriangle className="w-5 h-5 text-warning flex-shrink-0 mt-0.5" />
               <div className="text-sm text-muted-foreground space-y-2">
                 <p className="font-semibold text-foreground">Important Disclaimer</p>
-                <p><strong>FinOva provides educational content only.</strong> The quantitative strategies and investment materials presented are for learning and illustration. They do not constitute investment advice.</p>
+                <p><strong>Monucate provides educational content only.</strong> The quantitative strategies and investment materials presented are for learning and illustration. They do not constitute investment advice.</p>
                 <p>Users assume all risk. <strong>Past performance does not guarantee future results.</strong> Consult a licensed financial professional before making any investment decisions.</p>
                 <p>By purchasing Quant Vault access, you acknowledge that you have read and agree to our <Link to="/disclaimers" className="text-primary hover:underline">full Risk Disclosure and Terms of Use</Link>.</p>
               </div>
