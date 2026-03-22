@@ -6,7 +6,7 @@ import {
   BarChart3, Wallet, PiggyBank, GraduationCap, Gamepad2, Brain, Target,
   Sparkles, Lock, MessageCircle, Trophy, Flame, Award, ExternalLink,
 } from "lucide-react";
-import FFILearningPath from "@/components/ffi/FFILearningPath";
+import InvestingTimeMachine from "@/components/games/InvestingTimeMachine";
 import { Button } from "@/components/ui/button";
 
 const useReveal = () => {
