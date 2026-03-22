@@ -6,7 +6,7 @@ import {
   BarChart3, Wallet, PiggyBank, GraduationCap, Gamepad2, Brain, Target,
   Sparkles, Lock, MessageCircle, Trophy, Flame, Award, ExternalLink,
 } from "lucide-react";
-import InvestingTimeMachine from "@/components/games/InvestingTimeMachine";
+import { InvestingTimeline } from "@/components/ffi/FFIGames";
 import { Button } from "@/components/ui/button";
 
 const useReveal = () => {
@@ -301,7 +301,7 @@ const Landing = () => {
       <S className="py-24 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="mb-16 max-w-lg mx-auto">
-            <InvestingTimeMachine />
+            <InvestingTimeline />
           </div>
           <div className="text-center reveal">
             <p className="text-sm font-bold text-primary tracking-widest uppercase mb-3">OUR PARTNER</p>
