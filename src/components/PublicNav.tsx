@@ -12,31 +12,7 @@ const links = [
 ];
 
 const MonucateLogo = () => (
-  <span className="text-lg font-bold font-display flex items-center">
-    <span className="gradient-text">Fin</span>
-    <span className="relative inline-flex items-center justify-center mx-[-1px]">
-      <span className="gradient-text">O</span>
-      <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <span
-          className="w-5 h-5 rounded-full opacity-60 blur-[6px] animate-pulse"
-          style={{ background: "linear-gradient(135deg, hsl(36 100% 55%), hsl(28 100% 50%), hsl(45 100% 60%))" }}
-        />
-      </span>
-      <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-70" fill="none">
-          <path d="M12 2 L13 10 L22 12 L13 14 L12 22 L11 14 L2 12 L11 10 Z" fill="url(#novaGrad)" />
-          <defs>
-            <linearGradient id="novaGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="hsl(45 100% 60%)" />
-              <stop offset="50%" stopColor="hsl(36 100% 55%)" />
-              <stop offset="100%" stopColor="hsl(28 100% 50%)" />
-            </linearGradient>
-          </defs>
-        </svg>
-      </span>
-    </span>
-    <span className="gradient-text">va</span>
-  </span>
+  <span className="text-lg font-bold font-display gradient-text">Monucate</span>
 );
 
 const PublicNav = () => {
