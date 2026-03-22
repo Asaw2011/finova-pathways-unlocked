@@ -18,7 +18,7 @@ import LearningPath from "./pages/LearningPath";
 import MoneyCoach from "./pages/MoneyCoach";
 import Shop from "./pages/Shop";
 import About from "./pages/About";
-import FFI from "./pages/FFI";
+
 import Disclaimers from "./pages/Disclaimers";
 import CoursesPreview from "./pages/CoursesPreview";
 import Plus from "./pages/Plus";
