@@ -10,9 +10,7 @@ const links = [
   { to: "/resources", label: "Resources" },
 ];
 
-const FinOvaLogo = () => (
-  <span className="text-lg font-bold font-display gradient-text">FinOva</span>
-);
+import FinOvaLogo from "@/components/FinOvaLogo";
 
 const PublicNav = () => {
   const [open, setOpen] = useState(false);
