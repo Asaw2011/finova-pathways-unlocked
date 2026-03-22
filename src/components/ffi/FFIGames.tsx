@@ -152,7 +152,7 @@ const GROWTH_DATA = [
   { age: 35, label: "Age 35", monthly: 100, at60: "$118,589", data: [0, 5, 12, 24, 48, 80, 119] },
 ];
 
-const InvestingTimeline = () => {
+export const InvestingTimeline = () => {
   const [selected, setSelected] = useState(0);
   const d = GROWTH_DATA[selected];
   const maxVal = 404;
