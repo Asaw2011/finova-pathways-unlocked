@@ -71,9 +71,9 @@ const Awards = () => {
   const getModuleCategory = (cert: any) => cert.courses?.category || "Learning Path Module";
 
   const handleShare = (cert: any) => {
-    const text = `I just earned a Monucate Certificate in ${getModuleTitle(cert)}! 🎓 #Monucate #FinancialLiteracy`;
+    const text = `I just earned a FinOva Certificate in ${getModuleTitle(cert)}! 🎓 #FinOva #FinancialLiteracy`;
     if (navigator.share) {
-      navigator.share({ title: "Monucate Certificate", text });
+      navigator.share({ title: "FinOva Certificate", text });
     } else {
       navigator.clipboard.writeText(text);
       toast.success("Copied to clipboard!");

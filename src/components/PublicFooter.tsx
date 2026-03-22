@@ -8,7 +8,7 @@ const PublicFooter = () => (
         <div>
           <div className="flex items-center gap-2 mb-3">
             <TrendingUp className="w-5 h-5 text-primary" />
-            <span className="font-bold font-display gradient-text">Monucate</span>
+            <span className="font-bold font-display gradient-text">FinOva</span>
           </div>
           <p className="text-sm text-muted-foreground">
             The gamified financial literacy platform built for the next generation.
@@ -20,7 +20,7 @@ const PublicFooter = () => (
             <Link to="/courses-preview" className="block hover:text-foreground transition-colors">Courses</Link>
             <Link to="/resources" className="block hover:text-foreground transition-colors">Resources</Link>
             <Link to="/games" className="block hover:text-foreground transition-colors">Games</Link>
-            <Link to="/plus" className="block hover:text-foreground transition-colors">Monucate Plus</Link>
+            <Link to="/plus" className="block hover:text-foreground transition-colors">FinOva Plus</Link>
           </div>
         </div>
         <div>
@@ -34,7 +34,7 @@ const PublicFooter = () => (
         </div>
       </div>
       <div className="border-t border-border pt-6 text-center text-xs text-muted-foreground">
-        <p>© {new Date().getFullYear()} Monucate. All rights reserved. Monucate provides educational content only. See <Link to="/disclaimers" className="text-primary hover:underline">disclaimers</Link> for details.</p>
+        <p>© {new Date().getFullYear()} FinOva. All rights reserved. FinOva provides educational content only. See <Link to="/disclaimers" className="text-primary hover:underline">disclaimers</Link> for details.</p>
       </div>
     </div>
   </footer>
