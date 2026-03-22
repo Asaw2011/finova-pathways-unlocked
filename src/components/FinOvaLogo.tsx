@@ -1,22 +1,24 @@
 import { cn } from "@/lib/utils";
 
 const FinOvaLogo = ({ className = "", size = "text-lg" }: { className?: string; size?: string }) => (
-  <span className={cn("font-bold font-display gradient-text relative", size, className)}>
-    Fin
-    <span className="relative inline-block">
-      <span
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: "radial-gradient(circle, hsl(38 90% 55% / 0.35) 10%, hsl(25 85% 50% / 0.15) 40%, transparent 65%)",
-          transform: "scale(1.8)",
-          zIndex: 1,
-          mixBlendMode: "screen",
-        }}
-        aria-hidden="true"
-      />
-      <span className="relative z-0">O</span>
-    </span>
-    va
+  <span className={cn("font-bold font-display relative", size, className)}>
+    {/* Base gradient text */}
+    <span className="gradient-text">FinOva</span>
+    {/* Amber glow positioned over the O only */}
+    <span
+      className="absolute pointer-events-none"
+      style={{
+        left: "45%",
+        top: "50%",
+        transform: "translate(-50%, -50%)",
+        width: "0.8em",
+        height: "0.8em",
+        background: "radial-gradient(circle, hsl(38 90% 55% / 0.4) 0%, hsl(38 90% 55% / 0.12) 40%, transparent 70%)",
+        borderRadius: "50%",
+        zIndex: 1,
+      }}
+      aria-hidden="true"
+    />
   </span>
 );
 
