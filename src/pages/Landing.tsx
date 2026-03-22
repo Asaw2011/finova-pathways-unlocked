@@ -151,13 +151,13 @@ const Landing = () => {
       </section>
 
       {/* STATS */}
-      <S className="py-16 bg-card border-y border-border texture-dots" id="stats">
-        <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center stagger">
-          {[{ value: "10", label: "Learning Modules", sub: "Expert-designed curriculum" },{ value: "80+", label: "Interactive Lessons", sub: "5\u201310 mins each" },{ value: "8", label: "Financial Games", sub: "Real-world simulations" },{ value: "100%", label: "Free Core Access", sub: "No credit card required" }].map(({ value, label, sub }) => (
+      <S className="py-12 sm:py-16 bg-card border-y border-border texture-dots" id="stats">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 text-center stagger">
+          {[{ value: "10", label: "Learning Modules", sub: "Expert-designed curriculum" },{ value: "80+", label: "Interactive Lessons", sub: "5–10 mins each" },{ value: "8", label: "Financial Games", sub: "Real-world simulations" },{ value: "100%", label: "Free Core Access", sub: "No credit card required" }].map(({ value, label, sub }) => (
             <div key={label} className="reveal space-y-1">
-              <p className="text-3xl md:text-4xl font-black gradient-text" style={{ fontFamily: "var(--font-display)" }}>{value}</p>
-              <p className="text-sm font-bold">{label}</p>
-              <p className="text-xs text-muted-foreground">{sub}</p>
+              <p className="text-2xl sm:text-3xl md:text-4xl font-black gradient-text" style={{ fontFamily: "var(--font-display)" }}>{value}</p>
+              <p className="text-xs sm:text-sm font-bold">{label}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">{sub}</p>
             </div>
           ))}
         </div>
