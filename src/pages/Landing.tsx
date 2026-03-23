@@ -126,15 +126,15 @@ const Landing = () => {
               <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> 100% free &mdash; no credit card needed
             </div>
             <h1 className="cinema-in cinema-delay-1 text-3xl sm:text-5xl md:text-7xl font-black tracking-tight leading-[1.08] mb-4 sm:mb-6" style={{ fontFamily: "var(--font-display)" }}>
-              Master your money.{" "}<span className="gradient-text">Shape your future.</span>
+              Master Your Money.{" "}<span className="gradient-text">Change Your Life.</span>
             </h1>
             <p className="cinema-in cinema-delay-2 text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed mb-3 sm:mb-4 max-w-xl">
-              The gamified platform that teaches you budgeting, investing, credit, and taxes &mdash; through lessons, games, and real stock simulations.
+              The fun, free way to learn financial literacy &mdash; from budgeting to investing. 5 minutes a day.
             </p>
-            <p className="cinema-in cinema-delay-2 text-xs sm:text-sm text-muted-foreground font-medium mb-6 sm:mb-8">Built by students. Trusted by educators. Used nationwide.</p>
+            <p className="cinema-in cinema-delay-2 text-xs sm:text-sm text-muted-foreground font-medium mb-6 sm:mb-8">No credit card required &middot; Join 2,000+ learners</p>
             <div className="cinema-in cinema-delay-3 flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8 sm:mb-12">
-              <Link to="/auth" className="w-full sm:w-auto"><Button size="lg" className="w-full sm:w-auto btn-cinema bg-primary text-primary-foreground text-sm sm:text-base px-6 sm:px-8 py-5 sm:py-6 rounded-2xl font-bold">Start Learning Free <ArrowRight className="ml-2 w-5 h-5" /></Button></Link>
-              <a href="#features" className="w-full sm:w-auto"><Button size="lg" variant="outline" className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 py-5 sm:py-6 rounded-2xl font-bold">See What You'll Learn <ArrowRight className="ml-2 w-5 h-5" /></Button></a>
+              <Link to="/auth" className="w-full sm:w-auto"><Button size="lg" className="w-full sm:w-auto btn-cinema bg-primary text-primary-foreground text-sm sm:text-base px-6 sm:px-8 py-5 sm:py-6 rounded-2xl font-bold">Start Learning — Free <ArrowRight className="ml-2 w-5 h-5" /></Button></Link>
+              <a href="#how-it-works" className="w-full sm:w-auto"><Button size="lg" variant="outline" className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 py-5 sm:py-6 rounded-2xl font-bold">See How It Works <ArrowRight className="ml-2 w-5 h-5" /></Button></a>
             </div>
             <div className="cinema-in cinema-delay-4 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
               {[{ icon: BookOpen, val: "80+", label: "Lessons" },{ icon: Gamepad2, val: "8", label: "Games" },{ icon: TrendingUp, val: "Live", label: "Paper Trading" },{ icon: MessageCircle, val: "24/7", label: "AI Coach" }].map(({ icon: Icon, val, label }, idx) => (
