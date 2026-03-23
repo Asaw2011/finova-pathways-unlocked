@@ -11,7 +11,7 @@ import { modules } from "@/data/course-modules";
 import { useGameEconomy } from "@/contexts/GameEconomyContext";
 import { usePremiumAccess } from "@/hooks/usePremiumAccess";
 import FinancialAssessment from "@/components/onboarding/FinancialAssessment";
-import OnboardingModal from "@/components/OnboardingModal";
+
 
 const moduleIcons = [Banknote, Landmark, CreditCard, TrendingUp, PiggyBank, Swords, GraduationCap];
 
@@ -31,7 +31,7 @@ const Dashboard = () => {
   const { hearts, maxHearts, gems, streakFreezes } = useGameEconomy();
   const { hasAccess: isPlusUser } = usePremiumAccess();
   const [assessmentDone, setAssessmentDone] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(false);
+  
 
   const { data: financialProfile, isLoading: profileLoading } = useQuery({
     queryKey: ["financial-profile", user?.id],
@@ -53,15 +53,6 @@ const Dashboard = () => {
     enabled: !!user,
   });
 
-  useEffect(() => {
-    if (user && profile) {
-      const onboarded = localStorage.getItem(`finova_onboarded_${user.id}`);
-      const profileOnboarded = (profile as any).onboarding_completed;
-      if (!onboarded && !profileOnboarded && (!profile.display_name || profile.display_name === user.email?.split("@")[0])) {
-        setShowOnboarding(true);
-      }
-    }
-  }, [user, profile]);
 
   const { data: xpRecords } = useQuery({
     queryKey: ["user-xp", user?.id],
@@ -123,7 +114,7 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-5">
-      <OnboardingModal open={showOnboarding} onClose={() => setShowOnboarding(false)} />
+      
 
       {/* Streak Card */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
