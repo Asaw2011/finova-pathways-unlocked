@@ -126,15 +126,15 @@ const Landing = () => {
               <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> 100% free &mdash; no credit card needed
             </div>
             <h1 className="cinema-in cinema-delay-1 text-3xl sm:text-5xl md:text-7xl font-black tracking-tight leading-[1.08] mb-4 sm:mb-6" style={{ fontFamily: "var(--font-display)" }}>
-              Master your money.{" "}<span className="gradient-text">Shape your future.</span>
+              Master Your Money.{" "}<span className="gradient-text">Change Your Life.</span>
             </h1>
             <p className="cinema-in cinema-delay-2 text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed mb-3 sm:mb-4 max-w-xl">
-              The gamified platform that teaches you budgeting, investing, credit, and taxes &mdash; through lessons, games, and real stock simulations.
+              The fun, free way to learn financial literacy &mdash; from budgeting to investing. 5 minutes a day.
             </p>
-            <p className="cinema-in cinema-delay-2 text-xs sm:text-sm text-muted-foreground font-medium mb-6 sm:mb-8">Built by students. Trusted by educators. Used nationwide.</p>
+            <p className="cinema-in cinema-delay-2 text-xs sm:text-sm text-muted-foreground font-medium mb-6 sm:mb-8">No credit card required &middot; Join 2,000+ learners</p>
             <div className="cinema-in cinema-delay-3 flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8 sm:mb-12">
-              <Link to="/auth" className="w-full sm:w-auto"><Button size="lg" className="w-full sm:w-auto btn-cinema bg-primary text-primary-foreground text-sm sm:text-base px-6 sm:px-8 py-5 sm:py-6 rounded-2xl font-bold">Start Learning Free <ArrowRight className="ml-2 w-5 h-5" /></Button></Link>
-              <a href="#features" className="w-full sm:w-auto"><Button size="lg" variant="outline" className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 py-5 sm:py-6 rounded-2xl font-bold">See What You'll Learn <ArrowRight className="ml-2 w-5 h-5" /></Button></a>
+              <Link to="/auth" className="w-full sm:w-auto"><Button size="lg" className="w-full sm:w-auto btn-cinema bg-primary text-primary-foreground text-sm sm:text-base px-6 sm:px-8 py-5 sm:py-6 rounded-2xl font-bold">Start Learning — Free <ArrowRight className="ml-2 w-5 h-5" /></Button></Link>
+              <a href="#how-it-works" className="w-full sm:w-auto"><Button size="lg" variant="outline" className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 py-5 sm:py-6 rounded-2xl font-bold">See How It Works <ArrowRight className="ml-2 w-5 h-5" /></Button></a>
             </div>
             <div className="cinema-in cinema-delay-4 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
               {[{ icon: BookOpen, val: "80+", label: "Lessons" },{ icon: Gamepad2, val: "8", label: "Games" },{ icon: TrendingUp, val: "Live", label: "Paper Trading" },{ icon: MessageCircle, val: "24/7", label: "AI Coach" }].map(({ icon: Icon, val, label }, idx) => (
@@ -164,6 +164,18 @@ const Landing = () => {
         </div>
       </S>
 
+      {/* TRUST BADGES */}
+      <S className="py-6 sm:py-8 px-4 sm:px-6">
+        <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-4 sm:gap-8 stagger">
+          {[{ icon: Shield, label: "Secure" }, { icon: Sparkles, label: "Mobile Friendly" }, { icon: GraduationCap, label: "Expert Content" }, { icon: Trophy, label: "Gamified Learning" }].map(({ icon: Icon, label }) => (
+            <div key={label} className="reveal flex items-center gap-2 text-muted-foreground">
+              <Icon className="w-4 h-4 text-primary shrink-0" />
+              <span className="text-xs sm:text-sm font-semibold">{label}</span>
+            </div>
+          ))}
+        </div>
+      </S>
+
       {/* CURRICULUM */}
       <S className="py-16 sm:py-24 px-4 sm:px-6 texture-grid">
         <div className="max-w-6xl mx-auto">
@@ -173,11 +185,27 @@ const Landing = () => {
             <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">Our 10-module curriculum covers everything schools skip &mdash; from daily budgeting to taxes, student loans, scam protection, and long-term wealth building.</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 stagger">
-            {[{ icon: Wallet, label: "Budgeting", desc: "Income, expenses, the 50/30/20 rule, and building a plan" },{ icon: PiggyBank, label: "Saving", desc: "Emergency funds, high-yield accounts, and automation" },{ icon: TrendingUp, label: "Investing", desc: "Stocks, ETFs, index funds, and compound growth" },{ icon: BarChart3, label: "Credit & Debt", desc: "Credit scores, cards, building credit, and debt traps" },{ icon: Brain, label: "Taxes", desc: "W-2s, filing, deductions, brackets, and refunds" },{ icon: Sparkles, label: "Wealth Building", desc: "Net worth, multiple income streams, and FIRE" },{ icon: GraduationCap, label: "Student Life", desc: "First job, student loans, renting, and side hustles" },{ icon: Shield, label: "Money Protection", desc: "Scams, identity theft, insurance, and fine print" },{ icon: Target, label: "Financial Freedom", desc: "4% rule, retirement accounts, and action plans" },{ icon: Crown, label: "Money Basics", desc: "What money is, needs vs wants, and time value" }].map(({ icon: Icon, label, desc }) => (
+            {[{ icon: Crown, label: "Money Basics", desc: "What money is, needs vs wants, and time value", lessons: 6, free: true },
+              { icon: Brain, label: "Income & Taxes", desc: "Paychecks, tax brackets, W-2s, and filing", lessons: 6, free: true },
+              { icon: BarChart3, label: "Credit & Debt", desc: "Credit scores, cards, building credit, and debt traps", lessons: 7 },
+              { icon: PiggyBank, label: "Saving", desc: "Emergency funds, high-yield accounts, and automation", lessons: 6 },
+              { icon: TrendingUp, label: "Investing", desc: "Stocks, ETFs, index funds, and compound growth", lessons: 7 },
+              { icon: Shield, label: "Insurance", desc: "Health, auto, renters, and life insurance", lessons: 6 },
+              { icon: Wallet, label: "Real Estate", desc: "Renting, buying, mortgages, and homeownership", lessons: 6 },
+              { icon: Target, label: "Career & Money", desc: "Salary negotiation, benefits, and side hustles", lessons: 6 },
+              { icon: Sparkles, label: "Money Psychology", desc: "Behavioral economics, emotional spending", lessons: 6 },
+              { icon: GraduationCap, label: "Building Wealth", desc: "Net worth, tax strategies, and long-term planning", lessons: 6 }
+            ].map(({ icon: Icon, label, desc, lessons, free }) => (
               <div key={label} className="reveal card-3d">
-                <div className="card-3d-inner p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-card border border-border h-full">
+                <div className="card-3d-inner p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-card border border-border h-full relative">
+                  {free ? (
+                    <span className="absolute top-2 right-2 text-[9px] font-extrabold bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">FREE</span>
+                  ) : (
+                    <span className="absolute top-2 right-2 text-[9px] font-extrabold bg-amber-500/10 text-amber-600 px-1.5 py-0.5 rounded-full">PLUS</span>
+                  )}
                   <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-primary/10 flex items-center justify-center mb-2 sm:mb-3"><Icon className="w-4 h-4 sm:w-5 sm:h-5 text-primary" /></div>
                   <p className="font-bold text-xs sm:text-sm mb-0.5 sm:mb-1">{label}</p>
+                  <p className="text-[10px] text-muted-foreground mb-1">{lessons} lessons</p>
                   <p className="text-[10px] sm:text-xs text-muted-foreground leading-relaxed hidden sm:block">{desc}</p>
                 </div>
               </div>
@@ -340,7 +368,7 @@ const Landing = () => {
           <div className="absolute inset-0 bg-background/90" />
         </div>
         <div className="relative z-10 max-w-3xl mx-auto text-center reveal">
-          <h2 className="text-2xl sm:text-3xl md:text-5xl font-black mb-4 sm:mb-6" style={{ fontFamily: "var(--font-display)" }}>Your future self will{" "}<span className="gradient-text">thank you.</span></h2>
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-black mb-4 sm:mb-6" style={{ fontFamily: "var(--font-display)" }}>Ready to take control of your{" "}<span className="gradient-text">financial future?</span></h2>
           <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-6 sm:mb-8 max-w-xl mx-auto">Every financial skill you learn today saves you thousands tomorrow. Start your first lesson now &mdash; it takes 60 seconds.</p>
           <Link to="/auth"><Button size="lg" className="w-full sm:w-auto btn-cinema bg-primary text-primary-foreground rounded-2xl font-bold px-8 sm:px-10 py-5 sm:py-6 text-base sm:text-lg">Get Started &mdash; It&apos;s Free <ArrowRight className="ml-2 w-5 h-5" /></Button></Link>
           <p className="text-[10px] sm:text-xs text-muted-foreground mt-4 sm:mt-6">No credit card &middot; No spam &middot; Cancel anytime</p>
