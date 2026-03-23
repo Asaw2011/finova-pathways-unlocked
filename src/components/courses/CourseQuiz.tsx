@@ -97,6 +97,14 @@ const CourseQuiz = ({ lessonTitle, moduleQuestions, onComplete, onCancel }: Prop
   const letterLabel = (i: number) => String.fromCharCode(65 + i);
   const starCount = score === questions.length ? 3 : passed ? 2 : 1;
 
+  if (showOutOfHearts) {
+    return (
+      <>
+        <OutOfHeartsModal open={showOutOfHearts} onClose={() => { setShowOutOfHearts(false); onCancel(); }} />
+      </>
+    );
+  }
+
   if (finished) {
     return (
       <div className="rounded-2xl border border-border bg-card p-6 shadow-sm text-center space-y-5 animate-fade-in">
