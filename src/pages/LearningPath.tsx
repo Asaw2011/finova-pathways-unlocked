@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Flame, Zap, Award, Trophy, Lock, CheckCircle2, ChevronRight, Target, Heart, Diamond, Banknote, Landmark, CreditCard, TrendingUp, PiggyBank, Shield, GraduationCap, Crown, ChevronLeft } from "lucide-react";
+import { Flame, Zap, Award, Trophy, Lock, CheckCircle2, ChevronRight, Target, Heart, Diamond, Banknote, Landmark, CreditCard, TrendingUp, PiggyBank, Shield, GraduationCap, Crown, ChevronLeft, BookOpen } from "lucide-react";
 import LessonTooltip from "@/components/learning-path/LessonTooltip";
 import StepConnector from "@/components/learning-path/StepConnector";
 import { cn } from "@/lib/utils";
