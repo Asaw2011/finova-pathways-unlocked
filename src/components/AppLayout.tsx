@@ -29,6 +29,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useState, useRef, useEffect } from "react";
 import { usePremiumAccess } from "@/hooks/usePremiumAccess";
 import MoneyCoachWidget from "@/components/MoneyCoachWidget";
+import OnboardingModal from "@/components/OnboardingModal";
 
 
 
@@ -317,6 +318,26 @@ const sideNavItems: NavItem[] = [
 const AppLayoutInner = () => {
   const { user, loading, signOut } = useAuth();
   const location = useLocation();
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  const { data: profileForOnboarding } = useQuery({
+    queryKey: ["profile-onboarding", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase.from("profiles").select("*").eq("user_id", user!.id).single();
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  useEffect(() => {
+    if (user && profileForOnboarding) {
+      const onboarded = localStorage.getItem(`finova_onboarded_${user.id}`);
+      const profileOnboarded = (profileForOnboarding as any).onboarding_completed;
+      if (!onboarded && !profileOnboarded) {
+        setShowOnboarding(true);
+      }
+    }
+  }, [user, profileForOnboarding]);
 
   if (loading) {
     return (
@@ -335,6 +356,7 @@ const AppLayoutInner = () => {
 
   return (
     <GameEconomyProvider>
+      <OnboardingModal open={showOnboarding} onClose={() => setShowOnboarding(false)} />
       <div className="flex min-h-screen bg-background">
         {/* Persistent top bar */}
         <TopBar />
