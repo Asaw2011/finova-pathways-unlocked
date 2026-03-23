@@ -194,6 +194,50 @@ const LearningPath = () => {
         </motion.div>
       )}
 
+      {/* Recommended Next */}
+      {(() => {
+        const recs: { icon: React.ReactNode; title: string; desc: string; action: () => void }[] = [];
+        // Recommend next module
+        const nextMod = modules[activeModuleIndex];
+        const nextLesson = nextMod?.lessons.find((l: any) => !completedLessons.has(l.id));
+        if (nextLesson) {
+          recs.push({ icon: <BookOpen className="w-4 h-4 text-primary" />, title: `Continue: ${nextMod.title}`, desc: nextLesson.title, action: () => { setActiveModule(nextMod.id); setActiveLesson(nextLesson.id); } });
+        }
+        // Daily challenge
+        if (!hasLessonToday) {
+          recs.push({ icon: <Target className="w-4 h-4 text-amber-500" />, title: "Daily Challenge", desc: "Test yourself with today's challenge", action: () => {} });
+        }
+        // Onboarding-based interests
+        const stored = user ? localStorage.getItem(`finova_user_profile_${user.id}`) : null;
+        if (stored) {
+          try {
+            const prefs = JSON.parse(stored);
+            const interestMap: Record<string, number> = { credit: 2, investing: 4, budgeting: 0, taxes: 1, home: 6 };
+            (prefs.interests || []).slice(0, 2).forEach((interest: string) => {
+              const mi = interestMap[interest];
+              if (mi !== undefined && mi !== activeModuleIndex && !modules[mi]?.lessons.every((l: any) => completedLessons.has(l.id))) {
+                recs.push({ icon: <Zap className="w-4 h-4 text-violet-500" />, title: `For You: ${modules[mi].title}`, desc: "Based on your interests", action: () => setSelectedModuleIndex(mi) });
+              }
+            });
+          } catch {}
+        }
+        if (recs.length === 0) return null;
+        return (
+          <div className="space-y-2">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Recommended Next</p>
+            <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+              {recs.slice(0, 3).map((r, i) => (
+                <button key={i} onClick={r.action}
+                  className="shrink-0 w-48 rounded-xl border border-border bg-card p-3 text-left hover:shadow-sm transition-shadow">
+                  <div className="flex items-center gap-2 mb-1">{r.icon}<span className="text-xs font-bold truncate">{r.title}</span></div>
+                  <p className="text-[10px] text-muted-foreground truncate">{r.desc}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl font-black font-display">Your Learning Journey</h1>
