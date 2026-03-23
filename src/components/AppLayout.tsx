@@ -32,6 +32,8 @@ import MoneyCoachWidget from "@/components/MoneyCoachWidget";
 import NotificationBanner from "@/components/NotificationBanner";
 import OnboardingModal from "@/components/OnboardingModal";
 import XPGainAnimation from "@/components/XPGainAnimation";
+import { AvatarProvider, useAvatar } from "@/contexts/AvatarContext";
+import AvatarRenderer from "@/components/avatar/AvatarRenderer";
 import LevelUpModal from "@/components/LevelUpModal";
 import SpecialOfferModal from "@/components/SpecialOfferModal";
 import { Progress } from "@/components/ui/progress";
@@ -326,6 +328,15 @@ const sideNavItems: NavItem[] = [
   { to: "/settings", label: "Settings", icon: Settings },
 ];
 
+const ProfileAvatarIcon = () => {
+  try {
+    const { avatarConfig } = useAvatar();
+    return <AvatarRenderer config={avatarConfig} size="sm" showFrame={false} className="w-5 h-5" />;
+  } catch {
+    return <User className="w-5 h-5 shrink-0" />;
+  }
+};
+
 const AppLayoutInner = () => {
   const { user, loading, signOut } = useAuth();
   const location = useLocation();
@@ -373,6 +384,7 @@ const AppLayoutInner = () => {
 
   return (
     <GameEconomyProvider>
+      <AvatarProvider>
       <OnboardingModal open={showOnboarding} onClose={() => setShowOnboarding(false)} />
       <div className="flex min-h-screen bg-background">
         {/* Persistent top bar */}
@@ -405,7 +417,11 @@ const AppLayoutInner = () => {
                     )}
                   >
                     <div className="relative">
-                      <Icon className="w-5 h-5 shrink-0" />
+                      {label === "Profile" ? (
+                        <ProfileAvatarIcon />
+                      ) : (
+                        <Icon className="w-5 h-5 shrink-0" />
+                      )}
                       {isPro && label === "Profile" && (
                         <span className="absolute -top-1 -right-1.5 text-[7px] font-extrabold bg-amber-500 text-white px-1 rounded leading-tight">PRO</span>
                       )}
@@ -493,6 +509,7 @@ const AppLayoutInner = () => {
           onMarkShown={markSpecialOfferShown}
         />
       </div>
+      </AvatarProvider>
     </GameEconomyProvider>
   );
 };
