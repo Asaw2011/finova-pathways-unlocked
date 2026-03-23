@@ -237,7 +237,14 @@ const Friends = () => {
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold truncate">{f.friendProfile?.display_name || "Friend"}</p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="font-bold truncate">{f.friendProfile?.display_name || "Friend"}</p>
+                      {premiumFriends?.has(f.friendProfile?.user_id ?? "") && (
+                        <span className="text-[8px] font-extrabold bg-amber-500 text-white px-1.5 py-0.5 rounded-full flex items-center gap-0.5 shrink-0">
+                          <Crown className="w-2.5 h-2.5" /> PRO
+                        </span>
+                      )}
+                    </div>
                     <p className="text-xs text-muted-foreground flex items-center gap-1">
                       <Trophy className="w-3 h-3" /> {getLevelFromXp(f.friendXp || 0)}
                     </p>
