@@ -403,7 +403,12 @@ const AppLayoutInner = () => {
                         : "text-muted-foreground hover:bg-muted"
                     )}
                   >
-                    <Icon className="w-5 h-5 shrink-0" />
+                    <div className="relative">
+                      <Icon className="w-5 h-5 shrink-0" />
+                      {isPro && label === "Profile" && (
+                        <span className="absolute -top-1 -right-1.5 text-[7px] font-extrabold bg-amber-500 text-white px-1 rounded leading-tight">PRO</span>
+                      )}
+                    </div>
                     <span className="whitespace-nowrap flex-1">{label}</span>
                     {sub && (
                       <ChevronDown className={cn(
@@ -480,6 +485,11 @@ const AppLayoutInner = () => {
         {/* XP + Level Up overlays */}
         <XPGainAnimation />
         <LevelUpModal />
+        <SpecialOfferModal
+          open={showSpecialOffer}
+          onDismiss={() => setShowSpecialOffer(false)}
+          onMarkShown={markSpecialOfferShown}
+        />
       </div>
     </GameEconomyProvider>
   );
