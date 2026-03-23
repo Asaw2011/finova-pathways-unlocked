@@ -38,10 +38,6 @@ const CourseQuiz = ({ lessonTitle, moduleQuestions, onComplete, onCancel }: Prop
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const { loseHeart, canDoLessons, isPro } = useGameEconomy();
   const [showOutOfHearts, setShowOutOfHearts] = useState(false);
-  const [selected, setSelected] = useState<number | null>(null);
-  const [finished, setFinished] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(15);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const passed = score >= Math.ceil(questions.length * PASS_THRESHOLD);
 
