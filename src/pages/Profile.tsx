@@ -10,9 +10,12 @@ import { User, RefreshCw, Sparkles, Flame, Zap, BookOpen, Gamepad2, Clock, Check
 import FinancialAssessment from "@/components/onboarding/FinancialAssessment";
 import { usePremiumAccess } from "@/hooks/usePremiumAccess";
 import { useGameEconomy } from "@/contexts/GameEconomyContext";
+import { useAvatar } from "@/contexts/AvatarContext";
+import AvatarRenderer from "@/components/avatar/AvatarRenderer";
 import { modules } from "@/data/course-modules";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
+import { Link } from "react-router-dom";
 
 const ActivityHeatmap = ({ activityDates }: { activityDates: Set<string> }) => {
   const weeks = useMemo(() => {
@@ -54,6 +57,7 @@ const Profile = () => {
   const queryClient = useQueryClient();
   const { hasAccess: isPlusUser } = usePremiumAccess();
   const { currentStreak, level, xp } = useGameEconomy();
+  const { avatarConfig } = useAvatar();
   const [displayName, setDisplayName] = useState("");
   const [showAssessment, setShowAssessment] = useState(false);
 
@@ -195,12 +199,13 @@ const Profile = () => {
       {/* Profile Info */}
       <div className="glass rounded-xl p-6 space-y-6">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-            <User className="w-8 h-8 text-primary" />
-          </div>
+          <AvatarRenderer config={avatarConfig} size="lg" />
           <div>
             <p className="font-display font-semibold">{profile?.display_name || "Learner"}</p>
             <p className="text-sm text-muted-foreground">{user?.email}</p>
+            <Link to="/avatar-builder" className="text-xs font-bold text-primary hover:underline mt-1 inline-block">
+              ✏️ Customize Avatar
+            </Link>
           </div>
         </div>
         <div className="space-y-4">

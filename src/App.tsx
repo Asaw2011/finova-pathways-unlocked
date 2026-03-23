@@ -29,6 +29,7 @@ import PaperTrading from "./pages/PaperTrading";
 import Friends from "./pages/Friends";
 import NotFound from "./pages/NotFound";
 import SettingsPage from "./pages/Settings";
+import AvatarBuilder from "./pages/AvatarBuilder";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,7 @@ const App = () => (
                 <Route path="/friends" element={<Friends />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/avatar-builder" element={<AvatarBuilder />} />
                 <Route path="/resource-hub" element={<Library />} />
               </Route>
               <Route path="*" element={<NotFound />} />
