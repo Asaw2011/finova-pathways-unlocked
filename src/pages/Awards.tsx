@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
-// @ts-ignore - Lock icon rename to avoid collision with Web Lock API type
-
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Award, Trophy, Share2, Medal, Star, Flame, BookOpen, Printer, Target, Zap, Brain, GraduationCap, Crown, Shield, Gem, Clock, Moon, Sun, Gamepad2, Bot, TrendingUp, Heart } from "lucide-react";
+import { Award, Trophy, Share2, Medal, Star, Flame, BookOpen, Printer, Target, Zap, Brain, GraduationCap, Crown, Shield, Gem, Moon, Sun, Gamepad2, Bot, TrendingUp, Heart, Lock as LockIcon } from "lucide-react";
 import { modules } from "@/data/course-modules";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
