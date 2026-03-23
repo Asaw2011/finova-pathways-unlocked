@@ -75,6 +75,18 @@ const Friends = () => {
   const pendingReceived = friendships.filter(f => f.status === "pending" && f.friend_id === user?.id);
   const pendingSent = friendships.filter(f => f.status === "pending" && f.user_id === user?.id);
 
+  // Check premium status for friends
+  const friendUserIds = useMemo(() => acceptedFriends.map(f => f.friendProfile?.user_id).filter(Boolean) as string[], [acceptedFriends]);
+  const { data: premiumFriends } = useQuery({
+    queryKey: ["premium-friends", friendUserIds],
+    queryFn: async () => {
+      if (friendUserIds.length === 0) return new Set<string>();
+      const { data } = await supabase.from("user_subscriptions").select("user_id").in("user_id", friendUserIds).neq("plan", "free");
+      return new Set(data?.map(s => s.user_id) ?? []);
+    },
+    enabled: friendUserIds.length > 0,
+  });
+
   // Add friend by email
   const addFriendMutation = useMutation({
     mutationFn: async (email: string) => {
