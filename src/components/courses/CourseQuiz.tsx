@@ -91,6 +91,7 @@ const CourseQuiz = ({ lessonTitle, moduleQuestions, onComplete, onCancel }: Prop
     setSelected(null);
     setFinished(false);
     setTimeLeft(15);
+    setShowOutOfHearts(false);
   };
 
   const letterLabel = (i: number) => String.fromCharCode(65 + i);
