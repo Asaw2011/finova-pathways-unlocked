@@ -30,6 +30,9 @@ import { useState, useRef, useEffect } from "react";
 import { usePremiumAccess } from "@/hooks/usePremiumAccess";
 import MoneyCoachWidget from "@/components/MoneyCoachWidget";
 import OnboardingModal from "@/components/OnboardingModal";
+import XPGainAnimation from "@/components/XPGainAnimation";
+import LevelUpModal from "@/components/LevelUpModal";
+import { Progress } from "@/components/ui/progress";
 
 
 
@@ -100,14 +103,13 @@ const GemPopup = ({ onClose }: { onClose: () => void }) => {
 };
 
 const TopBar = () => {
-  const { hearts, gems } = useGameEconomy();
+  const { hearts, gems, isPro, currentStreak, level, xp, xpToNextLevel } = useGameEconomy();
   const { user } = useAuth();
   const [showHeartPopup, setShowHeartPopup] = useState(false);
   const [showGemPopup, setShowGemPopup] = useState(false);
   const heartRef = useRef<HTMLButtonElement>(null);
   const gemRef = useRef<HTMLButtonElement>(null);
 
-  // Close on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (heartRef.current && !heartRef.current.parentElement?.contains(e.target as Node)) setShowHeartPopup(false);
@@ -117,47 +119,54 @@ const TopBar = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const { data: streak } = useQuery({
-    queryKey: ["user-streak", user?.id],
-    queryFn: async () => {
-      const { data } = await supabase.from("user_streaks").select("*").eq("user_id", user!.id).maybeSingle();
-      return data;
-    },
-    enabled: !!user,
-  });
+  const xpProgress = ((500 - xpToNextLevel) / 500) * 100;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 h-14 bg-background/95 backdrop-blur-sm border-b border-border px-4 flex items-center justify-between md:justify-end md:left-[200px]">
-      {/* Mobile logo */}
-      <Link to="/learning-path" className="flex items-center gap-2 md:hidden">
-        <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center">
-          <TrendingUp className="w-4 h-4 text-primary-foreground" />
-        </div>
-        <FinOvaLogo />
-      </Link>
+    <div className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border md:left-[200px]">
+      <div className="h-14 px-4 flex items-center justify-between md:justify-end">
+        {/* Mobile logo */}
+        <Link to="/learning-path" className="flex items-center gap-2 md:hidden">
+          <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center">
+            <TrendingUp className="w-4 h-4 text-primary-foreground" />
+          </div>
+          <FinOvaLogo />
+        </Link>
 
-      <div className="flex items-center gap-2">
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-duo-orange/10">
-          <Flame className="w-4 h-4 text-duo-orange" />
-          <span className="text-sm font-extrabold text-duo-orange">{streak?.current_streak ?? 0}</span>
-        </div>
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Streak */}
+          <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-duo-orange/10">
+            <Flame className={cn("w-4 h-4 text-duo-orange", currentStreak > 0 && "animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]")} />
+            <span className="text-sm font-extrabold text-duo-orange">{currentStreak}</span>
+          </div>
 
-        <div className="relative">
-          <button ref={heartRef} onClick={() => { setShowHeartPopup(!showHeartPopup); setShowGemPopup(false); }}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl hover:bg-muted transition-colors">
-            <Heart className="w-4 h-4 text-duo-red fill-duo-red" />
-            <span className="text-sm font-extrabold text-duo-red">{hearts}</span>
-          </button>
-          {showHeartPopup && <HeartPopup onClose={() => setShowHeartPopup(false)} />}
-        </div>
+          {/* Hearts */}
+          <div className="relative">
+            <button ref={heartRef} onClick={() => { setShowHeartPopup(!showHeartPopup); setShowGemPopup(false); }}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl hover:bg-muted transition-colors">
+              <Heart className="w-4 h-4 text-duo-red fill-duo-red" />
+              <span className="text-sm font-extrabold text-duo-red">{isPro ? "∞" : hearts}</span>
+            </button>
+            {showHeartPopup && <HeartPopup onClose={() => setShowHeartPopup(false)} />}
+          </div>
 
-        <div className="relative">
-          <button ref={gemRef} onClick={() => { setShowGemPopup(!showGemPopup); setShowHeartPopup(false); }}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl hover:bg-muted transition-colors">
-            <Diamond className="w-4 h-4 text-duo-blue fill-duo-blue" />
-            <span className="text-sm font-extrabold text-duo-blue">{gems}</span>
-          </button>
-          {showGemPopup && <GemPopup onClose={() => setShowGemPopup(false)} />}
+          {/* Gems */}
+          <div className="relative">
+            <button ref={gemRef} onClick={() => { setShowGemPopup(!showGemPopup); setShowHeartPopup(false); }}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl hover:bg-muted transition-colors">
+              <Diamond className="w-4 h-4 text-duo-blue fill-duo-blue" />
+              <span className="text-sm font-extrabold text-duo-blue">{gems}</span>
+            </button>
+            {showGemPopup && <GemPopup onClose={() => setShowGemPopup(false)} />}
+          </div>
+
+          {/* Level + XP */}
+          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-primary/10">
+            <span className="text-xs font-extrabold text-primary">Lvl {level}</span>
+            <div className="w-16 h-1.5 rounded-full bg-muted overflow-hidden">
+              <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${xpProgress}%` }} />
+            </div>
+            <span className="text-[10px] font-bold text-muted-foreground">{xp} XP</span>
+          </div>
         </div>
       </div>
     </div>
@@ -460,6 +469,10 @@ const AppLayoutInner = () => {
 
         {/* Floating Money Coach */}
         <MoneyCoachWidget />
+
+        {/* XP + Level Up overlays */}
+        <XPGainAnimation />
+        <LevelUpModal />
       </div>
     </GameEconomyProvider>
   );

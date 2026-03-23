@@ -4,6 +4,8 @@ import { cn } from "@/lib/utils";
 import { CheckCircle2, XCircle, Trophy, Timer, RotateCcw, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
+import { useGameEconomy } from "@/contexts/GameEconomyContext";
+import OutOfHeartsModal from "@/components/OutOfHeartsModal";
 
 const defaultQuizBank = [
   { q: "What is compound interest?", options: ["Interest on original only", "Interest on interest + principal", "A bank fee", "A tax deduction"], answer: 1, explanation: "Compound interest earns interest on both the original principal AND previously earned interest, creating exponential growth over time." },
@@ -34,6 +36,8 @@ const CourseQuiz = ({ lessonTitle, moduleQuestions, onComplete, onCancel }: Prop
   const [finished, setFinished] = useState(false);
   const [timeLeft, setTimeLeft] = useState(15);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const { loseHeart, canDoLessons, isPro } = useGameEconomy();
+  const [showOutOfHearts, setShowOutOfHearts] = useState(false);
 
   const passed = score >= Math.ceil(questions.length * PASS_THRESHOLD);
 
@@ -61,11 +65,20 @@ const CourseQuiz = ({ lessonTitle, moduleQuestions, onComplete, onCancel }: Prop
     }
   }, [finished, passed]);
 
-  const handleAnswer = (i: number) => {
+  const handleAnswer = async (i: number) => {
     if (selected !== null) return;
     if (timerRef.current) clearInterval(timerRef.current);
     setSelected(i);
-    if (i >= 0 && i === questions[current].answer) setScore(s => s + 1);
+    const correct = i >= 0 && i === questions[current].answer;
+    if (correct) {
+      setScore(s => s + 1);
+    } else {
+      const hasHearts = await loseHeart();
+      if (!hasHearts && !isPro) {
+        setShowOutOfHearts(true);
+        return;
+      }
+    }
     setTimeout(() => {
       if (current + 1 >= questions.length) setFinished(true);
       else { setCurrent(c => c + 1); setSelected(null); }
@@ -78,10 +91,19 @@ const CourseQuiz = ({ lessonTitle, moduleQuestions, onComplete, onCancel }: Prop
     setSelected(null);
     setFinished(false);
     setTimeLeft(15);
+    setShowOutOfHearts(false);
   };
 
   const letterLabel = (i: number) => String.fromCharCode(65 + i);
   const starCount = score === questions.length ? 3 : passed ? 2 : 1;
+
+  if (showOutOfHearts) {
+    return (
+      <>
+        <OutOfHeartsModal open={showOutOfHearts} onClose={() => { setShowOutOfHearts(false); onCancel(); }} />
+      </>
+    );
+  }
 
   if (finished) {
     return (

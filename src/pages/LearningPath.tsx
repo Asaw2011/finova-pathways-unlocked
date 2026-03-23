@@ -30,10 +30,11 @@ import { modules } from "@/data/course-modules";
 const LearningPath = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const { hearts, gems, canDoLessons } = useGameEconomy();
+  const { hearts, gems, canDoLessons, currentStreak, lastLessonDate } = useGameEconomy();
   const [activeModule, setActiveModule] = useState<string | null>(null);
   const [activeLesson, setActiveLesson] = useState<string | null>(null);
   const [showUnitQuiz, setShowUnitQuiz] = useState<string | null>(null);
+  const [streakBannerDismissed, setStreakBannerDismissed] = useState(false);
 
   const { data: xpRecords } = useQuery({
     queryKey: ["user-xp", user?.id],
@@ -160,8 +161,39 @@ const LearningPath = () => {
   const colors = moduleColors[viewingModuleIndex % moduleColors.length];
   const ModIcon = moduleIcons[viewingModuleIndex % moduleIcons.length];
 
+  const today = new Date().toISOString().split("T")[0];
+  const hasLessonToday = lastLessonDate === today;
+
   return (
     <div className="space-y-6">
+      {/* Streak banner */}
+      {!streakBannerDismissed && currentStreak > 0 && !hasLessonToday && (
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+          className="rounded-2xl border border-duo-orange/30 bg-duo-orange/5 p-4 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <Flame className="w-5 h-5 text-duo-orange shrink-0" />
+            <p className="text-sm font-bold truncate">
+              Your {currentStreak}-day streak is at risk! Complete a lesson to keep it going.
+            </p>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <Button size="sm" className="rounded-xl font-bold text-xs" onClick={() => {
+              const firstMod = modules[activeModuleIndex];
+              const firstLesson = firstMod?.lessons.find((l: any) => !completedLessons.has(l.id));
+              if (firstLesson) { setActiveModule(firstMod.id); setActiveLesson(firstLesson.id); }
+            }}>Start Lesson</Button>
+            <button onClick={() => setStreakBannerDismissed(true)} className="text-muted-foreground hover:text-foreground text-lg">×</button>
+          </div>
+        </motion.div>
+      )}
+      {!streakBannerDismissed && currentStreak > 0 && hasLessonToday && (
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+          className="rounded-2xl border border-primary/30 bg-primary/5 p-3 flex items-center gap-2">
+          <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
+          <p className="text-sm font-bold">Streak secured! You're on a {currentStreak}-day streak. 🔥</p>
+        </motion.div>
+      )}
+
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl font-black font-display">Your Learning Journey</h1>
