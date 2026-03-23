@@ -368,7 +368,7 @@ const Landing = () => {
           <div className="absolute inset-0 bg-background/90" />
         </div>
         <div className="relative z-10 max-w-3xl mx-auto text-center reveal">
-          <h2 className="text-2xl sm:text-3xl md:text-5xl font-black mb-4 sm:mb-6" style={{ fontFamily: "var(--font-display)" }}>Your future self will{" "}<span className="gradient-text">thank you.</span></h2>
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-black mb-4 sm:mb-6" style={{ fontFamily: "var(--font-display)" }}>Ready to take control of your{" "}<span className="gradient-text">financial future?</span></h2>
           <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-6 sm:mb-8 max-w-xl mx-auto">Every financial skill you learn today saves you thousands tomorrow. Start your first lesson now &mdash; it takes 60 seconds.</p>
           <Link to="/auth"><Button size="lg" className="w-full sm:w-auto btn-cinema bg-primary text-primary-foreground rounded-2xl font-bold px-8 sm:px-10 py-5 sm:py-6 text-base sm:text-lg">Get Started &mdash; It&apos;s Free <ArrowRight className="ml-2 w-5 h-5" /></Button></Link>
           <p className="text-[10px] sm:text-xs text-muted-foreground mt-4 sm:mt-6">No credit card &middot; No spam &middot; Cancel anytime</p>
