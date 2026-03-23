@@ -221,7 +221,7 @@ const Awards = () => {
               >
                 {!unlocked && (
                   <div className="absolute inset-0 backdrop-blur-[2px] z-10 flex items-center justify-center">
-                    <Lock className="w-6 h-6 text-muted-foreground/40" />
+                    <LockIcon className="w-6 h-6 text-muted-foreground/40" />
                   </div>
                 )}
                 <div className={cn(
