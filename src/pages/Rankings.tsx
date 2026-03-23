@@ -63,6 +63,22 @@ const Rankings = () => {
     },
   });
 
+  // Get premium users for flair
+  const { data: premiumUsers } = useQuery({
+    queryKey: ["premium-users-rankings", leaderboard?.map(l => l.user_id)],
+    queryFn: async () => {
+      if (!leaderboard || leaderboard.length === 0) return new Set<string>();
+      const userIds = leaderboard.map(l => l.user_id);
+      const { data } = await supabase
+        .from("user_subscriptions")
+        .select("user_id")
+        .in("user_id", userIds)
+        .neq("plan", "free");
+      return new Set(data?.map(s => s.user_id) ?? []);
+    },
+    enabled: !!leaderboard && leaderboard.length > 0,
+  });
+
   // Get display names for leaderboard
   const { data: profiles } = useQuery({
     queryKey: ["leaderboard-profiles", leaderboard?.map(l => l.user_id)],
@@ -225,8 +241,11 @@ const Rankings = () => {
                   </span>
                   {(() => { const EIcon = entryTier.icon; return <EIcon className={cn("w-5 h-5", entryTier.textColor)} />; })()}
                   <div className="flex-1 min-w-0">
-                    <p className={cn("text-sm font-semibold truncate", isMe && "text-primary")}>
+                    <p className={cn("text-sm font-semibold truncate flex items-center gap-1", isMe && "text-primary")}>
                       {isMe ? "You" : getProfileName(entry.user_id)}
+                      {premiumUsers?.has(entry.user_id) && (
+                        <span className="text-[8px] font-extrabold bg-amber-500 text-white px-1 rounded leading-tight">⭐</span>
+                      )}
                     </p>
                   </div>
                   <div className="text-right shrink-0">

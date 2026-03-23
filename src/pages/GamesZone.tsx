@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Gamepad2, TrendingUp, Wallet, Brain, Trophy, ArrowRight, ArrowLeft, RotateCcw, CreditCard, Banknote, Clock, AlertTriangle, DollarSign, Diamond, CheckCircle2, Palmtree, ScrollText, Mountain } from "lucide-react";
+import { Gamepad2, TrendingUp, Wallet, Brain, Trophy, ArrowRight, ArrowLeft, RotateCcw, CreditCard, Banknote, Clock, AlertTriangle, DollarSign, Diamond, CheckCircle2, Palmtree, ScrollText, Mountain, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -8,6 +8,8 @@ import { useGameEconomy } from "@/contexts/GameEconomyContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { usePremiumAccess } from "@/hooks/usePremiumAccess";
+import PremiumUpgradePrompt from "@/components/PremiumUpgradePrompt";
 
 // New game components
 import SimTradingGame from "@/components/games/SimTradingGame";
@@ -95,12 +97,16 @@ const checkAndAwardGameBadges = async (userId: string, gameId: string, score: nu
   }
 };
 
+const FREE_GAME_IDS = ["budget", "paycheck", "subscription"];
+
 const GamesZone = () => {
   const [activeGame, setActiveGame] = useState<string | null>(null);
   const [difficultyFilter, setDifficultyFilter] = useState<"All" | "Beginner" | "Intermediate">("All");
   const { earnGems } = useGameEconomy();
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const { hasAccess: isPro, showUpgradePrompt, activeVariant, dismissUpgradePrompt } = usePremiumAccess();
+  const [lockedGameName, setLockedGameName] = useState<string | undefined>();
 
   const dailyFeaturedGameId = getDailyFeaturedGame();
 
@@ -236,15 +242,35 @@ const GamesZone = () => {
           </div>
 
           <div className="grid sm:grid-cols-2 gap-4">
-            {filteredGames.map(({ id, title, desc, icon: Icon, learn, difficulty, rounds, maxGems }, i) => (
+            {filteredGames.map(({ id, title, desc, icon: Icon, learn, difficulty, rounds, maxGems }, i) => {
+              const isLocked = !isPro && !FREE_GAME_IDS.includes(id);
+              return (
               <motion.button
                 key={id}
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                onClick={() => setActiveGame(id)}
-                className="bg-card rounded-2xl border border-border p-5 text-left hover:shadow-md transition-all group"
+                onClick={() => {
+                  if (isLocked) {
+                    setLockedGameName(title);
+                    showUpgradePrompt("game_lock");
+                  } else {
+                    setActiveGame(id);
+                  }
+                }}
+                className={cn(
+                  "bg-card rounded-2xl border border-border p-5 text-left hover:shadow-md transition-all group relative overflow-hidden",
+                  isLocked && "opacity-80"
+                )}
               >
+                {isLocked && (
+                  <div className="absolute inset-0 bg-background/60 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-2xl">
+                    <div className="flex flex-col items-center gap-1">
+                      <Lock className="w-6 h-6 text-muted-foreground" />
+                      <span className="text-[10px] font-bold text-muted-foreground">PLUS</span>
+                    </div>
+                  </div>
+                )}
                 <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center mb-3 border", gameColors[i % gameColors.length])}>
                   <Icon className="w-6 h-6" />
                 </div>
@@ -282,8 +308,16 @@ const GamesZone = () => {
                   )}
                 </div>
               </motion.button>
-            ))}
+              );
+            })}
           </div>
+
+          <PremiumUpgradePrompt
+            variant="game_lock"
+            open={activeVariant === "game_lock"}
+            onDismiss={dismissUpgradePrompt}
+            gameName={lockedGameName}
+          />
         </>
       ) : (
         <div>

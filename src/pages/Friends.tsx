@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Users, UserPlus, Search, Flame, Zap, Trophy, Check, X, Mail } from "lucide-react";
+import { Users, UserPlus, Search, Flame, Zap, Trophy, Check, X, Mail, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -74,6 +74,18 @@ const Friends = () => {
   const acceptedFriends = friendships.filter(f => f.status === "accepted");
   const pendingReceived = friendships.filter(f => f.status === "pending" && f.friend_id === user?.id);
   const pendingSent = friendships.filter(f => f.status === "pending" && f.user_id === user?.id);
+
+  // Check premium status for friends
+  const friendUserIds = useMemo(() => acceptedFriends.map(f => f.friendProfile?.user_id).filter(Boolean) as string[], [acceptedFriends]);
+  const { data: premiumFriends } = useQuery({
+    queryKey: ["premium-friends", friendUserIds],
+    queryFn: async () => {
+      if (friendUserIds.length === 0) return new Set<string>();
+      const { data } = await supabase.from("user_subscriptions").select("user_id").in("user_id", friendUserIds).neq("plan", "free");
+      return new Set(data?.map(s => s.user_id) ?? []);
+    },
+    enabled: friendUserIds.length > 0,
+  });
 
   // Add friend by email
   const addFriendMutation = useMutation({
@@ -225,7 +237,14 @@ const Friends = () => {
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold truncate">{f.friendProfile?.display_name || "Friend"}</p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="font-bold truncate">{f.friendProfile?.display_name || "Friend"}</p>
+                      {premiumFriends?.has(f.friendProfile?.user_id ?? "") && (
+                        <span className="text-[8px] font-extrabold bg-amber-500 text-white px-1.5 py-0.5 rounded-full flex items-center gap-0.5 shrink-0">
+                          <Crown className="w-2.5 h-2.5" /> PRO
+                        </span>
+                      )}
+                    </div>
                     <p className="text-xs text-muted-foreground flex items-center gap-1">
                       <Trophy className="w-3 h-3" /> {getLevelFromXp(f.friendXp || 0)}
                     </p>
