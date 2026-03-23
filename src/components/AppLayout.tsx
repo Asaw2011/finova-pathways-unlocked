@@ -32,6 +32,7 @@ import MoneyCoachWidget from "@/components/MoneyCoachWidget";
 import OnboardingModal from "@/components/OnboardingModal";
 import XPGainAnimation from "@/components/XPGainAnimation";
 import LevelUpModal from "@/components/LevelUpModal";
+import SpecialOfferModal from "@/components/SpecialOfferModal";
 import { Progress } from "@/components/ui/progress";
 
 
@@ -328,6 +329,12 @@ const AppLayoutInner = () => {
   const { user, loading, signOut } = useAuth();
   const location = useLocation();
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const { hasAccess: isPro, shouldShowSpecialOffer, markSpecialOfferShown } = usePremiumAccess();
+  const [showSpecialOffer, setShowSpecialOffer] = useState(false);
+
+  useEffect(() => {
+    if (shouldShowSpecialOffer) setShowSpecialOffer(true);
+  }, [shouldShowSpecialOffer]);
 
   const { data: profileForOnboarding } = useQuery({
     queryKey: ["profile-onboarding", user?.id],
